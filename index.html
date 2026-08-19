@@ -53,13 +53,15 @@ header{margin-bottom:8px}
   width:32px;height:32px;border-radius:11px;background:linear-gradient(#ffd0de,#ffb0c6);
   display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:var(--sh)
 }
+/* 헤더 버튼은 아이 손가락 기준으로 38px 은 넘긴다 (특히 🎁선물상자는 자주 누른다) */
 .brand .lv{
   margin-left:auto;font-size:11px;font-weight:700;background:var(--card);border:2px solid var(--line);
-  border-radius:11px;padding:3px 9px;cursor:pointer;white-space:nowrap
+  border-radius:12px;padding:0 9px;min-height:38px;display:flex;align-items:center;
+  cursor:pointer;white-space:nowrap
 }
 .brand .hbtn{
-  width:30px;height:30px;flex:none;border-radius:11px;background:var(--card);border:2px solid var(--line);
-  display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;position:relative;
+  width:38px;height:38px;flex:none;border-radius:12px;background:var(--card);border:2px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;position:relative;
   box-shadow:var(--sh)
 }
 .brand .hbtn:active{transform:translateY(1px)}
@@ -92,7 +94,8 @@ header{margin-bottom:8px}
   cursor:pointer;box-shadow:0 3px 0 #c94168;transition:transform .06s
 }
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #c94168}
-.btn.sm{font-size:12px;padding:7px 10px;border-radius:12px}
+/* 작은 버튼도 아이 손가락으로 누를 수 있게 40px 은 넘긴다 */
+.btn.sm{font-size:12px;padding:9px 10px;border-radius:12px;min-height:40px}
 .btn.w{background:linear-gradient(#fffdfb,#fdeef2);color:var(--ink);border-color:var(--line);box-shadow:0 3px 0 #ecd3da}
 .btn.w:active{box-shadow:0 1px 0 #ecd3da}
 .btn.g{background:linear-gradient(#86dcc7,var(--acc2));border-color:#43a892;box-shadow:0 3px 0 #3d9a84}
@@ -172,6 +175,19 @@ header{margin-bottom:8px}
 .tub .new{position:absolute;right:3px;top:1px;font-size:9px}
 .tub.locked{opacity:.42;cursor:pointer}
 
+/* ---------- 🏠 방 고르기 줄 ---------- */
+.rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:7px}
+.rooms>div{
+  background:var(--card);border:2px solid var(--line);border-radius:13px;padding:5px 2px 4px;
+  text-align:center;font-size:10.5px;font-weight:700;cursor:pointer;box-shadow:var(--sh);
+  line-height:1.25;word-break:keep-all;min-height:52px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+.rooms>div.on{border-color:var(--acc);background:#ffeaf1;color:var(--acc)}
+.rooms>div .e{display:block;font-size:17px;line-height:1.15}
+.rooms>div i{display:block;font-style:normal;font-size:8.5px;font-weight:700;color:var(--ink2)}
+.rooms>div.on i{color:var(--acc)}
+
 /* ---------- 테라스 ---------- */
 /* 테라스 색은 전부 변수로 뺐다 — 🎨테마를 고르면 applyTheme() 가 :root 값만 바꿔준다 */
 :root{
@@ -217,6 +233,12 @@ header{margin-bottom:8px}
   border-radius:9px;padding:1px 6px;width:fit-content;margin:0 auto;white-space:nowrap
 }
 #terrace .tham b i{font-style:normal;font-size:8.5px;color:#d4568a;letter-spacing:-.5px}
+/* 좁은 폰에서는 테라스가 360px 밖에 안 돼서 이름표끼리 많이 겹친다 — 조금 작게 만든다 */
+@media(max-width:429px){
+  #terrace .tham b{font-size:9.5px;padding:1px 5px;border-radius:8px}
+  #terrace .tham b i{font-size:8px}
+  #terrace .tham .hb{font-size:9px;padding:1px 5px}
+}
 /* 말풍선 — 이모지뿐 아니라 짧은 말도 띄운다. translateX(-50%) 를 키프레임에도 넣어야 한다 */
 #terrace .tham .hb{
   position:absolute;left:50%;top:-11px;transform:translateX(-50%);
@@ -226,6 +248,46 @@ header{margin-bottom:8px}
 }
 #terrace .tham:active .hs{animation:none;transform:scale(.9)}
 #terrace .tham.hop .hs{animation:thop .75s ease-out}
+
+/* ⚽ 공 쫓아가기 — 공이 지나가는 쪽으로 우르르 달려갔다 돌아온다.
+   stroll 과 마찬가지로 translateX(-50%) 를 키프레임마다 다시 써줘야 가운데 정렬이 안 깨진다. */
+#terrace .tham.chase{animation:chase 2.8s cubic-bezier(.4,0,.5,1)}
+@keyframes chase{
+  0%  {transform:translateX(-50%) translateX(0)}
+  38% {transform:translateX(-50%) translateX(var(--cx,60px))}
+  55% {transform:translateX(-50%) translateX(var(--cx,60px))}
+  100%{transform:translateX(-50%) translateX(0)}
+}
+#terrace .tham.chase .hs{animation:runwob .28s ease-in-out infinite alternate}
+@keyframes runwob{from{transform:translateY(0) rotate(-11deg)}to{transform:translateY(-7px) rotate(11deg)}}
+
+/* 🎵 춤추기 */
+#terrace .tham.dance{animation:dance 1.15s ease-in-out infinite}
+@keyframes dance{
+  0%  {transform:translateX(-50%) translateX(-9px) rotate(-7deg)}
+  25% {transform:translateX(-50%) translateX(0)    rotate(0deg) translateY(-13px)}
+  50% {transform:translateX(-50%) translateX(9px)  rotate(7deg)}
+  75% {transform:translateX(-50%) translateX(0)    rotate(0deg) translateY(-13px)}
+  100%{transform:translateX(-50%) translateX(-9px) rotate(-7deg)}
+}
+#terrace .tham.dance .hs{animation:dwob .575s ease-in-out infinite alternate}
+@keyframes dwob{from{transform:scale(.94) rotate(-6deg)}to{transform:scale(1.07) rotate(6deg)}}
+#terrace .fx.note{font-size:16px;opacity:.9;animation:noteup 2.6s ease-out forwards}
+@keyframes noteup{
+  0%{transform:translate(0,0) rotate(-15deg);opacity:0}
+  15%{opacity:1}
+  100%{transform:translate(var(--nx,20px),-150px) rotate(20deg);opacity:0}
+}
+/* 춤출 때 바닥에 도는 조명 — 바깥 상자로 잘라서 바닥 밖으로 새지 않게 한다 */
+#terrace .disco{
+  position:absolute;left:0;right:0;bottom:0;height:44%;z-index:0;pointer-events:none;overflow:hidden
+}
+#terrace .disco i{
+  position:absolute;left:50%;top:50%;width:240%;aspect-ratio:1;margin:-120% 0 0 -120%;
+  background:repeating-conic-gradient(from 0deg,rgba(255,140,190,.26) 0 12%,transparent 0 25%);
+  animation:discospin 3.2s linear infinite
+}
+@keyframes discospin{to{transform:rotate(360deg)}}
 @keyframes wob{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-8px) rotate(3deg)}}
 @keyframes stroll{from{transform:translateX(-50%) translateX(calc(var(--d) * -1))}to{transform:translateX(-50%) translateX(var(--d))}}
 @keyframes mumble{
@@ -235,18 +297,24 @@ header{margin-bottom:8px}
 @keyframes thop{0%{transform:translateY(0) rotate(0)}25%{transform:translateY(-24px) rotate(-8deg) scale(1.06)}
   50%{transform:translateY(0)}72%{transform:translateY(-11px) rotate(6deg)}100%{transform:translateY(0) rotate(0)}}
 #terrace .fx{position:absolute;pointer-events:none;z-index:6}
-#terrace .fx.ball{bottom:16px;font-size:26px;animation:ballroll 2.4s linear forwards}
+#terrace .fx.ball{bottom:16px;font-size:26px;animation:ballroll 3.4s cubic-bezier(.4,0,.5,1) forwards}
 #terrace .fx.bub{animation:bubup 3s ease-out forwards}
 #terrace .fx.heart{font-size:20px;transform:translate(-50%,0);animation:heartup 1s ease-out forwards}
-@keyframes ballroll{from{left:-12%;transform:rotate(0)}to{left:108%;transform:rotate(1440deg)}}
+/* 굴러갔다가 오른쪽 끝에서 톡 튕겨 되돌아온다 (구르는 방향도 같이 바뀐다) */
+@keyframes ballroll{
+  0%  {left:-10%; transform:rotate(0)}
+  46% {left:96%;  transform:rotate(1080deg)}
+  54% {left:96%;  transform:rotate(1080deg)}
+  100%{left:-10%; transform:rotate(0)}
+}
 @keyframes bubup{0%{transform:translateY(0) scale(.5);opacity:0}18%{opacity:.95}100%{transform:translateY(-190px) scale(1.2);opacity:0}}
 @keyframes heartup{0%{transform:translate(-50%,0) scale(.4);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-56px) scale(1.15);opacity:0}}
 
-.toys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.toy{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:7px 3px;text-align:center;cursor:pointer;box-shadow:var(--sh)}
+.toys{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.toy{background:var(--card);border:2px solid var(--line);border-radius:13px;padding:6px 2px;text-align:center;cursor:pointer;box-shadow:var(--sh)}
 .toy.on{border-color:var(--acc);box-shadow:0 0 0 3px #ffd9e4}
-.toy .e{font-size:21px;line-height:1.15}
-.toy .n{font-size:10.5px;font-weight:700;margin-top:1px}
+.toy .e{font-size:19px;line-height:1.15}
+.toy .n{font-size:10px;font-weight:700;margin-top:1px;word-break:keep-all}
 .toy .c{font-size:9px;color:var(--ink2)}
 .toy:active{transform:translateY(1px)}
 
@@ -255,6 +323,8 @@ header{margin-bottom:8px}
 .slot .hs{width:44px;height:44px;flex:0 0 44px}
 .slot .ph{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:#fdeef2;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink2)}
 .slot .info{flex:1;min-width:0;font-size:12px}
+/* 좁은 폰(360px)에서 「놀러 가기 ▸」 같은 꼬리말이 본문과 겹치지 않게 줄이지 않고 붙여 둔다 */
+.slot > .muted{flex:0 0 auto;white-space:nowrap;font-size:10.5px}
 
 /* ---------- 도감 ---------- */
 .dexgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
@@ -311,6 +381,79 @@ header{margin-bottom:8px}
 @keyframes cupup{to{transform:translateY(-54px) rotate(-12deg);opacity:0}}
 .cup .lb{font-size:10.5px;font-weight:700;margin-top:4px;color:var(--ink2);min-height:14px}
 
+/* ---------- 🔔 손님 주문받기 ----------
+   콘 → 맛 → 토핑 순서로 아래에서 위로 쌓아 올린다(고른 것이 바로 그림에 붙는다).
+   주문서 말풍선은 고르는 동안 계속 띄워 둔다 — 저학년은 외우게 하면 안 된다. */
+.ord{text-align:center}
+.ord .bub{
+  display:inline-block;max-width:94%;background:#fff;border:2.5px solid var(--line);border-radius:15px;
+  padding:8px 12px;font-size:12.5px;font-weight:700;line-height:1.7;box-shadow:var(--sh);position:relative
+}
+.ord .bub:after,.ord .bub:before{content:'';position:absolute;left:50%;border:8px solid transparent}
+.ord .bub:before{bottom:-16px;margin-left:-8px;border-top-color:var(--line)}
+.ord .bub:after{bottom:-12px;margin-left:-8px;border-top-color:#fff}
+.ord .who{width:70px;height:70px;display:inline-block;margin-top:11px;animation:wob 2.5s ease-in-out infinite alternate}
+/* 만들고 있는 아이스크림 — .scard .ic 와 겹치지 않게 icec 로 따로 둔다 */
+.icec{position:relative;height:112px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;margin-top:4px}
+.icec>span{animation:icpop .34s ease-out}
+.icec .tp{font-size:21px;line-height:1;margin-bottom:-7px;z-index:3}
+.icec .sc{
+  width:52px;height:46px;border-radius:50% 50% 46% 46%;z-index:2;margin-bottom:-10px;
+  background:radial-gradient(circle at 34% 28%, var(--c2,#fff), var(--c,#ffa8c2) 74%);
+  border:2px solid rgba(0,0,0,.06);box-shadow:inset -5px -6px 9px rgba(0,0,0,.10)
+}
+.icec .ph{
+  font-size:11px;font-weight:700;color:var(--ink2);animation:none;line-height:1.5;
+  border:2px dashed var(--line);border-radius:13px;padding:13px 15px;background:#fffafc
+}
+/* 콘 세 가지 — 와플콘·무지개콘은 삼각형, 예쁜 컵은 둥근 컵 */
+.cone{display:block;position:relative;z-index:1;width:48px;height:54px;flex:0 0 auto}
+.cone.waffle,.cone.rain{clip-path:polygon(3% 0,97% 0,50% 100%)}
+.cone.waffle{background:
+  repeating-linear-gradient(45deg,rgba(255,255,255,.45) 0 2px,transparent 2px 8px),
+  repeating-linear-gradient(-45deg,rgba(140,88,36,.32) 0 2px,transparent 2px 8px),
+  linear-gradient(#e9b77a,#c68c4c)}
+.cone.rain{background:linear-gradient(90deg,#ff9fba 0 20%,#ffd98a 20% 40%,#a8e6a3 40% 60%,#9fd4f5 60% 80%,#cbaaf0 80% 100%)}
+.cone.cupc{
+  height:42px;margin-top:12px;
+  background:linear-gradient(#fffdfb,#ffe0ea);border:2.5px solid #f0a8c4;
+  border-radius:7px 7px 42% 42%/7px 7px 24px 24px
+}
+.cone.sm{width:30px;height:34px;margin:0 auto 3px}
+.cone.cupc.sm{height:26px;margin-top:8px;border-width:2px;border-radius:5px 5px 42% 42%/5px 5px 15px 15px}
+@keyframes icpop{from{transform:scale(.4) translateY(-9px);opacity:0}to{transform:scale(1);opacity:1}}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.opts.c3{grid-template-columns:repeat(3,1fr)}
+.opts button{
+  background:var(--card);border:2px solid var(--line);border-radius:13px;padding:7px 2px 6px;
+  font:inherit;font-size:10.5px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:var(--sh);
+  word-break:keep-all;line-height:1.25
+}
+.opts button .e{display:block;font-size:22px;line-height:1.25}
+.opts button .sw{display:block;width:27px;height:27px;border-radius:50%;margin:1px auto 3px;border:2px solid rgba(0,0,0,.07)}
+.opts button:active{transform:translateY(2px)}
+.stepn{font-size:12px;font-weight:800;color:var(--acc);margin-top:10px;text-align:center}
+.score{display:grid;gap:4px;margin-top:9px;font-size:11.5px}
+.score div{display:flex;justify-content:space-between;gap:6px;background:#fff7fa;border:1.5px solid var(--line);border-radius:10px;padding:5px 9px}
+.score div b{color:var(--acc)}
+.score div.tot{background:#ffeaf1;border-color:var(--acc);font-weight:800;font-size:12.5px}
+
+/* ---------- 🏆 꾸미기 대회 ---------- */
+.runway{
+  position:relative;border-radius:15px;overflow:hidden;padding:13px 8px 26px;text-align:center;
+  background:linear-gradient(#fff4f9,#ffe0ec);border:2.5px solid var(--line);margin-top:2px
+}
+.runway .spot{
+  position:absolute;left:50%;top:-46%;width:150%;aspect-ratio:1;margin-left:-75%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 60%)
+}
+.runway .rug{position:absolute;left:0;right:0;bottom:0;height:20px;
+  background:repeating-linear-gradient(90deg,#f2a2c1 0 13px,#ffc4d9 13px 26px)}
+.runway .hs{width:104px;height:104px;display:inline-block;position:relative;z-index:2;
+  animation:wob 2.5s ease-in-out infinite alternate}
+.runway .rk{position:relative;z-index:2;font-size:32px;line-height:1.2}
+.runway .cap{position:relative;z-index:2;font-size:12.5px;font-weight:800;line-height:1.6}
+
 /* ---------- 사진첩 ---------- */
 .photo{background:#fff;border:2px solid var(--line);border-radius:13px;padding:7px 7px 5px;box-shadow:0 3px 0 #eed7de}
 .photo .pic{
@@ -337,11 +480,15 @@ header{margin-bottom:8px}
 }
 .frames div.on{border-color:var(--acc);background:#ffeaf1;color:var(--acc)}
 .frames div .e{display:block;font-size:18px;line-height:1.2}
-#photocam{
-  position:absolute;right:8px;top:41px;z-index:6;cursor:pointer;
-  background:rgba(255,255,255,.9);border:2px solid #f3d0dc;border-radius:11px;
-  font-size:15px;padding:2px 7px;line-height:1.35
+/* 테라스 오른쪽 위 작은 버튼 두 개 — 카드를 늘리지 않고 그림에서 바로 누르게 한다 */
+#photocam,#tthemebtn{
+  position:absolute;right:8px;z-index:6;cursor:pointer;
+  background:rgba(255,255,255,.9);border:2px solid #f3d0dc;border-radius:12px;
+  font-size:17px;line-height:1;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center
 }
+#photocam{top:38px}
+#tthemebtn{top:81px}
 
 /* ---------- 꾸미기(옷장) ---------- */
 .wprev{
@@ -370,6 +517,37 @@ header{margin-bottom:8px}
 .wpick .it .n{font-size:10px;font-weight:700;word-break:keep-all;line-height:1.2}
 .wpick .it .p{font-size:10px;color:var(--ink2);font-weight:700}
 .wpick .it .chk{position:absolute;right:3px;top:1px;font-size:11px}
+
+/* ---------- 💞 믹스쮜 ---------- */
+.mixrow{display:flex;align-items:center;justify-content:center;gap:4px}
+.mslot{
+  flex:1;max-width:92px;text-align:center;border:2px dashed var(--line);border-radius:14px;
+  background:#fffdfb;padding:6px 3px
+}
+.mslot.on{border-style:solid;border-color:var(--acc);background:#fff2f6}
+.mslot .hs{width:100%;aspect-ratio:1;display:block}
+.mslot .ph{display:block;font-size:26px;color:var(--ink2);line-height:1.5}
+.mslot b{display:block;font-size:10px;word-break:keep-all;line-height:1.2;margin-top:1px}
+.mplus{font-size:15px;color:var(--ink2);flex:none}
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+@media(min-width:430px){.mgrid{grid-template-columns:repeat(6,1fr)}}
+.mpick{
+  border:2px solid var(--line);background:var(--card);border-radius:11px;padding:3px 1px;
+  text-align:center;cursor:pointer;position:relative
+}
+.mpick.on{border-color:var(--acc);background:#ffeaf1;box-shadow:0 0 0 3px #ffd9e4}
+.mpick .hs{width:100%;aspect-ratio:1;display:block}
+.mpick .nm{font-size:8.5px;font-weight:700;line-height:1.15;word-break:keep-all}
+.mpick .ht{font-size:8px;color:var(--ink2)}
+.mixgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+@media(min-width:430px){.mixgrid{grid-template-columns:repeat(5,1fr)}}
+.mcard{
+  border:2px solid #e8c6ea;background:linear-gradient(#fff8fd,#ffeef8);border-radius:13px;
+  padding:5px 3px;text-align:center;box-shadow:var(--sh);cursor:pointer;position:relative
+}
+.mcard .hs{width:100%;aspect-ratio:1;display:block}
+.mcard .nm{font-size:9.5px;font-weight:700;line-height:1.2;word-break:keep-all}
+.mcard .st{position:absolute;left:3px;top:2px;font-size:8.5px;color:var(--gold);letter-spacing:-1.5px}
 
 /* ---------- 스티커 ---------- */
 .stkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
@@ -402,7 +580,12 @@ nav .dot{position:absolute;top:5px;right:22%;width:8px;height:8px;border-radius:
   padding:12px 11px calc(22px + env(safe-area-inset-bottom))}
 @keyframes up{from{transform:translateY(28px);opacity:.4}to{transform:translateY(0);opacity:1}}
 #modal h2{margin:0 0 9px;font-size:17px;display:flex;align-items:center;gap:6px}
-#modal h2 .x{margin-left:auto;font-size:12px;font-weight:400;color:var(--ink2);cursor:pointer;text-decoration:underline}
+/* 「닫기」도 손가락으로 누를 수 있게 넉넉히 — 글자만 작으면 아이가 못 닫는다 */
+#modal h2 .x{
+  margin-left:auto;margin-right:-6px;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer;
+  background:#fdeef2;border:1.5px solid var(--line);border-radius:11px;
+  min-width:52px;min-height:38px;display:flex;align-items:center;justify-content:center;flex:none
+}
 .reslist{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px}
 .rcard{border:2px solid var(--line);background:var(--card);border-radius:13px;padding:4px 2px;text-align:center;box-shadow:var(--sh)}
 .rcard .hs{width:100%;aspect-ratio:1;display:block}
@@ -439,7 +622,7 @@ nav .dot{position:absolute;top:5px;right:22%;width:8px;height:8px;border-radius:
 
 <nav>
   <button data-t="scoop" class="on"><i>🍨</i>뜨기</button>
-  <button data-t="play"><i>🎪</i>테라스</button>
+  <button data-t="play"><i>🏠</i>놀이방</button>
   <button data-t="dex"><i>📖</i>31도감</button>
   <button data-t="store"><i>🛒</i>상점<span class="dot" id="s-dot" style="display:none"></span></button>
 </nav>
@@ -512,6 +695,8 @@ const SFX={
   star4:()=>{ [0,.08,.16,.24,.34].forEach((t,i)=>note([1047,1319,1568,2093,2637][i],t,.30,.09,'triangle'));
               note(523,0,.5,.05,'sine'); },
   gift :()=>{ note(659,0,.12,.09,'triangle'); note(880,.11,.12,.09,'triangle'); note(1319,.22,.22,.09,'triangle'); },
+  /* 춤출 때 나오는 짧은 가락 (도-미-솔-미-도-솔-도) */
+  tune :()=>{ [523,659,784,659,523,784,1047].forEach((f,i)=>note(f, i*0.16, .15, .07, 'triangle')); },
   boo  :()=>{ note(300,0,.14,.08,'sine'); note(220,.12,.18,.07,'sine'); }
 };
 function sfx(k){ if(S&&S.snd===false) return; const f=SFX[k]; if(f) try{ f(); }catch(e){} }
@@ -748,7 +933,7 @@ function hamSVG(h){
   return v;
 }
 function buildHamSVG(h){
-  const sh=SHAPES[h.shape], c=COLORS[h.color], F=sh.face;
+  const sh=SHAPES[h.shape], c=h.colorObj||COLORS[h.color], F=sh.face;
   const id='hc'+(++_uid);
   const fx=F.x, fy=F.y, s=F.s;
   let g='';
@@ -869,38 +1054,111 @@ const UPG={
   spoon:{name:'큰 스쿱',    em:'🥄', max:5, base:600,  mul:2.5, desc:'한 번 뜨는 값이 싸져요'},
   luck :{name:'요정 스쿱',  em:'🍀', max:5, base:900,  mul:2.8, desc:'⭐가 많은 햄쮜가 더 잘 나와요'},
   charm:{name:'인기 가게',  em:'🎀', max:6, base:500,  mul:2.3, desc:'놀아줄 때 코인을 더 줘요'},
-  seat :{name:'테라스 확장',em:'🪑', max:4, base:1200, mul:3.0, desc:'함께 놀 자리가 하나 늘어요'},
+  seat :{name:'자리 늘리기',em:'🪑', max:4, base:1200, mul:3.0, desc:'모든 방의 자리가 하나 늘어요'},
   regul:{name:'단골 손님',  em:'⏰', max:5, base:1500, mul:2.9, desc:'저절로 모이는 코인이 늘어요'}
 };
 const UPG_KEYS=Object.keys(UPG);
 function upgLv(k){ return (S&&S.upg&&S.upg[k])||0; }
 function upgCost(k){ const u=UPG[k]; return Math.round(u.base*Math.pow(u.mul,upgLv(k))); }
 function seats(){ return 2+upgLv('seat'); }
+
+/* ==================================================================
+   🏠 놀이방 — 방을 여러 개 만들어 각 방마다 다른 햄쮜를 두고 따로 꾸민다.
+   방마다 {name, theme, seat[]} 을 갖는다. 자리 수(seats)와 소품은 모든 방이 함께 쓴다.
+   한 마리는 한 방에만 있을 수 있다 — 그래야 "누구를 데려갈까" 고민이 남는다.
+================================================================== */
+const ROOMS=[
+  {dn:'첫째 방', lv:1},
+  {dn:'둘째 방', lv:5},
+  {dn:'셋째 방', lv:10},
+  {dn:'넷째 방', lv:15}
+];
+function roomOk(i){ return !!ROOMS[i] && S.lv>=ROOMS[i].lv; }
+function openRooms(){ return ROOMS.filter((r,i)=>roomOk(i)).length; }
+/* 방 한 칸을 꺼낸다 — 없으면 그때 만든다 */
+function room(i){
+  if(i===undefined) i=S.room|0;
+  if(!Array.isArray(S.rooms)) S.rooms=[];
+  if(!S.rooms[i]) S.rooms[i]={name:'', theme:'day', seat:[]};
+  const r=S.rooms[i];
+  if(!Array.isArray(r.seat)) r.seat=[];
+  while(r.seat.length<seats()) r.seat.push(null);
+  if(typeof r.name!=='string') r.name='';
+  if(!THEMES[r.theme]) r.theme='day';
+  /* 자리 한도 밖에 남은 햄쮜는 앞으로 당겨온다 — 안 그러면 화면에 안 보이는데
+     다른 방으로도 못 옮기는 미아가 된다 */
+  for(let j=seats(); j<r.seat.length; j++){
+    const k=r.seat[j]; if(!k) continue;
+    r.seat[j]=null;
+    const free=r.seat.slice(0,seats()).indexOf(null);
+    if(free>=0) r.seat[free]=k;
+  }
+  return r;
+}
+function roomName(i){ if(i===undefined) i=S.room|0; return room(i).name || ROOMS[i].dn; }
+function roomEm(i){ return THEMES[room(i).theme].em; }
+function seatArr(){ return room().seat; }
+function roomHams(i){ return room(i).seat.slice(0,seats()).filter(k=>k&&S.dex[k]); }
+/* 모든 방을 돌며 그 햄쮜가 어디에 있는지 찾는다 */
+function whereSeated(k){
+  for(let i=0;i<openRooms();i++){
+    const j=room(i).seat.indexOf(k);
+    if(j>=0) return {r:i, s:j};
+  }
+  return null;
+}
+function unseat(k){
+  for(let i=0;i<openRooms();i++){
+    const s=room(i).seat;
+    s.forEach((x,j)=>{ if(x===k) s[j]=null; });
+  }
+}
+function goRoom(i){
+  if(!roomOk(i)){ sfx('boo'); toast(`🔒 가게 Lv.${ROOMS[i].lv} 가 되면 열려요`); return; }
+  S.room=i; room(i); applyTheme(); sfx('tap'); save(); renderView();
+}
 function playMul(){ return (1+upgLv('charm')*0.15)*(1+S.lv*0.05); }
 function gradeW(){
   const bonus=upgLv('luck')*2;                 /* ★3 이상 확률 +2%p 씩 */
   return {1:58-bonus, 2:28, 3:11+bonus*0.75, 4:3+bonus*0.25};
 }
 function expNeed(lv){ return Math.floor(60*Math.pow(lv,1.3)); }
-function dexCount(){ return Object.keys(S.dex).length; }
+function dexCount(){ return Object.keys(S.dex).filter(k=>!isMix(k)).length; }
 function unlocked(){ return FKEYS.filter(k=>S.open.includes(k)); }
 
 /* 친밀도 */
 function hearts(k){ const d=S.dex[k]; return d?Math.min(5,Math.floor((d.bond||0)/20)):0; }
 function heartStr(k){ const n=hearts(k); return '💗'.repeat(n)+'🤍'.repeat(5-n); }
 function totalHearts(){ return Object.keys(S.dex).reduce((a,k)=>a+hearts(k),0); }
+/* 방을 여러 개 꾸미면 모든 방의 햄쮜가 함께 벌어준다 — 방을 늘릴 이유 */
 function autoIncome(){
   let c=0;
-  S.seat.forEach(k=>{ if(k&&S.dex[k]) c+=S.dex[k].g*(1+0.3*hearts(k))*0.3; });
+  for(let i=0;i<openRooms();i++)
+    roomHams(i).forEach(k=>{ c+=S.dex[k].g*(1+0.3*hearts(k))*0.3; });
   return c*(1+upgLv('regul')*0.25)*(1+S.lv*0.08);
 }
 function hamOf(k,wearOv){
-  const f=FL[k], d=S.dex[k];
-  return {shape:f.shape, color:f.color, pattern:d?d.p:'plain', grade:d?d.g:1, cone:f.c,
-          wear: wearOv!==undefined ? wearOv : (d?d.w:null)};
+  const d=S.dex[k], m=d&&d.mix;
+  const wear = wearOv!==undefined ? wearOv : (d?d.w:null);
+  if(m){   /* 💞 믹스쮜 — 부모 색을 섞어 만든 저만의 색을 쓴다 */
+    return {shape:m.shape, color:k, colorObj:m.col, pattern:d.p, grade:d.g, cone:m.cone, wear};
+  }
+  const f=FL[k];
+  return {shape:f.shape, color:f.color, pattern:d?d.p:'plain', grade:d?d.g:1, cone:f.c, wear};
 }
 /* 아이가 지어준 이름이 있으면 그 이름으로 부른다 */
-function nameOf(k){ const d=S.dex[k]; return (d&&d.name)||FL[k].hn; }
+function nameOf(k){
+  const d=S.dex[k];
+  if(d&&d.name) return d.name;
+  if(d&&d.mix) return d.mix.hn;
+  return FL[k]?FL[k].hn:'햄쮜';
+}
+/* 아이가 이름을 지어주기 전의 '원래 이름' */
+function baseName(k){ const d=S.dex[k]; return (d&&d.mix)?d.mix.hn:(FL[k]?FL[k].hn:'햄쮜'); }
+/* 믹스쮜는 31가지 도감과 따로 센다 */
+function isMix(k){ return typeof k==='string' && k.slice(0,4)==='mix_'; }
+function mixKeys(){ return Object.keys(S.dex).filter(isMix); }
+function mixCount(){ return mixKeys().length; }
 
 /* ==================================================================
    4. 상태 / 저장
@@ -913,7 +1171,8 @@ function freshState(){
     coin:60, top:0, lv:1, exp:0, pity:0,
     open:['vanilla','straw','choco','milk'],
     dex:{},                       // flavorKey -> {g:최고등급, p:무늬, n:뜬횟수, bond:하트, name:아이가 지은 이름, w:꾸미기}
-    seat:[null,null],
+    rooms:[{name:'', theme:'day', seat:[null,null]}],  // 🏠 놀이방 — 방마다 이름·배경·자리를 따로 갖는다
+    room:0,                       // 지금 보고 있는 방
     upg:{},
     closet:[],                    // 사둔 꾸미기 소품 ('hat_ribbon')
     badge:[],                     // 모은 스티커
@@ -921,11 +1180,13 @@ function freshState(){
     stamp:{d:'', n:0, all:0},     // 오늘의 도장판 (마지막 날, 이번 판에 모은 개수, 전체 개수)
     star:{d:'', k:null},          // 오늘의 친구
     cup:{at:0, win:0, play:0},    // 컵 고르기
+    ord:{at:0, done:0, perfect:0},// 손님 주문받기 (마지막 손님 시각, 대접한 손님 수, 대성공 수)
+    cont:{d:'', best:0, win:0, play:0}, // 꾸미기 대회 (마지막 날, 최고점, 1등 횟수, 나간 횟수)
     album:[],                     // 사진첩
     play:{toy:'pet', ballAt:0, bubbleAt:0},
     giftAt:0,
     stats:{scoop:0, pet:0, best4:0},
-    snd:true, vib:true, theme:'day', tut:0, t:Date.now()
+    snd:true, vib:true, tut:0, t:Date.now()
   };
 }
 
@@ -949,7 +1210,19 @@ const BADGES=[
   {k:'ph1',   em:'📸', n:'첫 사진',      d:'사진을 처음 찍었어요',        ok:()=>S.album.length>=1, top:3},
   {k:'ph6',   em:'🖼️', n:'사진 여섯 장', d:'사진첩에 6장을 모았어요',     ok:()=>S.album.length>=6, top:10},
   {k:'cup10', em:'🙈', n:'숨바꼭질 왕',  d:'숨바꼭질을 10번 맞혔어요',    ok:()=>(S.cup.win||0)>=10, top:10},
-  {k:'th4',   em:'🎨', n:'테라스 꾸미기', d:'테라스 테마 4가지가 다 열렸어요', ok:()=>S.lv>=16, top:12},
+  {k:'th4',   em:'🎨', n:'배경 네 가지',  d:'방 배경 4가지가 다 열렸어요',  ok:()=>S.lv>=16, top:12},
+  {k:'rm2',   em:'🏠', n:'방이 둘',       d:'둘째 방이 열렸어요',          ok:()=>openRooms()>=2, top:6},
+  {k:'rm4',   em:'🏘️', n:'방이 넷',       d:'놀이방 4개가 다 열렸어요',    ok:()=>openRooms()>=4, top:20},
+  {k:'rmfull',em:'🎡', n:'방마다 친구',    d:'열린 방을 모두 햄쮜로 채웠어요',
+     ok:()=>openRooms()>=2 && ROOMS.every((r,i)=>!roomOk(i) || roomHams(i).length>0), top:12},
+  {k:'mx1',   em:'💞', n:'첫 짝꿍',      d:'믹스쮜가 처음 태어났어요',    ok:()=>mixCount()>=1, top:5},
+  {k:'mx5',   em:'👨‍👩‍👧', n:'대가족',   d:'믹스쮜를 5마리 만들었어요',   ok:()=>mixCount()>=5, top:15},
+  {k:'dnc',   em:'🎵', n:'댄스 파티',    d:'다 같이 10번 춤췄어요',       ok:()=>(S.stats.dance||0)>=10, top:8},
+  {k:'ord10', em:'🔔', n:'친절한 사장님', d:'손님 10명에게 만들어 줬어요',  ok:()=>(S.ord.done||0)>=10, top:8},
+  {k:'ordp5', em:'🍦', n:'주문 척척',    d:'주문을 딱 맞게 5번 만들었어요', ok:()=>(S.ord.perfect||0)>=5, top:12},
+  {k:'ordp20',em:'👩‍🍳', n:'아이스크림 장인', d:'주문을 딱 맞게 20번 만들었어요', ok:()=>(S.ord.perfect||0)>=20, top:25},
+  {k:'cont1', em:'🏆', n:'대회 1등',     d:'꾸미기 대회에서 1등을 했어요',  ok:()=>(S.cont.win||0)>=1, top:10},
+  {k:'cont5', em:'👑', n:'패션 스타',    d:'꾸미기 대회 1등을 5번 했어요',  ok:()=>(S.cont.win||0)>=5, top:20},
   {k:'wall',  em:'🛍️', n:'옷장 부자',    d:'꾸미기 소품을 다 모았어요',
      ok:()=>S.closet.length>=WEAR_SLOTS.reduce((a,sl)=>a+Object.keys(WEAR[sl].items).length,0), top:25}
 ];
@@ -998,7 +1271,12 @@ const COUPONS={
   '요술봉'      :{em:'🪄', name:'요술봉 선물',      wear:['hand_wand']},
   '리본세트'    :{em:'🎀', name:'리본 세트',        wear:['hat_ribbon','neck_bowtie','hand_balloon']},
   '별사탕쮜'    :{em:'⭐', name:'별사탕 통 초대장', tub:['candy']},
-  '무지개쮜'    :{em:'🌈', name:'무지개 통 초대장', tub:['rainbow']}
+  '무지개쮜'    :{em:'🌈', name:'무지개 통 초대장', tub:['rainbow']},
+  /* 아이에게 알려주는 특별 번호 — 제일 큰 선물 */
+  '김찌돌돌돌돌돌돌':{em:'🎊', name:'김찌돌 비밀 선물', coin:6000, top:30,
+                      wear:['hat_starband','hand_teddy'], tub:['golden']},
+  '얌얌쮜'      :{em:'🍓', name:'얌얌 간식 세트',   coin:2500, top:18,
+                      wear:['hat_berry','hand_lolly']}
 };
 function openCoupon(){
   const used=(S.coupon||[]).filter(c=>COUPONS[c]);
@@ -1096,7 +1374,6 @@ function load(){
     S=Object.assign(freshState(),d);
     if(!Array.isArray(S.open)||!S.open.length) S.open=['vanilla','straw','choco','milk'];
     if(!S.dex||typeof S.dex!=='object') S.dex={};
-    if(!Array.isArray(S.seat)) S.seat=[null,null];
     if(!S.upg||typeof S.upg!=='object') S.upg={};
     if(!S.play||typeof S.play!=='object') S.play={toy:'pet',ballAt:0,bubbleAt:0};
     if(!S.stats) S.stats={scoop:0,pet:0,best4:0};
@@ -1107,10 +1384,31 @@ function load(){
     if(S.stamp.all==null) S.stamp.all=0;
     if(!S.star ||typeof S.star !=='object') S.star={d:'',k:null};
     if(!S.cup  ||typeof S.cup  !=='object') S.cup={at:0,win:0,play:0};
+    if(!S.ord  ||typeof S.ord  !=='object') S.ord={at:0,done:0,perfect:0};
+    if(!S.cont ||typeof S.cont !=='object') S.cont={d:'',best:0,win:0,play:0};
     if(!Array.isArray(S.album)) S.album=[];
     if(S.vib==null) S.vib=true;
-    if(!THEMES[S.theme]) S.theme='day';
     if(S.giftAt==null) S.giftAt=0;
+    /* 🏠 옛 저장본(방이 하나뿐이던 때)에는 rooms 대신 seat / theme 이 들어 있다 → 첫째 방으로 옮긴다.
+       판정은 반드시 **원본 d** 로 한다 — S 는 freshState() 가 이미 기본 방 하나를 넣어둬서
+       S.rooms 를 보면 옛 저장본도 "방 있음"으로 보이고 앉아 있던 햄쮜가 사라진다. */
+    if(!Array.isArray(d.rooms)||!d.rooms.length){
+      S.rooms=[{name:'', theme:(THEMES[d.theme]?d.theme:'day'),
+                seat:Array.isArray(d.seat)?d.seat.slice():[null,null]}];
+    }
+    delete S.seat; delete S.theme;
+    S.rooms=S.rooms.slice(0,ROOMS.length);
+    S.room=clamp(S.room|0, 0, ROOMS.length-1);
+    for(let i=0;i<ROOMS.length;i++) if(S.rooms[i]) room(i);   /* 자리 수·배경 보정 */
+    if(!roomOk(S.room)) S.room=0;
+    /* 같은 햄쮜가 두 방에 겹쳐 있으면(옛 저장본 꼬임) 앞쪽만 남긴다 */
+    {
+      const seen={};
+      for(let i=0;i<ROOMS.length;i++){
+        const r=S.rooms[i]; if(!r) continue;
+        r.seat.forEach((k,j)=>{ if(!k) return; if(seen[k]) r.seat[j]=null; else seen[k]=1; });
+      }
+    }
     Object.keys(S.dex).forEach(k=>{
       const e=S.dex[k];
       if(e.bond==null) e.bond=0;
@@ -1119,7 +1417,6 @@ function load(){
       if(e.n==null) e.n=1;
       if(!e.w||typeof e.w!=='object') e.w={hat:null,neck:null,hand:null};
     });
-    while(S.seat.length<seats()) S.seat.push(null);
     /* 가게를 닫아둔 동안에도 단골 손님이 절반 속도로 벌어둔다 */
     const dt=clamp((Date.now()-(d.t||Date.now()))/1000,0,OFFLINE_MAX);
     const inc=autoIncome();
@@ -1177,7 +1474,7 @@ function doScoop(n){
   if(digging) return;
   if(!sel){ sfx('boo'); toast('먼저 아래에서 통을 골라주세요 🍨'); return; }
   const f=FL[sel], cost=scoopCost(f)*n;
-  if(S.coin<cost){ sfx('boo'); toast(`🪙 코인이 ${fmt(cost-S.coin)} 더 필요해요 — 🎪테라스에서 햄쮜와 놀면 모여요`); return; }
+  if(S.coin<cost){ sfx('boo'); toast(`🪙 코인이 ${fmt(cost-S.coin)} 더 필요해요 — 🏠놀이방에서 햄쮜와 놀면 모여요`); return; }
   S.coin-=cost;
   dig(f,()=>finishScoop(sel,n,false));
 }
@@ -1251,7 +1548,7 @@ function showResult(f,out,gold){
   const one=out.length===1;
   const news=out.filter(o=>o.isNew).length;
   const best=out.reduce((a,o)=>Math.max(a,o.g),0);
-  const seated=S.seat.filter(Boolean).length<seats();
+  const seated=seatArr().filter(Boolean).length<seats();
 
   if(one){
     const o=out[0];
@@ -1282,7 +1579,7 @@ function showResult(f,out,gold){
         </div>
       </div>`
       :`<div class="row" style="justify-content:center;margin-top:12px">
-        <button class="btn" onclick="closeModal();seatFirst('${f.k}')">🎪 테라스에 두기</button>
+        <button class="btn" onclick="closeModal();seatFirst('${f.k}')">🏠 방에 두기</button>
         <button class="btn w" onclick="closeModal()">또 뜨기 🍨</button>
       </div>`}`);
     if(o.isNew) setTimeout(()=>{ const i=$('#nm-in'); if(i) i.focus(); },120);
@@ -1298,7 +1595,7 @@ function showResult(f,out,gold){
         </div>`).join('')}</div>
       <div class="row" style="justify-content:center;margin-top:12px">
         <button class="btn" onclick="closeModal()">확인</button>
-        ${seated?`<button class="btn w" onclick="closeModal();seatFirst('${f.k}')">🎪 테라스에 두기</button>`:''}
+        ${seated?`<button class="btn w" onclick="closeModal();seatFirst('${f.k}')">🏠 방에 두기</button>`:''}
       </div>`);
   }
 }
@@ -1308,15 +1605,20 @@ function saveName(k){
   let v=i?String(i.value||'').trim():'';
   v=v.replace(/[<>&"'`]/g,'').slice(0,8);          /* 이름에 태그가 섞이지 않게 */
   if(v){ S.dex[k].name=v; sfx('heart'); toast(`💕 <b>${v}</b> 라고 부를게요!`); }
-  else toast(`${FL[k].hn} 라고 부를게요 🐹`);
+  else toast(`${baseName(k)} 라고 부를게요 🐹`);
   save(); closeModal(); seatFirst(k);
 }
 function seatFirst(k){
-  if(S.seat.includes(k)){ go('play'); toast(`${nameOf(k)} 은(는) 이미 테라스에 있어요`); return; }
-  const i=S.seat.findIndex(x=>!x);
-  if(i<0){ go('play'); toast('테라스가 꽉 찼어요 — 자리를 눌러 바꿔주세요'); return; }
-  S.seat[i]=k; save(); go('play');
-  toast(`${nameOf(k)} 이(가) 테라스로 왔어요 🎪`);
+  const at=whereSeated(k);
+  if(at){ S.room=at.r; applyTheme(); go('play'); toast(`${nameOf(k)} 은(는) 이미 <b>${roomName(at.r)}</b> 에 있어요`); return; }
+  /* 지금 방에 빈자리가 없으면 다른 방의 빈자리를 찾아본다 */
+  let ri=S.room|0, i=room(ri).seat.findIndex(x=>!x);
+  if(i<0){
+    for(let j=0;j<openRooms();j++){ const s=room(j).seat.findIndex(x=>!x); if(s>=0){ ri=j; i=s; break; } }
+  }
+  if(i<0){ go('play'); toast('방이 다 꽉 찼어요 — 자리를 눌러 바꿔주세요'); return; }
+  room(ri).seat[i]=k; S.room=ri; applyTheme(); save(); go('play');
+  toast(`${nameOf(k)} 이(가) <b>${roomName(ri)}</b> 으로 왔어요 🏠`);
 }
 
 function renderScoopTab(){
@@ -1359,7 +1661,7 @@ function renderScoopTab(){
     </div>
     <div class="row" style="justify-content:center;margin-top:6px">
       <button class="btn w sm" onclick="goldScoop()" ${S.top<GOLD_TOP||S.coin<c1?'disabled':''}>
-        🍒 골든 스쿱 — ⭐3개 이상 확정 (🍒${GOLD_TOP} + 🪙${fmt(c1)})</button>
+        🍒 골든 스쿱 🍒${GOLD_TOP}+🪙${fmt(c1)} — ⭐3개 이상!</button>
     </div>
     <div class="pity" onclick="openPity()">
       <div class="lab">${left===0
@@ -1372,30 +1674,31 @@ function renderScoopTab(){
   <div class="card">
     <h3>📅 오늘의 즐거움 <small>${dateLabel(Date.now())}</small></h3>
     ${stampsHTML()}
-    <div class="row" style="margin-top:8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
       <button class="btn ${stampReady()?'':'w'} sm" onclick="openStamp()">
         ${stampReady()?'📅 오늘 도장 받기!':'📅 도장판 보기'}</button>
+      <button class="btn ${ordLeft()?'w':'g'} sm" onclick="openOrder()">
+        🔔 손님 주문받기${ordLeft()?` (${Math.ceil(ordLeft()/60000)}분 뒤)`:'!'}</button>
+      <button class="btn ${contReady()?'g':'w'} sm" onclick="openContest()">
+        🏆 꾸미기 대회${contReady()?'!':' (내일 또)'}</button>
       <button class="btn ${cupLeft()?'w':'g'} sm" onclick="openCup()">
         🙈 숨바꼭질${cupLeft()?` (${Math.ceil(cupLeft()/60000)}분 뒤)`:''}</button>
     </div>
     ${star?`<div class="slot on" style="margin-top:8px" onclick="go('play')">
         <span class="hs">${hamSVG(hamOf(star))}</span>
         <div class="info"><b>🌟 오늘의 친구는 ${nameOf(star)}</b>
-          <div class="muted">테라스에서 <b>쓰담쓰담하면 두 배</b>로 줘요! 오늘 하루만이에요</div></div>
-        <span class="muted">놀러 가기 ▸</span></div>`
-      :'<div class="muted" style="margin-top:7px">햄쮜를 만나면 <b>🌟오늘의 친구</b> 도 정해져요!</div>'}
+          <div class="muted"><b>쓰담쓰담하면 두 배</b>로 줘요!</div></div>
+        <span class="muted">놀러 가기 ▸</span></div>`:''}
   </div>
 
   <div class="card">
     <h3>🍨 아이스크림 통 <small>${unlocked().length} / 31가지</small></h3>
     <div class="tubs">${tubs}</div>
     <div class="muted" style="margin-top:7px;line-height:1.6">
-      통을 고르고 <b>푹 뜨면</b> 그 통에 사는 햄쮜가 나와요. 통마다 <b>모양과 색</b>이 정해져 있고,
-      <b>무늬와 ⭐개수는 뜰 때마다 달라요</b>. ⭐는 가장 많이 나온 것만 도감에 남아요.
-      ${lockList.length?`<br>🔒 남은 통 ${lockList.length}가지는 <span style="text-decoration:underline;cursor:pointer" onclick="go('store')">🛒상점</span>에서 살 수 있어요.`:''}
+      통을 고르고 <b>푹 뜨면</b> 그 통에 사는 햄쮜가 나와요.
+      ${lockList.length?`🔒 남은 통 ${lockList.length}가지는 <span style="text-decoration:underline;cursor:pointer" onclick="go('store')">🛒상점</span>에 있어요.`:''}
     </div>
     <div class="row" style="margin-top:8px">
-      <button class="btn w sm" onclick="go('play')">🎪 햄쮜와 놀아서 코인 벌기</button>
       <button class="btn w sm" onclick="openCoupon()">🎫 쿠폰</button>
       <button class="btn w sm" onclick="openHelp()">❓ 도움말</button>
     </div>
@@ -1408,8 +1711,9 @@ function renderScoopTab(){
 const TOYS={
   pet   :{em:'🖐️', name:'쓰담쓰담', tip:'코인을 물어와요',        bond:2,  one:1},
   treat :{em:'🍒', name:'토핑 주기', tip:'제일 좋아해요 (🍒1)',    bond:12, one:1},
-  ball  :{em:'⚽', name:'공놀이',   tip:'다 같이 우르르 쫓아가요', bond:5,  cd:30000},
-  bubble:{em:'🫧', name:'비눗방울', tip:'폴짝폴짝 뛰어올라요',     bond:4,  cd:60000}
+  ball  :{em:'⚽', name:'공놀이',   tip:'공을 우르르 쫓아가요',   bond:5,  cd:30000},
+  bubble:{em:'🫧', name:'비눗방울', tip:'폴짝폴짝 뛰어올라요',     bond:4,  cd:60000},
+  dance :{em:'🎵', name:'춤추기',   tip:'노래를 틀면 다 같이 춤춰요', bond:7, cd:45000}
 };
 const TOY_KEYS=Object.keys(TOYS);
 const DECO=[
@@ -1421,7 +1725,7 @@ const DECO=[
   {lv:11,em:'⛱️', l:73, b:96,  s:26}
 ];
 function deco(){ return DECO.filter(d=>d.lv<=S.lv); }
-function seatHams(){ return S.seat.slice(0,seats()).filter(k=>k&&S.dex[k]); }
+function seatHams(){ return roomHams(S.room|0); }
 
 function petHam(k,ev){
   const d=S.dex[k]; if(!d) return;
@@ -1455,7 +1759,7 @@ function addBond(k,v){
 function playAll(kind){
   const t=TOYS[kind], now=Date.now(), key=kind+'At', last=S.play[key]||0;
   const list=seatHams();
-  if(!list.length){ sfx('boo'); toast('테라스에 함께 놀 햄쮜가 없어요 🪑'); return; }
+  if(!list.length){ sfx('boo'); toast('이 방에 함께 놀 햄쮜가 없어요 🪑'); return; }
   if(now-last<t.cd){ toast(`${t.em} 잠깐 쉬는 중이에요 (${Math.ceil((t.cd-(now-last))/1000)}초 뒤)`); return; }
   S.play[key]=now;
   list.forEach(k=>addBond(k,t.bond));
@@ -1463,13 +1767,22 @@ function playAll(kind){
   if(kind==='ball'){
     const g=Math.ceil(list.reduce((a,k)=>a+(6+S.dex[k].g*5),0)*playMul());
     S.coin+=g; got=`🪙+${fmt(g)}`;
+  }else if(kind==='dance'){
+    const g=Math.ceil(list.reduce((a,k)=>a+(8+S.dex[k].g*6),0)*playMul());
+    S.coin+=g;
+    const t2=list.length>=4?2:1; S.top+=t2;                /* 많이 모여 출수록 신난다 */
+    got=`🪙+${fmt(g)} · 🍒+${t2}`;
+    S.stats.dance=(S.stats.dance||0)+1;
   }else{
     const g=Math.min(3,1+Math.floor(list.length/2));
     S.top+=g; got=`🍒+${g}`;
   }
-  fxToy(kind); hop();
-  sfx(kind==='ball'?'coin':'heart'); checkBadges();
-  save(); renderHUD(); refreshBond();
+  fxToy(kind);
+  if(kind==='ball') chaseBall();
+  else if(kind==='dance') danceAll();
+  else hop();
+  sfx(kind==='dance'?'tune':kind==='ball'?'coin':'heart'); vib(kind==='dance'?[0,25,60,25,60,25]:12);
+  checkBadges(); save(); renderHUD(); refreshBond();
   toast(`${t.em} ${t.name}! 다 같이 신났어요 ${got}`);
 }
 function pickToy(k){
@@ -1480,7 +1793,7 @@ function pickToy(k){
 function toyTipHTML(){
   const t=TOYS[S.play.toy||'pet'];
   return t.one ? `${t.em} <b>${t.name}</b> — ${t.tip}. <b>햄쮜를 톡 누르세요!</b>`
-               : `${t.em} <b>${t.name}</b> — ${t.tip}. <b>테라스 아무 곳이나 누르세요!</b>`;
+               : `${t.em} <b>${t.name}</b> — ${t.tip}. <b>방 아무 곳이나 누르세요!</b>`;
 }
 function terraceBg(){ const t=TOYS[S.play.toy||'pet']; if(!t.one) playAll(S.play.toy); }
 function tapHam(k,ev){
@@ -1499,11 +1812,52 @@ function hop(idx){
     setTimeout(()=>el.classList.remove('hop'),800);
   }, i*110));
 }
+/* 공이 왼쪽에서 오른쪽으로 굴러가니, 왼쪽에 있는 햄쮜부터 차례로 뛰쳐나가 뒤를 쫓는다 */
+function chaseBall(){
+  const els=$$('#terrace .tham');
+  els.forEach(el=>{
+    const l=parseFloat(el.style.left)||50;
+    const dist=Math.min(78, (100-l)*0.85 + 26);           /* 오른쪽 끝일수록 조금만 움직인다 */
+    el.style.setProperty('--cx', dist.toFixed(0)+'px');
+    el.style.animationDelay='0s';
+    el.classList.remove('chase'); void el.offsetWidth;
+    setTimeout(()=>{
+      el.classList.add('chase');
+      setTimeout(()=>{ el.classList.remove('chase'); el.style.removeProperty('--cx'); },2900);
+    }, Math.max(0, l*11));                                 /* 공이 제 앞을 지날 때 출발한다 */
+  });
+}
+/* 노래를 틀면 다 같이 춤춘다 — 12초쯤 추고 조명도 돈다 */
+function danceAll(){
+  const r=$('#terrace'); if(!r) return;
+  const els=$$('#terrace .tham');
+  els.forEach((el,i)=>{
+    el.classList.remove('dance'); void el.offsetWidth;
+    el.style.animationDelay=(i*0.14).toFixed(2)+'s';
+    el.classList.add('dance');
+  });
+  const d=document.createElement('div'); d.className='disco'; d.innerHTML='<i></i>';
+  r.insertBefore(d, r.firstChild);
+  setTimeout(()=>{
+    els.forEach(el=>{ el.classList.remove('dance'); el.style.animationDelay=''; });
+    d.remove();
+  }, 11500);
+}
 function fxToy(kind){
   const r=$('#terrace'); if(!r) return;
   if(kind==='ball'){
     const b=document.createElement('span'); b.className='fx ball'; b.textContent='⚽';
-    r.appendChild(b); setTimeout(()=>b.remove(),2600);
+    r.appendChild(b); setTimeout(()=>b.remove(),3600);
+  }else if(kind==='dance'){
+    /* 음표는 띄엄띄엄 몇 개만 — 많으면 정신없다 */
+    for(let i=0;i<6;i++){
+      const n=document.createElement('span'); n.className='fx note';
+      n.textContent=pick(['🎵','🎶']);
+      n.style.left=rnd(14,84).toFixed(1)+'%'; n.style.bottom=rnd(55,100).toFixed(0)+'px';
+      n.style.setProperty('--nx', rnd(-28,28).toFixed(0)+'px');
+      n.style.animationDelay=(i*1.6).toFixed(2)+'s';
+      r.appendChild(n); setTimeout(()=>n.remove(),12500);
+    }
   }else{
     for(let i=0;i<10;i++){
       const b=document.createElement('span'); b.className='fx bub'; b.textContent='🫧';
@@ -1525,9 +1879,8 @@ function fxHeart(ev){
   }
 }
 function refreshBond(){
-  const el=$('#bondlist'); if(el) el.innerHTML=bondListHTML();
   const h=$('#terrace .hint');
-  if(h) h.innerHTML=`🎪 테라스 · 하트 ${totalHearts()}개`;
+  if(h) h.innerHTML=`🏠 ${roomName()} · 하트 ${totalHearts()}개`;
   const list=seatHams();
   $$('#terrace .tham').forEach((el,i)=>{
     if(!list[i]) return;
@@ -1536,18 +1889,8 @@ function refreshBond(){
   });
   const inc=$('#autoinc'); if(inc) inc.textContent=autoIncome()>0?fmt(autoIncome()*60)+' /분':'없음';
 }
-function bondListHTML(){
-  const arr=Object.keys(S.dex).sort((a,b)=>(S.dex[b].bond||0)-(S.dex[a].bond||0)).slice(0,5);
-  if(!arr.length) return '<div class="muted">아직 만난 햄쮜가 없어요</div>';
-  return arr.map(k=>`<div class="slot on" onclick="openCloset('${k}')">
-      <span class="hs">${hamSVG(hamOf(k))}</span>
-      <div class="info"><b>${nameOf(k)}</b> <span style="font-size:10px">${heartStr(k)}</span>
-        <div class="bar" style="margin-top:3px"><div style="width:${clamp((S.dex[k].bond||0)/100,0,1)*100}%"></div></div></div>
-      <div style="font-size:11px;font-weight:700;white-space:nowrap">🪙 +${hearts(k)*20}%</div>
-    </div>`).join('');
-}
 function renderPlayTab(){
-  while(S.seat.length<seats()) S.seat.push(null);
+  const R=room();                            /* 지금 보고 있는 방 (자리 수 보정까지 여기서 한다) */
   const list=seatHams();
   const star=starHam();
   /* 앞줄은 크고 뒷줄은 작게 — 이름표가 겹치지 않게 가로로 벌려 둔다 */
@@ -1556,7 +1899,7 @@ function renderPlayTab(){
   const said=[];                            /* 같은 말이 두 마리에게 겹치지 않게 */
   const hams=list.map((k,i)=>{
     const s=spot[i]||spot[0], d=S.dex[k];
-    const dur=(7+(FL[k].i*7)%6+i*0.6).toFixed(1);
+    const dur=(7+((FL[k]?FL[k].i:i*3)*7)%6+i*0.6).toFixed(1);
     let mumble=mumbleOf(k), tryN=0;
     while(said.indexOf(mumble)>=0 && tryN++<8) mumble=mumbleOf(k);
     said.push(mumble);
@@ -1573,29 +1916,39 @@ function renderPlayTab(){
   const cur=S.play.toy||'pet';
   const nextD=DECO.find(d=>d.lv>S.lv);
 
-  const slots=S.seat.slice(0,seats()).map((k,i)=>{
+  const slots=R.seat.slice(0,seats()).map((k,i)=>{
     if(!k||!S.dex[k]) return `<div class="slot" onclick="openSeatPick(${i})">
       <span class="ph">＋</span><div class="info"><b>빈 자리</b><div class="muted">햄쮜를 불러와 함께 놀아요</div></div>
       <span class="muted">고르기 ▸</span></div>`;
     return `<div class="slot on">
       <span class="hs" onclick="openCloset('${k}')">${hamSVG(hamOf(k))}</span>
       <div class="info" onclick="openCloset('${k}')"><b>${nameOf(k)}</b> <span class="stars">${'★'.repeat(S.dex[k].g)}</span>
-        <div class="muted">${heartStr(k)} · 저절로 🪙${(S.dex[k].g*(1+0.3*hearts(k))*0.3*(1+upgLv('regul')*0.25)*(1+S.lv*0.08)).toFixed(1)}/초</div></div>
+        <div class="muted" style="white-space:nowrap">${heartStr(k)} 🪙${(S.dex[k].g*(1+0.3*hearts(k))*0.3*(1+upgLv('regul')*0.25)*(1+S.lv*0.08)).toFixed(1)}/초</div></div>
       <div style="display:flex;flex-direction:column;gap:4px">
         <button class="btn sm" onclick="event.stopPropagation();openCloset('${k}')">👗 꾸미기</button>
         <button class="btn w sm" onclick="event.stopPropagation();openSeatPick(${i})">🔄 바꾸기</button>
       </div></div>`;
   }).join('');
 
+  /* 🏠 방 고르기 — 잠긴 방은 열리는 레벨을 보여준다 */
+  const roomTabs=ROOMS.map((r,i)=>{
+    const ok=roomOk(i);
+    return `<div class="${S.room===i?'on':''}" style="${ok?'':'opacity:.5'}" onclick="goRoom(${i})">
+      <span class="e">${ok?roomEm(i):'🔒'}</span>${ok?roomName(i):'Lv.'+r.lv}
+      <i>${ok?roomHams(i).length+'/'+seats():'잠김'}</i></div>`;
+  }).join('');
+
   $('#view').innerHTML=`
+  <div class="rooms">${roomTabs}</div>
   <div id="terrace" onclick="terraceBg()">
     <div class="awn"></div><div class="floor"></div>
     ${themeSpHTML()}
     ${dec}
-    <div class="hint">🎪 테라스 · 하트 ${totalHearts()}개</div>
+    <div class="hint">🏠 ${roomName()} · 하트 ${totalHearts()}개</div>
     <div id="photocam" onclick="event.stopPropagation();takePhoto()" title="사진 찍기">📸</div>
-    ${list.length?hams:`<div class="none">테라스가 비었어요 🪑<br>
-      <span style="font-size:10.5px">아래에서 함께 놀 햄쮜를 골라주세요</span><br>
+    <div id="tthemebtn" onclick="event.stopPropagation();sfx('tap');openRoomDeco()" title="방 꾸미기">🎨</div>
+    ${list.length?hams:`<div class="none">${roomName()} 이 비었어요 🪑<br>
+      <span style="font-size:10.5px">아래에서 이 방에 둘 햄쮜를 골라주세요</span><br>
       <button class="btn w sm" style="margin-top:7px" onclick="event.stopPropagation();go('scoop')">🍨 뜨러 가기</button></div>`}
   </div>
 
@@ -1608,91 +1961,113 @@ function renderPlayTab(){
         <div class="c">${k==='treat'?'🍒 1개':(t.cd?Math.round(t.cd/1000)+'초마다':'언제나')}</div></div>`;
     }).join('')}</div>
     <div class="muted" id="toytip" style="margin-top:7px;line-height:1.6">${toyTipHTML()}</div>
-    <div class="muted" style="margin-top:5px">🖐️ 쓰담쓰담이 <b>코인을 버는 가장 기본</b>이에요. 번 코인으로 또 아이스크림을 뜨면 됩니다.</div>
   </div>
 
   <div class="card">
-    <h3>🪑 테라스 자리 <small>${list.length} / ${seats()}자리</small></h3>
+    <h3>🐹 ${roomName()}의 햄쮜 <small>${list.length} / ${seats()}자리</small></h3>
     ${slots}
-    ${seats()<6?'<div class="muted">🛒상점의 <b>테라스 확장</b>으로 자리를 늘릴 수 있어요</div>':''}
-  </div>
-
-  <div class="card">
-    <h3>🎨 테라스 꾸미기 <small>테마 ${Object.keys(THEMES).filter(themeOk).length} / ${Object.keys(THEMES).length}가지</small></h3>
-    <div class="frames">${Object.keys(THEMES).map(k=>{
-      const t=THEMES[k], ok=themeOk(k);
-      return `<div class="${S.theme===k?'on':''}" style="${ok?'':'opacity:.5'}" onclick="setTheme('${k}')">
-        <span class="e">${ok?t.em:'🔒'}</span>${ok?t.name:'Lv.'+t.lv}</div>`;
-    }).join('')}</div>
-    <div class="muted">테라스 배경을 바꿀 수 있어요. 가게 레벨이 오르면 새 테마가 열려요!</div>
-  </div>
-
-  <div class="card">
-    <h3>📸 사진첩 <small>${S.album.length} / ${ALBUM_MAX}장</small></h3>
-    ${S.album.length
-      ? `<div class="album">${S.album.slice(0,3).map((p,i)=>`<div onclick="openPhoto(${i})">${photoHTML(p,true)}</div>`).join('')}</div>`
-      : `<div class="muted">아직 사진이 없어요. 테라스 오른쪽 위 <b>📸</b> 를 눌러<br>지금 함께 있는 햄쮜들을 사진으로 남겨보세요!</div>`}
     <div class="row" style="margin-top:8px">
-      <button class="btn sm" onclick="takePhoto()">📸 지금 사진 찍기</button>
-      ${S.album.length?`<button class="btn w sm" onclick="openAlbum()">📖 사진첩 보기 (${S.album.length}장)</button>`:''}
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>👗 옷장 <small>가진 소품 ${(S.closet||[]).length} / ${WEAR_SLOTS.reduce((a,s)=>a+Object.keys(WEAR[s].items).length,0)}가지</small></h3>
-    <div class="row" style="font-size:19px;gap:4px;line-height:1.3">
-      ${WEAR_SLOTS.map(s=>Object.keys(WEAR[s].items).map(key=>
-        `<span title="${WEAR[s].items[key].name}" style="${ownWear(s,key)?'':'opacity:.25;filter:grayscale(1)'}">${WEAR[s].items[key].em}</span>`
-      ).join('')).join('')}
+      <button class="btn sm" onclick="openDressPick()">👗 햄쮜 꾸미기</button>
+      <button class="btn w sm" onclick="openRoomDeco()">🎨 방 꾸미기</button>
+      <button class="btn w sm" onclick="openAlbum()">📖 사진첩 (${S.album.length})</button>
     </div>
     <div class="muted" style="margin-top:7px;line-height:1.6">
-      리본·모자·풍선으로 햄쮜를 예쁘게 꾸며줄 수 있어요. 한 번 사면 <b>모두가 돌려 입어요!</b>
-    </div>
-    <div class="row" style="margin-top:8px">
-      ${list.length?`<button class="btn sm" onclick="openCloset('${list[0]}')">👗 ${nameOf(list[0])} 꾸미기</button>`
-                   :`<button class="btn w sm" onclick="go('scoop')">🍨 먼저 햄쮜를 만나요</button>`}
-      ${list.length>1?`<button class="btn w sm" onclick="openCloset('${list[1]}')">👗 ${nameOf(list[1])}</button>`:''}
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>💗 사이좋기 <small>하트 1개마다 코인 +20%</small></h3>
-    <div id="bondlist">${bondListHTML()}</div>
-    <div class="muted" style="margin-top:6px;line-height:1.6">
-      ⏰ 저절로 모이는 코인 <b id="autoinc">${autoIncome()>0?fmt(autoIncome()*60)+' /분':'없음'}</b>
-      — 게임을 꺼둔 동안에도 <b>절반 속도</b>로 쌓여요 (최대 ${OFFLINE_MAX/3600}시간)
-      ${nextD?`<br>🔒 다음 테라스 소품 <b>${nextD.em}</b> — 가게 Lv.${nextD.lv}`:''}
+      ⏰ 가만히 있어도 <b id="autoinc">${autoIncome()>0?fmt(autoIncome()*60)+' /분':'없음'}</b> 모여요
+      — <b>모든 방</b>의 햄쮜가 함께 벌어줘요
+      ${seats()<6?'<br>🪑 자리는 🛒상점의 <b>자리 늘리기</b> 로 늘려요 (모든 방이 같이 늘어나요)':''}
+      ${openRooms()<ROOMS.length?`<br>🔒 다음 방 <b>${ROOMS[openRooms()].dn}</b> — 가게 Lv.${ROOMS[openRooms()].lv}`:''}
+      ${nextD?`<br>🔒 다음 방 소품 <b>${nextD.em}</b> — 가게 Lv.${nextD.lv}`:''}
     </div>
   </div>`;
 }
+/* 꾸밀 햄쮜 고르기 — 테라스에 앉은 두 마리만이 아니라 가진 햄쮜 전부가 나온다 */
+function openDressPick(){
+  const own=Object.keys(S.dex).sort((a,b)=>
+    wearCount(b)-wearCount(a) || (FL[a]?FL[a].i:99)-(FL[b]?FL[b].i:99));
+  if(!own.length){ sfx('boo'); toast('먼저 햄쮜를 만나야 꾸밀 수 있어요 🍨'); return; }
+  sfx('tap');
+  const total=WEAR_SLOTS.reduce((a,s)=>a+Object.keys(WEAR[s].items).length,0);
+  openModal(`<h2>👗 누구를 꾸며줄까요?<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="margin-bottom:8px;line-height:1.6">
+      가진 햄쮜 <b>${own.length}마리</b> 모두 꾸밀 수 있어요.
+      소품은 한 번 사면 <b>모두가 돌려 입어요</b> (가진 소품 ${(S.closet||[]).length}/${total}가지).</div>
+    <div class="shopgrid wide">${own.map(k=>`<div class="scard">
+      <span class="ic">${hamPic(hamOf(k))}</span>
+      <b>${nameOf(k)}</b>
+      <span class="fx">소품 ${wearCount(k)}가지</span>
+      <button class="btn sm" onclick="openCloset('${k}')">👗 꾸미기</button>
+    </div>`).join('')}</div>`);
+}
+/* 🎨 방 꾸미기 — 이름 지어주기 + 배경 고르기. 방마다 따로 저장된다.
+   카드로 두면 화면이 길어져서 방 그림 위 🎨 버튼에 달았다. */
+function openRoomDeco(){
+  const i=S.room|0, r=room(i);
+  openModal(`<h2>🎨 ${roomName(i)} 꾸미기<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="card" style="margin:0">
+      <h3>✏️ 방 이름</h3>
+      <input id="rm-in" class="tin" maxlength="8" placeholder="${ROOMS[i].dn}" value="${r.name}"
+             onkeydown="if(event.key==='Enter'){saveRoomName()}">
+      <div class="row" style="margin-top:7px">
+        <button class="btn sm" onclick="saveRoomName()">💕 이 이름으로!</button>
+        <button class="btn w sm" onclick="resetRoomName()">원래 이름(${ROOMS[i].dn})</button>
+      </div>
+      <div class="muted" style="margin-top:6px">한글 8자까지 — 「공주방」 「딸기방」 처럼 지어봐요</div>
+    </div>
+    <div class="card" style="margin:9px 0 0">
+      <h3>🖼️ 배경 고르기</h3>
+      <div class="frames" style="margin-bottom:8px">${Object.keys(THEMES).map(k=>{
+        const t=THEMES[k], ok=themeOk(k);
+        return `<div class="${r.theme===k?'on':''}" style="${ok?'':'opacity:.5'}" onclick="setTheme('${k}')">
+          <span class="e">${ok?t.em:'🔒'}</span>${ok?t.name:'Lv.'+t.lv}</div>`;
+      }).join('')}</div>
+      <div class="muted">방마다 <b>다른 배경</b>을 골라도 돼요! 가게 레벨이 오르면 새 배경이 열려요.</div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn" onclick="closeModal()">다 꾸몄어요</button></div>`);
+}
+function saveRoomName(){
+  const el=$('#rm-in');
+  const v=el?String(el.value||'').trim().replace(/[<>&"'`]/g,'').slice(0,8):'';
+  room().name=v; sfx('heart'); save(); renderView();
+  toast(v?`💕 이제 <b>${v}</b> 이에요!`:`${ROOMS[S.room|0].dn} 으로 돌아왔어요`);
+  openRoomDeco();
+}
+function resetRoomName(){
+  room().name=''; sfx('tap'); save(); renderView();
+  toast(`${ROOMS[S.room|0].dn} 으로 돌아왔어요`);
+  openRoomDeco();
+}
 function openSeatPick(i){
-  const own=Object.keys(S.dex).sort((a,b)=>FL[a].i-FL[b].i);
+  const own=Object.keys(S.dex).sort((a,b)=>(FL[a]?FL[a].i:99+ (isMix(a)?1:0))-(FL[b]?FL[b].i:99));
+  const R=room();
   const cards=own.map(k=>{
-    const here=S.seat[i]===k, used=S.seat.indexOf(k);
+    const here=R.seat[i]===k, at=whereSeated(k);
+    /* 다른 방에 있으면 어느 방인지 알려준다 — 한 마리는 한 방에만 있을 수 있다 */
+    const away = at && !here;
     return `<div class="scard" style="${here?'border-color:var(--acc);box-shadow:0 0 0 3px #ffd9e4':''}">
       <span class="ic">${hamPic(hamOf(k))}</span>
       <b>${nameOf(k)}</b>
       <span class="fx"><span class="stars">${'★'.repeat(S.dex[k].g)}</span> · ${heartStr(k)}</span>
-      ${used>=0&&!here?`<span class="fx" style="color:var(--acc)">${used+1}번 자리에 있어요</span>`:''}
-      <button class="btn ${here?'w':''} sm" onclick="setSeat(${i},'${here?'':k}')">${here?'빼기':'앉히기'}</button>
+      ${away?`<span class="fx" style="color:var(--acc)">${at.r===(S.room|0)?`${at.s+1}번 자리에 있어요`:`${roomName(at.r)} 에 있어요`}</span>`:''}
+      <button class="btn ${here?'w':''} sm" onclick="setSeat(${i},'${here?'':k}')">${here?'빼기':'데려오기'}</button>
     </div>`;
   }).join('');
-  openModal(`<h2>🪑 ${i+1}번 자리<span class="x" onclick="closeModal()">닫기</span></h2>
+  openModal(`<h2>🪑 ${roomName()} ${i+1}번 자리<span class="x" onclick="closeModal()">닫기</span></h2>
     ${own.length
-      ? `<div class="muted" style="margin-bottom:7px">함께 놀 햄쮜를 골라주세요. 다른 자리에 있으면 자리를 옮깁니다.</div>
+      ? `<div class="muted" style="margin-bottom:7px">이 자리에 둘 햄쮜를 골라주세요. 다른 방에 있으면 <b>이 방으로 옮겨와요</b>.</div>
          <div class="shopgrid wide">${cards}</div>`
       : `<div class="muted">아직 만난 햄쮜가 없어요.<br>🍨탭에서 아이스크림 통을 떠보세요!</div>
          <div class="row" style="justify-content:center;margin-top:10px"><button class="btn" onclick="closeModal();go('scoop')">🍨 뜨러 가기</button></div>`}`);
 }
 function setSeat(i,k){
-  if(!k) S.seat[i]=null;
+  const R=room();
+  if(!k) R.seat[i]=null;
   else{
-    const j=S.seat.indexOf(k);
-    if(j>=0) S.seat[j]=null;
-    S.seat[i]=k;
+    unseat(k);                       /* 어느 방에 있었든 먼저 빼낸다 */
+    R.seat[i]=k;
   }
   sfx('tap'); save(); closeModal(); renderAll();
-  toast(k?`${nameOf(k)} 이(가) ${i+1}번 자리에 앉았어요 🪑`:'자리를 비웠어요');
+  toast(k?`${nameOf(k)} 이(가) <b>${roomName()}</b> ${i+1}번 자리에 앉았어요 🪑`:'자리를 비웠어요');
 }
 
 /* ==================================================================
@@ -1714,13 +2089,25 @@ function renderDexTab(){
   <div class="card">
     <h3>📖 31가지 통 도감 <small>${c} / 31마리</small></h3>
     <div class="bar"><div style="width:${c/31*100}%"></div></div>
-    <div class="muted" style="margin-top:6px;line-height:1.6">
-      통마다 햄쮜가 딱 한 마리씩 살아요. <b>그 통을 떠야</b> 나옵니다.<br>
-      ⭐는 <b>가장 많이 나온 것만</b> 남아요 — 모두 ${stars} / ${31*4}개
-    </div>
+    <div class="muted" style="margin-top:6px">통마다 햄쮜가 딱 한 마리씩 살아요 · ⭐ 모두 ${stars}개</div>
   </div>
   <div class="dexgrid">${cards}</div>
   <div class="card" style="margin-top:9px">
+    <h3>💞 믹스쮜 <small>${mixCount()}마리</small></h3>
+    <div class="muted" style="margin-bottom:7px">둘을 짝지어주면 새 햄쮜가 태어나요. 딸기쮜＋바나나쮜＝<b>딸바쮜</b>!</div>
+    ${mixCount()
+      ? `<div class="mixgrid">${mixKeys().map(k=>`
+          <div class="mcard" onclick="openMixInfo('${k}')">
+            <span class="st">${'★'.repeat(S.dex[k].g)}</span>
+            <span class="hs">${hamSVG(hamOf(k))}</span>
+            <div class="nm">${nameOf(k)}</div>
+          </div>`).join('')}</div>`
+      : ''}
+    <div class="row" style="margin-top:${mixCount()?'8px':'0'}">
+      <button class="btn sm" onclick="mixA=null;mixB=null;openMixLab()">💞 짝꿍 만들기</button>
+    </div>
+  </div>
+  <div class="card">
     <h3>🏅 스티커판 <small>${S.badge.length} / ${BADGES.length}장</small></h3>
     <div class="stkgrid">${BADGES.map(b=>{
       const got=S.badge.includes(b.k);
@@ -1733,12 +2120,9 @@ function renderDexTab(){
     <h3>🧾 내 기록</h3>
     <div class="muted" style="line-height:1.9">
       🥄 뜬 횟수 ${fmt(S.stats.scoop)}번 · 🖐️ 쓰담쓰담 ${fmt(S.stats.pet)}번<br>
-      ✨ ⭐4 만난 횟수 ${fmt(S.stats.best4)}번 · 💗 하트 ${totalHearts()}개 · 🎀 꾸민 친구 ${dressedCount()}마리
-    </div>
-    <div class="row" style="margin-top:8px">
-      <button class="btn w sm" onclick="openCoupon()">🎫 쿠폰</button>
-      <button class="btn w sm" onclick="openHelp()">❓ 도움말</button>
-      <button class="btn w sm" onclick="hardReset()">♻️ 처음부터</button>
+      ✨ ⭐4 만난 횟수 ${fmt(S.stats.best4)}번 · 💗 하트 ${totalHearts()}개 · 🎀 꾸민 친구 ${dressedCount()}마리<br>
+      💞 믹스쮜 ${mixCount()}마리 · 🎵 춤춘 횟수 ${fmt(S.stats.dance||0)}번<br>
+      🔔 대접한 손님 ${fmt(S.ord.done||0)}명 · 🏆 대회 1등 ${fmt(S.cont.win||0)}번
     </div>
   </div>`;
 }
@@ -1756,13 +2140,13 @@ function openDex(k){
       🍨 사는 통 <b>${f.n}</b>
       <span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${f.c};border:1px solid rgba(0,0,0,.15);vertical-align:-1px"></span>
       · 한 번 뜨는 값 <b>🪙${fmt(scoopCost(f))}</b><br>
-      ${d?`💗 사이좋기 <b>${heartStr(k)}</b> — 놀아줄 때 코인 <b>+${hearts(k)*20}%</b><br>
+      ${d?`💗 친한 정도 <b>${heartStr(k)}</b> — 놀아줄 때 코인 <b>+${hearts(k)*20}%</b><br>
            🥄 이 통을 <b>${d.n}</b>번 떠봤어요`
         :`🎲 ⭐1 ${gradeW()[1].toFixed(0)}% · ⭐2 ${gradeW()[2].toFixed(0)}% · ⭐3 ${gradeW()[3].toFixed(0)}% · ⭐4 ${gradeW()[4].toFixed(1)}%`}
     </div>
     <div class="row" style="justify-content:center;margin-top:10px">
       ${d?`<button class="btn" onclick="openCloset('${k}')">👗 꾸미기</button>
-           <button class="btn g" onclick="closeModal();seatFirst('${k}')">🎪 테라스에 두기</button>
+           <button class="btn g" onclick="closeModal();seatFirst('${k}')">🏠 방에 두기</button>
            <button class="btn w" onclick="closeModal();pickTub('${k}');go('scoop')">🍨 더 뜨기</button>`
         :`<button class="btn" onclick="closeModal();${open?`pickTub('${k}');go('scoop')`:`go('store')`}">${open?'🍨 뜨러 가기':'🛒 통 사러 가기'}</button>`}
     </div>`);
@@ -1859,11 +2243,11 @@ function openRename(k){
     <div class="big">${hamSVG(hamOf(k))}</div>
     <div class="card" style="margin:0">
       <h3>어떻게 불러줄까요?</h3>
-      <input id="nm-in" class="tin" maxlength="8" placeholder="${FL[k].hn}" value="${S.dex[k].name||''}"
+      <input id="nm-in" class="tin" maxlength="8" placeholder="${baseName(k)}" value="${S.dex[k].name||''}"
              onkeydown="if(event.key==='Enter'){renameHam('${k}')}">
       <div class="row" style="margin-top:8px">
         <button class="btn" onclick="renameHam('${k}')">💕 이 이름으로!</button>
-        <button class="btn w" onclick="resetName('${k}')">원래 이름(${FL[k].hn})</button>
+        <button class="btn w" onclick="resetName('${k}')">원래 이름(${baseName(k)})</button>
       </div>
       <div class="muted" style="margin-top:6px">한글 8자까지 쓸 수 있어요</div>
     </div>`);
@@ -1879,7 +2263,7 @@ function renameHam(k){
 }
 function resetName(k){
   delete S.dex[k].name; sfx('tap'); save(); renderView();
-  toast(`${FL[k].hn} 로 되돌렸어요`);
+  toast(`${baseName(k)} 로 되돌렸어요`);
   openCloset(k);
 }
 
@@ -1937,7 +2321,7 @@ function renderStoreTab(){
   </div>
   <div class="card">
     <h3>👗 꾸미기 소품 <small>${(S.closet||[]).length} / ${WEAR_SLOTS.reduce((a,s)=>a+Object.keys(WEAR[s].items).length,0)}가지</small></h3>
-    <div class="muted" style="margin-bottom:7px">한 번 사면 <b>모든 햄쮜가 돌려 입어요.</b> 🎪테라스에서 입혀주세요!</div>
+    <div class="muted" style="margin-bottom:7px">한 번 사면 <b>모든 햄쮜가 돌려 입어요.</b> 🏠놀이방에서 입혀주세요!</div>
     <div class="shopgrid">${wears}</div>
   </div>
   <div class="card">
@@ -1945,18 +2329,10 @@ function renderStoreTab(){
     <div class="shopgrid">${ups}</div>
   </div>
   <div class="card">
-    <h3>🪙 코인 · 🍒 토핑 모으는 법</h3>
-    <div class="muted" style="line-height:1.9">
-      🖐️ <b>테라스에서 쓰담쓰담</b> — 코인의 기본. 하트가 늘면 더 많이 줘요<br>
-      ⚽ <b>공놀이</b>(30초마다) — 테라스 친구들이 다 같이 코인을 모아와요<br>
-      ⏰ <b>저절로 모이는 코인</b> — 테라스에 앉은 햄쮜가 가만히 있어도 벌어줘요<br>
-      🎁 <b>선물상자</b> — 5분마다 위쪽 🎁 를 누르면 코인을 줘요<br>
-      📅 <b>오늘의 도장판</b> — 하루에 하나, 일곱 개를 채우면 큰 선물!<br>
-      🙈 <b>숨바꼭질</b> — 맞히면 🍒토핑 2~3개 (8분마다)<br>
-      🌟 <b>오늘의 친구</b> — 그 친구는 쓰담쓰담 보상이 두 배<br>
-      🏅 <b>스티커</b> — 📖도감의 스티커판을 채우면 🍒토핑을 줘요<br>
-      🍒 <b>토핑</b> — ⭐3 뜨면 +1, ⭐4 +2, 새 햄쮜 +2, 🫧비눗방울, 레벨업 +2<br>
-      <span style="opacity:.85">토핑은 🍒간식 주기 · 예쁜 소품 · <b>골든 스쿱</b> · 마지막 세 통(별사탕·무지개·황금)에 써요</span>
+    <h3>🍒 토핑은 어디서 나와요?</h3>
+    <div class="muted" style="line-height:1.8">
+      ⭐3개 이상 뜰 때 · 🔔손님 주문받기 · 🏆꾸미기 대회 · 🙈숨바꼭질 · 📅도장판 · 🏅스티커<br>
+      더 자세한 건 <span style="text-decoration:underline;cursor:pointer" onclick="openHelp()"><b>❓도움말</b></span> 에 있어요.
     </div>
   </div>`;
 }
@@ -1981,7 +2357,7 @@ function buyUpg(k){
   if(upgLv(k)>=u.max){ toast('이미 최대예요'); return; }
   if(S.coin<c){ sfx('boo'); toast(`🪙 코인이 ${fmt(c-S.coin)} 더 필요해요`); return; }
   S.coin-=c; S.upg[k]=upgLv(k)+1; sfx('coin');
-  if(k==='seat') S.seat.push(null);
+  if(k==='seat') for(let i=0;i<ROOMS.length;i++) if(S.rooms[i]) S.rooms[i].seat.push(null);
   addExp(14); save(); renderAll();
   toast(`${u.em} ${u.name} Lv.${upgLv(k)} 로 올렸어요!`);
 }
@@ -1998,7 +2374,7 @@ function openLevel(){
       <div class="bar"><div style="width:${clamp(have/need,0,1)*100}%"></div></div>
       <div class="muted" style="margin-top:6px">
         한 번 뜨기 +5 · 새 햄쮜 +26 · 새 통 +20 · 하트 +8 · 가게 키우기 +14<br>
-        레벨이 오르면 🍒토핑 +2, 새 통과 테라스 소품이 열려요.
+        레벨이 오르면 🍒토핑 +2, 새 통·새 방·방 소품이 열려요.
       </div>
     </div>
     <div class="card" style="margin:0">
@@ -2013,19 +2389,24 @@ function openHelp(){
   const topics=[
     ['🍨','통 고르고 푹 뜨기','🍨탭에서 <b>통을 하나 고르고</b> 「한 번 뜨기」를 누르면 그 통에 사는 햄쮜가 나와요. 통마다 사는 햄쮜가 달라서 <b>31마리</b>랍니다.'],
     ['🎲','뜰 때마다 달라요','통이 정하는 건 <b>모양과 색</b>. <b>무늬와 ⭐개수</b>는 뜰 때마다 달라요. ⭐4개가 나오면 왕관을 쓴 채 훨씬 예쁘게 나와요. 도감에는 <b>가장 많이 나온 것만</b> 남아요.'],
-    ['🎪','나온 햄쮜와 놀기','🎪테라스에 햄쮜를 앉히고 <b>쓰담쓰담·토핑·공놀이·비눗방울</b>로 놀아주세요. 놀아주면 <b>코인</b>이 모이고, 그 코인으로 또 아이스크림을 뜨면 됩니다.'],
-    ['💗','사이좋기','놀아줄수록 💗하트가 차요(최대 5개). 하트가 늘면 <b>코인을 더 많이</b> 물어오고, 저절로 모이는 코인도 늘어요.'],
-    ['👗','예쁘게 꾸미기','🛒상점의 <b>꾸미기 소품</b>을 사서 🎪테라스의 <b>👗꾸미기</b> 로 입혀줘요. 리본·왕관·풍선 14가지! 한 번 사면 <b>모두가 돌려 입어요</b>.'],
+    ['🏠','나온 햄쮜와 놀기','🏠놀이방에 햄쮜를 앉히고 <b>쓰담쓰담·토핑·공놀이·비눗방울</b>로 놀아주세요. 놀아주면 <b>코인</b>이 모이고, 그 코인으로 또 아이스크림을 뜨면 됩니다.'],
+    ['💗','친해지기','놀아줄수록 💗하트가 차요(최대 5개). 하트가 늘면 <b>코인을 더 많이</b> 물어오고, 저절로 모이는 코인도 늘어요.'],
+    ['👗','예쁘게 꾸미기','🛒상점에서 <b>꾸미기 소품</b>을 사고, 🏠놀이방의 <b>「👗 햄쮜 꾸미기」</b> 를 누르면 <b>가진 햄쮜 전부</b>가 나와요 — 누구든 골라서 입힐 수 있어요. 리본·왕관·풍선 '+WEAR_SLOTS.reduce((a,s)=>a+Object.keys(WEAR[s].items).length,0)+'가지! 한 번 사면 <b>모두가 돌려 입어요</b>. 🏆꾸미기 대회에서도 쓰여요.'],
     ['✏️','이름 지어주기','새 햄쮜가 나오면 <b>내가 이름을 지어줄 수 있어요.</b> 나중에 👗꾸미기 → ✏️이름 바꾸기 로 바꿀 수도 있어요.'],
-    ['🏅','스티커 모으기','📖도감의 <b>스티커판</b>에 14장을 붙일 수 있어요. 스티커를 받으면 🍒토핑도 같이 와요.'],
+    ['🏅','스티커 모으기','📖도감의 <b>스티커판</b>에 '+BADGES.length+'장을 붙일 수 있어요. 스티커를 받으면 🍒토핑도 같이 와요.'],
     ['🎁','선물상자','오른쪽 위 🎁 가 <b>흔들리면</b> 눌러보세요. 5분마다 코인을 선물해줘요.'],
     ['📅','오늘의 도장판','하루에 <b>도장 하나</b>씩 찍어요. 일곱 개를 채우면 🎁큰 선물(꾸미기 소품!)을 받고 새 도장판이 와요.'],
     ['🌟','오늘의 친구','매일 아침 친구 한 마리가 <b>오늘의 친구</b>가 돼요. 그 친구를 쓰담쓰담하면 코인과 하트를 <b>두 배</b>로 받아요!'],
     ['🙈','숨바꼭질','아이스크림 컵 세 개 중 하나에 햄쮜가 숨어요. 맞히면 🍒토핑을 줘요. 8분에 한 번 할 수 있어요.'],
-    ['📸','사진첩','🎪테라스 오른쪽 위 <b>📸</b> 를 누르면 지금 함께 있는 햄쮜들 사진을 찍어요. 테두리를 고르고 제목을 지어 <b>사진첩</b>에 12장까지 모을 수 있어요.'],
-    ['🎨','테라스 테마','☀️낮 가게 · 🌙밤하늘 · 🏖️바닷가 · ❄️눈나라 — 가게 레벨이 오르면 열려요. 🎪테라스 탭에서 고를 수 있어요.'],
+    ['🔔','손님 주문받기','손님 햄쮜가 <b>주문서</b>를 말해요. <b>콘 → 맛 → 토핑</b> 순서로 골라 주문대로 만들어 주세요. 세 가지를 다 맞히면 <b>대성공</b>! 코인과 🍒토핑을 많이 받아요. 잘못 골랐으면 <b>↩다시 고르기</b>로 되돌릴 수 있어요. 4분마다 새 손님이 와요.'],
+    ['🏆','꾸미기 대회','하루에 한 번 열려요. 매일 <b>오늘의 주제 소품</b>이 정해지는데, 그 소품을 입은 햄쮜를 내보내면 점수가 <b>확</b> 올라요. 머리·목·손을 다 채우고(풀코디) 💗하트가 많으면 더 유리해요. 1등은 🥇 상품이 아주 커요!'],
+    ['📸','사진첩','🏠놀이방 오른쪽 위 <b>📸</b> 를 누르면 지금 함께 있는 햄쮜들 사진을 찍어요. 테두리를 고르고 제목을 지어 <b>사진첩</b>에 12장까지 모을 수 있어요.'],
+    ['💞','짝꿍 만들기','햄쮜 둘을 짝지어주면 <b>새 햄쮜</b>가 태어나요. 딸기쮜＋바나나쮜＝<b>딸바쮜</b>! 색깔도 부모 둘을 섞은 <b>세상에 하나뿐인 색</b>이에요. 📖도감 탭에서 만들 수 있어요(🍒'+MIX_TOP+', 둘 다 💗하트 '+MIX_NEED_HEART+'개 이상).'],
+    ['🎵','춤추기','🏠놀이방에서 <b>🎵춤추기</b>를 고르고 아무 곳이나 누르면 노래가 나오고 다 같이 춤을 춰요. ⚽공놀이를 하면 햄쮜들이 <b>공을 우르르 쫓아갑니다</b>.'],
+    ['🏠','놀이방 여러 개','🏠놀이방 탭 맨 위에서 <b>방을 골라</b> 옮겨다닐 수 있어요. 방은 가게 레벨이 오르면 하나씩 열려요 (Lv.1 · Lv.5 · Lv.10 · Lv.15, 모두 4개). 방마다 <b>이름과 배경을 따로</b> 정하고 <b>다른 햄쮜</b>를 둘 수 있어요. 한 마리는 한 방에만 있을 수 있고, ⏰저절로 모이는 코인은 <b>모든 방</b>의 햄쮜가 함께 벌어줘요!'],
+    ['🎨','방 꾸미기','방 그림의 <b>오른쪽 위 🎨</b> 를 누르면 방 <b>이름</b>을 지어주고(「공주방」처럼!) <b>배경</b>을 고를 수 있어요. ☀️낮 가게 · 🌙밤하늘 · 🏖️바닷가 · ❄️눈나라 — 가게 레벨이 오르면 열려요.'],
     ['⚙️','설정 · 저장 코드','오른쪽 위 <b>⚙️</b> 에서 소리·진동을 끄고 켜요. <b>저장 코드</b>를 복사해두면 폰을 바꿔도 모은 햄쮜를 되살릴 수 있어요!'],
-    ['⏰','가만히 있어도','테라스에 앉힌 햄쮜는 <b>저절로 코인</b>을 모아줘요. 게임을 꺼둔 동안에도 절반 속도로 최대 12시간 쌓입니다.'],
+    ['⏰','가만히 있어도','방에 앉힌 햄쮜는 <b>저절로 코인</b>을 모아줘요. 게임을 꺼둔 동안에도 절반 속도로 최대 12시간 쌓입니다.'],
     ['✨','반짝 게이지 · 골든 스쿱','🍨뜨기 화면의 <b>✨반짝 게이지</b>가 가득 차면 다음에 뜨는 햄쮜는 <b>⭐3개 이상</b>이에요(15번마다 한 번). 🍒토핑 '+GOLD_TOP+'개를 더 얹는 <b>골든 스쿱</b>은 기다리지 않고 바로 ⭐3개 이상이 나옵니다.'],
     ['🎫','쿠폰','쿠폰 번호를 알고 있다면 🍨뜨기 화면 아래의 <b>🎫쿠폰</b> 에 적어보세요. 코인·토핑·예쁜 소품·새 통을 선물로 받아요.']
   ];
@@ -2072,12 +2453,12 @@ function showTutorial(n){
   openModal(`<h2>🎪 나온 햄쮜랑 놀아요<span class="x" onclick="closeModal()">건너뛰기</span></h2>
     <div class="card" style="margin:0;font-size:13px;line-height:1.95">
       1️⃣ 🍨탭에서 통을 골라 <b>푹 뜨기</b> → 햄쮜 등장<br>
-      2️⃣ 🎪<b>테라스</b>에 앉히고 <b>쓰담쓰담·토핑·공놀이</b>로 놀아주면 <b>코인</b>이 모여요<br>
+      2️⃣ 🏠<b>놀이방</b>에 앉히고 <b>쓰담쓰담·토핑·공놀이</b>로 놀아주면 <b>코인</b>이 모여요<br>
       3️⃣ 모은 코인으로 또 뜨고, 🛒상점에서 <b>새 통</b>을 늘려요<br>
       4️⃣ 놀아줄수록 💗하트가 차서 코인을 더 많이 줘요<br>
       5️⃣ 🎀리본·👑왕관으로 <b>예쁘게 꾸미고</b>, ✏️<b>이름</b>도 지어줄 수 있어요<br>
       6️⃣ 📅도장판·🙈숨바꼭질·📸사진 찍기도 잊지 마세요!<br><br>
-      <span class="muted">코인이 없으면 테라스에서 쓰담쓰담만 해도 계속 모여요. 막힐 일은 없어요 🍨</span>
+      <span class="muted">코인이 없으면 놀이방에서 쓰담쓰담만 해도 계속 모여요. 막힐 일은 없어요 🍨</span>
     </div>
     ${foot(`<button class="btn w" onclick="showTutorial(1)">◂ 이전</button>
             <button class="btn" onclick="runStartQueue()">가게 열기 🔔</button>`)}`);
@@ -2088,7 +2469,7 @@ function showAway(){
   const mins=Math.floor(r.dt/60), hrs=Math.floor(mins/60);
   openModal(`<h2>🔔 다녀오셨어요!<span class="x" onclick="closeModal()">닫기</span></h2>
     <div class="card" style="margin:0;text-align:center;font-size:13px">
-      가게를 비운 <b>${hrs>0?hrs+'시간 '+(mins%60)+'분':mins+'분'}</b> 동안<br>테라스 햄쮜가 가게를 봐줬어요!
+      가게를 비운 <b>${hrs>0?hrs+'시간 '+(mins%60)+'분':mins+'분'}</b> 동안<br>방에 있던 햄쮜들이 가게를 봐줬어요!
       <div style="font-size:20px;font-weight:800;margin-top:8px">🪙 +${fmt(r.got)}</div>
       <div class="muted" style="margin-top:5px">게임을 꺼둔 동안은 절반 속도로 모여요 (최대 ${OFFLINE_MAX/3600}시간)</div>
     </div>
@@ -2254,6 +2635,236 @@ function pickCup(i){
   setTimeout(()=>{ if(tab==='scoop'||tab==='play') renderView(); },10);
 }
 
+/* ---------- 🔔 손님 주문받기 ----------
+   가게 놀이의 핵심. 손님 햄쮜가 주문서를 말하고, 아이가 콘 → 맛 → 토핑을
+   차례로 골라 아이스크림을 만들어 준다. 세 가지를 다 맞히면 대성공.
+   주문서는 만드는 동안 계속 보이고, ↩다시 고르기로 되돌릴 수 있어서 틀려도 부담이 없다. */
+const ORDER_CD=4*60*1000;
+/* 콘은 이모지 대신 CSS 로 그린다 — 이모지 콘(🍦)은 아이스크림이 이미 얹혀 있어서 쓸 수 없다.
+   em 은 말풍선·채점표에서 글자로 쓸 때만 쓴다. */
+const CONES={
+  waffle:{em:'🧇', n:'와플콘',   cls:'waffle'},
+  cup   :{em:'🍨', n:'예쁜 컵',  cls:'cupc'},
+  rain  :{em:'🌈', n:'무지개콘', cls:'rain'}
+};
+const TOPS={
+  choco :{em:'🍫', n:'초코시럽'},
+  candy :{em:'🍬', n:'알사탕'},
+  cherry:{em:'🍒', n:'체리'},
+  cookie:{em:'🍪', n:'쿠키'}
+};
+function coneHTML(k,sm){ return `<span class="cone ${CONES[k].cls}${sm?' sm':''}"></span>`; }
+const CONE_KEYS=Object.keys(CONES), TOP_KEYS=Object.keys(TOPS);
+const ORD_STEP=['cn','fl','tp'];
+let ordCur=null;
+function ordLeft(){ return Math.max(0, ORDER_CD-(Date.now()-(S.ord.at||0))); }
+function newOrder(){
+  const own=Object.keys(S.dex); if(!own.length) return null;
+  const pool=unlocked(); if(!pool.length) return null;
+  const fl=pick(pool);
+  /* 맛 후보는 정답 하나 + 가진 통 중에서 세 가지 (통이 적으면 있는 만큼만) */
+  const opts=[fl], want=Math.min(4,pool.length);
+  while(opts.length<want){ const c=pick(pool); if(opts.indexOf(c)<0) opts.push(c); }
+  opts.sort(()=>Math.random()-0.5);
+  return {who:pick(own), want:{cn:pick(CONE_KEYS), fl, tp:pick(TOP_KEYS)},
+          got:{cn:null,fl:null,tp:null}, opts, step:0, done:false, hit:0, pay:null};
+}
+function openOrder(){
+  if(!Object.keys(S.dex).length){ sfx('boo'); toast('먼저 햄쮜를 만나야 손님이 와요 🍨'); return; }
+  if(ordLeft()>0){ sfx('boo'); toast(`🔔 다음 손님은 ${Math.ceil(ordLeft()/60000)}분 뒤에 와요`); return; }
+  ordCur=newOrder(); if(!ordCur) return;
+  sfx('tap'); renderOrder();
+}
+function icecHTML(g){
+  const f=g.fl?FL[g.fl]:null;
+  return `<div class="icec">
+    ${g.tp?`<span class="tp">${TOPS[g.tp].em}</span>`:''}
+    ${f?`<span class="sc" style="--c:${f.c};--c2:${f.c2}"></span>`:''}
+    ${g.cn?coneHTML(g.cn):'<span class="ph">여기에<br>만들어 줘요</span>'}
+  </div>`;
+}
+function ordPick(v){
+  if(!ordCur||ordCur.done) return;
+  const st=ordCur.step; if(st<0||st>2) return;
+  ordCur.got[ORD_STEP[st]]=v;
+  ordCur.step++;
+  sfx(st===1?'scoop':'tap'); vib(12);
+  if(ordCur.step>=3) finishOrder(); else renderOrder();
+}
+function ordBack(){
+  if(!ordCur||ordCur.done||ordCur.step<=0) return;
+  ordCur.step--; ordCur.got[ORD_STEP[ordCur.step]]=null;
+  sfx('tap'); renderOrder();
+}
+function finishOrder(){
+  const c=ordCur, w=c.want, g=c.got;
+  c.hit=(g.cn===w.cn?1:0)+(g.fl===w.fl?1:0)+(g.tp===w.tp?1:0);
+  c.done=true;
+  S.ord.at=Date.now(); S.ord.done=(S.ord.done||0)+1;
+  const m=1+S.lv*0.25;
+  let coin,tops=0,bond,exp;
+  if(c.hit===3){ S.ord.perfect=(S.ord.perfect||0)+1; coin=Math.ceil(160*m); tops=ri(1,3); bond=10; exp=9; }
+  else if(c.hit===2){ coin=Math.ceil(90*m); tops=ri(0,1); bond=5; exp=5; }
+  else { coin=Math.ceil(45*m); bond=3; exp=3; }
+  c.pay={coin,tops};
+  S.coin+=coin; S.top+=tops;
+  addBond(c.who,bond); addExp(exp);
+  sfx(c.hit===3?'nw':(c.hit?'coin':'boo')); vib(c.hit===3?[0,30,50,30]:14);
+  checkBadges(); save(); renderHUD(); renderOrder();
+  setTimeout(()=>{ if(tab==='scoop'||tab==='play') renderView(); },10);
+}
+function renderOrder(){
+  const c=ordCur; if(!c) return;
+  const w=c.want, g=c.got;
+  const head=c.done
+    ? ['음… 그래도 고마워요!','괜찮아요, 잘 먹을게요!','거의 다 맞았어요! 맛있어요 😋','완벽해요!! 최고예요 🎉'][c.hit]
+    : `안녕! <b>${CONES[w.cn].em}${CONES[w.cn].n}</b>에<br>
+       <b style="color:var(--acc)">${FL[w.fl].n}</b> 맛을 담고
+       <b>${TOPS[w.tp].em}${TOPS[w.tp].n}</b>를 올려주세요!`;
+  let bot;
+  if(c.done){
+    const row=(ok,lab,mine)=>`<div><span>${lab}</span><span>${mine} ${ok?'⭕':'❌'}</span></div>`;
+    bot=`<div class="score">
+      ${row(g.cn===w.cn,'🍦 콘',   CONES[g.cn].em+CONES[g.cn].n)}
+      ${row(g.fl===w.fl,'🍨 맛',   FL[g.fl].n)}
+      ${row(g.tp===w.tp,'🍒 토핑', TOPS[g.tp].em+TOPS[g.tp].n)}
+      <div class="tot"><span>${c.hit===3?'🏆 딱 맞았어요!':(c.hit?'👍 잘했어요':'🙂 다음엔 더 잘할 거예요')}</span>
+        <b>🪙+${fmt(c.pay.coin)}${c.pay.tops?' · 🍒+'+c.pay.tops:''}</b></div></div>
+    <div class="muted" style="text-align:center;margin-top:8px;line-height:1.6">
+      ${nameOf(c.who)} 와(과) 더 친해졌어요 💗<br>
+      대접한 손님 <b>${S.ord.done}</b>명 · 딱 맞힌 주문 <b>${S.ord.perfect}</b>번</div>
+    <div class="row" style="justify-content:center;margin-top:10px">
+      <button class="btn" onclick="closeModal()">또 오세요! 👋</button></div>`;
+  }else{
+    const st=c.step;
+    let opts;
+    if(st===0){
+      opts=`<div class="opts c3">${CONE_KEYS.map(k=>
+        `<button onclick="ordPick('${k}')">${coneHTML(k,1)}${CONES[k].n}</button>`).join('')}</div>`;
+    }else if(st===1){
+      opts=`<div class="opts${c.opts.length<4?' c3':''}">${c.opts.map(k=>
+        `<button onclick="ordPick('${k}')"><span class="sw" style="background:radial-gradient(circle at 34% 28%,${FL[k].c2},${FL[k].c} 74%)"></span>${FL[k].n}</button>`).join('')}</div>`;
+    }else{
+      opts=`<div class="opts">${TOP_KEYS.map(k=>
+        `<button onclick="ordPick('${k}')"><span class="e">${TOPS[k].em}</span>${TOPS[k].n}</button>`).join('')}</div>`;
+    }
+    bot=`<div class="stepn">${['① 콘을 골라요','② 맛을 담아요','③ 토핑을 올려요'][st]}</div>
+      ${opts}
+      <div class="row" style="justify-content:center;margin-top:9px">
+        ${st>0?'<button class="btn w sm" onclick="ordBack()">↩ 다시 고르기</button>':''}
+        <div class="muted">주문서를 보고 그대로 만들어 주세요!</div></div>`;
+  }
+  openModal(`<h2>🔔 손님이 왔어요<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="ord">
+      <div class="bub">${head}</div>
+      <div><span class="who hs">${hamSVG(hamOf(c.who))}</span></div>
+      ${icecHTML(g)}
+    </div>
+    ${bot}`);
+}
+
+/* ---------- 🏆 꾸미기 대회 ----------
+   하루에 한 번. 오늘의 주제 소품을 입고 나가면 점수가 확 오른다 →
+   사둔 소품 17가지를 골고루 쓰게 만드는 장치. */
+function contTheme(){
+  const all=[];
+  WEAR_SLOTS.forEach(s=>Object.keys(WEAR[s].items).forEach(k=>all.push([s,k])));
+  /* 날짜로 정해지므로 하루 종일 주제가 바뀌지 않는다 */
+  const d=new Date(), seed=d.getFullYear()*372+(d.getMonth()+1)*31+d.getDate();
+  return all[seed%all.length];
+}
+function contThemeItem(){ const [s,k]=contTheme(); return WEAR[s].items[k]; }
+function contReady(){ return S.cont.d!==todayKey(); }
+let contRes=null, contWarn=null;
+function openContest(){
+  if(!Object.keys(S.dex).length){ sfx('boo'); toast('먼저 햄쮜를 만나야 대회에 나갈 수 있어요 🍨'); return; }
+  contRes=null; contWarn=null; sfx('tap'); renderContPick();
+}
+function renderContPick(){
+  const [ts,tk]=contTheme(), it=WEAR[ts].items[tk];
+  const own=Object.keys(S.dex).sort((a,b)=>(wearOf(b)[ts]===tk?1:0)-(wearOf(a)[ts]===tk?1:0)||wearCount(b)-wearCount(a));
+  const cards=own.map(k=>{
+    const on=wearOf(k)[ts]===tk;
+    return `<div class="scard" style="${on?'border-color:var(--acc);box-shadow:0 0 0 3px #ffd9e4':''}">
+      <span class="ic">${hamPic(hamOf(k))}</span>
+      <b>${nameOf(k)}</b>
+      <span class="fx">소품 ${wearCount(k)}개 · ${heartStr(k)}</span>
+      <span class="fx" style="${on?'color:var(--acc);font-weight:700':''}">${on?it.em+' 주제 입었어요!':'주제 소품 없음'}</span>
+      ${k===contWarn
+        ? `<button class="btn sm" onclick="joinContest('${k}',1)">그래도 내보내기</button>`
+        : `<button class="btn ${on?'':'w'} sm" onclick="joinContest('${k}')">🏆 내보내기</button>`}
+    </div>`;
+  }).join('');
+  openModal(`<h2>🏆 꾸미기 대회<span class="x" onclick="closeModal()">닫기</span></h2>
+    ${contReady()
+      ? `${contWarn?`<div class="card" style="margin:0 0 8px;font-size:12px;line-height:1.7;border-color:var(--acc)">
+             ⚠️ <b>${nameOf(contWarn)}</b> 는 아직 아무것도 안 입었어요.<br>
+             먼저 <b>👗꾸미기</b> 로 리본이나 모자를 입혀주면 점수가 훨씬 높아요!
+             (대회는 <b>하루에 한 번</b>이에요)</div>`:''}
+         <div class="muted" style="line-height:1.7;margin-bottom:8px">
+           오늘의 주제는 <b style="color:var(--acc);font-size:13px">${it.em} ${it.name}</b> 예요!<br>
+           주제 소품을 입고 나가면 점수를 <b>많이</b> 받아요. 하루에 한 번 나갈 수 있어요.</div>
+         <div class="shopgrid wide">${cards}</div>
+         <div class="muted" style="margin-top:8px">👗 소품이 없으면 놀이방의 <b>꾸미기</b> 나 🛒상점에서 먼저 사주세요.</div>`
+      : `<div class="muted" style="text-align:center;line-height:1.8">
+           오늘 대회는 벌써 끝났어요 🎀<br>내일 또 새로운 주제로 열려요!<br>
+           <b>내 최고 점수 ${S.cont.best}점</b> · 1등 ${S.cont.win}번 (나간 횟수 ${S.cont.play}번)</div>
+         <div class="row" style="justify-content:center;margin-top:11px">
+           <button class="btn" onclick="closeModal()">알았어요</button></div>`}`);
+}
+function joinContest(k,ok){
+  if(!contReady()){ sfx('boo'); toast('오늘 대회는 이미 끝났어요 🎀'); return; }
+  if(!S.dex[k]) return;
+  /* 아무것도 안 입힌 채로 하루 한 번을 써버리지 않게 한 번 되묻는다 */
+  if(!ok && wearCount(k)===0){ contWarn=k; sfx('boo'); renderContPick(); return; }
+  contWarn=null;
+  const [ts,tk]=contTheme(), w=wearOf(k), d=S.dex[k], n=wearCount(k);
+  const rows=[];
+  rows.push([`👗 꾸민 소품 ${n}개`, n*20]);
+  rows.push([`${WEAR[ts].items[tk].em} 오늘의 주제`, w[ts]===tk?40:0]);
+  if(n===3) rows.push(['✨ 머리·목·손 풀코디', 20]);
+  rows.push([`💗 하트 ${hearts(k)}개`, hearts(k)*4]);
+  rows.push([`⭐ ${d.g}개`, d.g*5]);
+  rows.push(['🙂 심사위원 기분', ri(0,15)]);
+  const tot=rows.reduce((a,r)=>a+r[1],0);
+  const rank= tot>=115?1:(tot>=75?2:3);
+  const m=1+S.lv*0.25;
+  const pay=[null,{t:5,c:Math.ceil(200*m),b:12,e:12},
+                  {t:3,c:Math.ceil(120*m),b:8, e:8},
+                  {t:1,c:Math.ceil(60*m), b:5, e:5}][rank];
+  S.cont.d=todayKey(); S.cont.play=(S.cont.play||0)+1;
+  S.cont.best=Math.max(S.cont.best||0,tot);
+  if(rank===1) S.cont.win=(S.cont.win||0)+1;
+  S.top+=pay.t; S.coin+=pay.c;
+  addBond(k,pay.b); addExp(pay.e);
+  contRes={k,rows,tot,rank,pay};
+  sfx(rank===1?'star4':'nw'); vib(rank===1?[0,30,50,30,50,30]:[0,30,50,30]);
+  checkBadges(); save(); renderHUD(); renderContResult();
+  setTimeout(()=>{ if(tab==='scoop'||tab==='play') renderView(); },10);
+}
+function renderContResult(){
+  const r=contRes; if(!r) return;
+  const medal=['','🥇','🥈','🥉'][r.rank];
+  const word=['',`${medal} 1등이에요!! 우와 🎉`,`${medal} 2등이에요! 잘했어요`,`${medal} 3등이에요, 참가상!`][r.rank];
+  openModal(`<h2>🏆 대회 결과<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="runway">
+      <div class="spot"></div><div class="rug"></div>
+      <div class="rk">${medal}</div>
+      <span class="hs">${hamSVG(hamOf(r.k))}</span>
+      <div class="cap">${nameOf(r.k)}<br>${word}</div>
+    </div>
+    <div class="score">
+      ${r.rows.map(([lab,v])=>`<div><span>${lab}</span><b>${v>0?'+'+v:'0'}점</b></div>`).join('')}
+      <div class="tot"><span>모두 합쳐서</span><b>${r.tot}점</b></div>
+      <div class="tot"><span>상품</span><b>🍒+${r.pay.t} · 🪙+${fmt(r.pay.c)}</b></div>
+    </div>
+    <div class="muted" style="text-align:center;margin-top:8px;line-height:1.6">
+      내 최고 점수 <b>${S.cont.best}점</b> · 1등 ${S.cont.win}번<br>
+      내일은 다른 주제가 나와요 — 소품을 많이 모아두면 유리해요!</div>
+    <div class="row" style="justify-content:center;margin-top:10px">
+      <button class="btn" onclick="closeModal()">고마워요!</button></div>`);
+}
+
 /* ---------- 📸 사진첩 ---------- */
 const FRAMES={
   ribbon:{name:'리본',  em:'🎀', sky:'linear-gradient(#ffeef4,#ffd9e6)', fl:'#f7dcc6', line:'#f2a8c4', cn:['🎀','💗','💗','🎀']},
@@ -2271,9 +2882,14 @@ function photoHTML(p,small){
       <div class="sky" style="background:${F.sky}"></div>
       <div class="fl" style="background:${F.fl}"></div>
       ${F.cn.map((e,i)=>`<span class="cn" style="${pos[i]}">${e}</span>`).join('')}
-      ${p.hams.map(h=>FL[h.k]?`<span class="hs">${hamSVG({
-        shape:FL[h.k].shape, color:FL[h.k].color, pattern:h.p||'plain',
-        grade:h.g||1, cone:FL[h.k].c, wear:h.w})}</span>`:'').join('')}
+      ${p.hams.map(h=>{
+        const d=S.dex[h.k], m=d&&d.mix;
+        if(m) return `<span class="hs">${hamSVG({shape:m.shape, color:h.k, colorObj:m.col,
+                        pattern:h.p||'plain', grade:h.g||1, cone:m.cone, wear:h.w})}</span>`;
+        if(!FL[h.k]) return '';
+        return `<span class="hs">${hamSVG({shape:FL[h.k].shape, color:FL[h.k].color,
+                  pattern:h.p||'plain', grade:h.g||1, cone:FL[h.k].c, wear:h.w})}</span>`;
+      }).join('')}
     </div>
     <div class="cap">${p.cap||'우리 가게에서 📸'}</div>
     <div class="dt">${dateLabel(p.t)}</div>
@@ -2281,7 +2897,7 @@ function photoHTML(p,small){
 }
 function takePhoto(){
   const list=seatHams();
-  if(!list.length){ sfx('boo'); toast('📸 먼저 테라스에 햄쮜를 앉혀주세요'); return; }
+  if(!list.length){ sfx('boo'); toast('📸 먼저 이 방에 햄쮜를 앉혀주세요'); return; }
   photoDraft={
     t:Date.now(), frame:'ribbon', cap:'',
     hams:list.slice(0,6).map(k=>({k, g:S.dex[k].g, p:S.dex[k].p, w:Object.assign({},wearOf(k))}))
@@ -2321,7 +2937,7 @@ function openAlbum(){
     ${S.album.length
       ? `<div class="muted" style="margin-bottom:8px">${S.album.length} / ${ALBUM_MAX}장 · 사진을 누르면 크게 볼 수 있어요</div>
          <div class="album">${S.album.map((p,i)=>`<div onclick="openPhoto(${i})">${photoHTML(p,true)}</div>`).join('')}</div>`
-      : `<div class="muted">아직 사진이 없어요.<br>🎪테라스의 <b>📸</b> 를 눌러 첫 사진을 찍어보세요!</div>`}
+      : `<div class="muted">아직 사진이 없어요.<br>🏠놀이방의 <b>📸</b> 를 눌러 첫 사진을 찍어보세요!</div>`}
     <div class="row" style="justify-content:center;margin-top:11px">
       <button class="btn" onclick="closeModal();go('play')">📸 사진 찍으러 가기</button>
     </div>`);
@@ -2331,7 +2947,7 @@ function openPhoto(i){
   openModal(`<h2>📸 ${p.cap||'우리 사진'}<span class="x" onclick="openAlbum()">뒤로</span></h2>
     <div style="max-width:290px;margin:0 auto">${photoHTML(p)}</div>
     <div class="muted" style="text-align:center;margin-top:8px">
-      ${p.hams.map(h=>FL[h.k]?nameOf(h.k):'').filter(Boolean).join(' · ')}
+      ${p.hams.map(h=>S.dex[h.k]?nameOf(h.k):'').filter(Boolean).join(' · ')}
     </div>
     <div class="row" style="justify-content:center;margin-top:11px">
       <button class="btn" onclick="openAlbum()">사진첩으로</button>
@@ -2344,7 +2960,169 @@ function delPhoto(i){
   });
 }
 
-/* ---------- 🎨 테라스 테마 ---------- */
+/* ==================================================================
+   💞 믹스쮜 — 햄쮜 둘을 짝지어 새 햄쮜가 태어난다
+      딸기쮜 + 바나나쮜 = 딸바쮜 처럼 이름 앞 글자를 하나씩 따서 붙이고,
+      색은 부모 둘의 색을 진짜로 섞어서 세상에 없던 색을 만든다.
+================================================================== */
+const MIX_TOP=5;                      /* 짝지어줄 때 드는 🍒토핑 */
+const MIX_NEED_HEART=1;               /* 둘 다 하트가 이만큼은 있어야 한다 */
+
+function mixHex(a,b){                 /* 색 두 개의 한가운데 색 */
+  const p=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+  const [r1,g1,b1]=p(a), [r2,g2,b2]=p(b);
+  const m=(x,y)=>Math.round((x+y)/2).toString(16).padStart(2,'0');
+  return '#'+m(r1,r2)+m(g1,g2)+m(b1,b2);
+}
+function mixKeyOf(a,b){               /* 순서가 달라도 같은 짝은 같은 아이 */
+  const [x,y]=[a,b].sort((p,q)=>FL[p].i-FL[q].i);
+  return 'mix_'+x+'_'+y;
+}
+function mixNameOf(a,b){
+  const [x,y]=[a,b].sort((p,q)=>FL[p].i-FL[q].i);
+  return FL[x].n.charAt(0)+FL[y].n.charAt(0)+'쮜';
+}
+function canMix(a,b){
+  if(!a||!b||a===b) return '서로 다른 햄쮜 둘을 골라주세요';
+  if(!S.dex[a]||!S.dex[b]) return '아직 만나지 못한 햄쮜예요';
+  if(isMix(a)||isMix(b)) return '믹스쮜끼리는 아직 짝지을 수 없어요';
+  if(S.dex[mixKeyOf(a,b)]) return `이 짝의 <b>${mixNameOf(a,b)}</b> 는 이미 태어났어요`;
+  if(hearts(a)<MIX_NEED_HEART||hearts(b)<MIX_NEED_HEART)
+    return `둘 다 💗하트가 ${MIX_NEED_HEART}개 이상이어야 해요 — 더 놀아주세요`;
+  if(S.top<MIX_TOP) return `🍒토핑이 ${MIX_TOP-S.top}개 더 필요해요`;
+  return null;
+}
+function makeMix(a,b){
+  const why=canMix(a,b);
+  if(why){ sfx('boo'); toast(why); return; }
+  const [x,y]=[a,b].sort((p,q)=>FL[p].i-FL[q].i);
+  const fx=FL[x], fy=FL[y], dx=S.dex[x], dy=S.dex[y];
+  const cx=COLORS[fx.color], cy=COLORS[fy.color];
+
+  S.top-=MIX_TOP;
+  const key=mixKeyOf(x,y);
+  const g=Math.min(4, Math.max(dx.g,dy.g) + (Math.random()<0.3?1:0));   /* 부모보다 좋아질 수도 */
+  S.dex[key]={
+    g, p:pick([dx.p,dy.p]), n:1, bond:0, w:{hat:null,neck:null,hand:null},
+    mix:{
+      a:x, b:y, hn:mixNameOf(x,y),
+      shape: Math.random()<0.5?fx.shape:fy.shape,
+      cone : mixHex(fx.c,fy.c),
+      col  : {
+        name :'섞은 색',
+        base :mixHex(cx.base ,cy.base),
+        light:mixHex(cx.light,cy.light),
+        dark :mixHex(cx.dark ,cy.dark),
+        cheek:mixHex(cx.cheek,cy.cheek)
+      }
+    }
+  };
+  addExp(30); sfx('nw'); vib([0,40,60,40,60,40]); checkBadges(); save(); renderHUD(); renderView();
+  showMixBorn(key);
+}
+function showMixBorn(key){
+  const d=S.dex[key], m=d.mix;
+  openModal(`<h2>💞 새 햄쮜가 태어났어요!<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="row" style="justify-content:center;gap:4px;align-items:center;margin-bottom:2px">
+      <span class="hs" style="width:52px;height:52px">${hamSVG(hamOf(m.a))}</span>
+      <span style="font-size:17px">＋</span>
+      <span class="hs" style="width:52px;height:52px">${hamSVG(hamOf(m.b))}</span>
+      <span style="font-size:17px">＝</span>
+    </div>
+    <div class="big burst">${hamSVG(hamOf(key))}</div>
+    <div style="text-align:center;font-size:14px">
+      <b style="font-size:19px">${m.hn}</b>
+      <div style="font-size:16px;letter-spacing:1px;margin-top:1px">${'⭐'.repeat(d.g)}${'☆'.repeat(4-d.g)}</div>
+      <div class="muted" style="margin-top:3px">
+        ${nameOf(m.a)} 와(과) ${nameOf(m.b)} 의 아이 · ${SHAPES[m.shape].name} 모양 · ${PATTERNS[d.p]}<br>
+        <b>세상에 하나뿐인 색</b>이에요 🎨
+      </div>
+    </div>
+    <div class="card" style="margin:10px 0 0">
+      <h3>✏️ 이름을 지어줄래요?</h3>
+      <input id="nm-in" class="tin" maxlength="8" placeholder="${m.hn}" value=""
+             onkeydown="if(event.key==='Enter'){saveName('${key}')}">
+      <div class="row" style="margin-top:7px">
+        <button class="btn" onclick="saveName('${key}')">💕 이 이름으로!</button>
+        <button class="btn w" onclick="closeModal();seatFirst('${key}')">그냥 ${m.hn} 로 할래요</button>
+      </div>
+    </div>`);
+  setTimeout(()=>{ const i=$('#nm-in'); if(i) i.focus(); },120);
+}
+/* 짝 고르는 화면 */
+let mixA=null, mixB=null;
+function openMixLab(slot){
+  const own=Object.keys(S.dex).filter(k=>!isMix(k)).sort((a,b)=>FL[a].i-FL[b].i);
+  const why=canMix(mixA,mixB);
+  const pick2=(cur,which)=>own.map(k=>{
+    const on=cur===k, low=hearts(k)<MIX_NEED_HEART;
+    return `<div class="mpick ${on?'on':''}" onclick="setMix('${which}','${k}')" title="${nameOf(k)}">
+      <span class="hs">${hamSVG(hamOf(k))}</span>
+      <div class="nm">${nameOf(k)}</div>
+      <div class="ht">${low?'💗0':'💗'+hearts(k)}</div>
+    </div>`;
+  }).join('');
+  openModal(`<h2>💞 짝꿍 만들기<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="mixrow">
+      <div class="mslot ${mixA?'on':''}">${mixA?`<span class="hs">${hamSVG(hamOf(mixA))}</span><b>${nameOf(mixA)}</b>`:'<span class="ph">＋</span><b>첫째</b>'}</div>
+      <span class="mplus">＋</span>
+      <div class="mslot ${mixB?'on':''}">${mixB?`<span class="hs">${hamSVG(hamOf(mixB))}</span><b>${nameOf(mixB)}</b>`:'<span class="ph">＋</span><b>둘째</b>'}</div>
+      <span class="mplus">＝</span>
+      <div class="mslot ${mixA&&mixB&&!canMix(mixA,mixB)?'on':''}">
+        ${mixA&&mixB?`<span style="font-size:26px">❔</span><b>${mixNameOf(mixA,mixB)}</b>`:'<span class="ph">?</span><b>???</b>'}
+      </div>
+    </div>
+    <div class="muted" style="text-align:center;margin:8px 0 9px;line-height:1.6">
+      ${why?why:`<b style="color:var(--acc)">${mixNameOf(mixA,mixB)}</b> 가 태어나요! 🍒${MIX_TOP} 이 들어요`}
+    </div>
+    <div class="row" style="justify-content:center;margin-bottom:10px">
+      <button class="btn ${why?'w':''}" ${why?'disabled':''} onclick="makeMix('${mixA}','${mixB}')">💞 짝지어주기 (🍒${MIX_TOP})</button>
+      ${mixA||mixB?'<button class="btn w sm" onclick="clearMix()">다시 고르기</button>':''}
+    </div>
+    <div class="card" style="margin:0">
+      <h3>🐹 첫째 고르기</h3>
+      <div class="mgrid">${pick2(mixA,'a')}</div>
+      <h3 style="margin-top:10px">🐹 둘째 고르기</h3>
+      <div class="mgrid">${pick2(mixB,'b')}</div>
+      <div class="muted" style="margin-top:8px;line-height:1.6">
+        둘 다 💗하트가 ${MIX_NEED_HEART}개 이상이어야 해요(놀이방에서 놀아주면 올라가요).<br>
+        같은 짝에서는 한 마리만 태어나요. 아이 색은 <b>부모 둘의 색을 섞어</b> 만들어집니다.
+      </div>
+    </div>`);
+}
+function clearMix(){ mixA=null; mixB=null; sfx('tap'); openMixLab(); }
+function setMix(which,k){
+  if(which==='clear'){ mixA=null; mixB=null; }
+  else if(which==='a') mixA=(mixA===k?null:k);
+  else mixB=(mixB===k?null:k);
+  sfx('tap'); openMixLab();
+}
+function openMixInfo(key){
+  const d=S.dex[key]; if(!d||!d.mix) return;
+  const m=d.mix;
+  openModal(`<h2>${nameOf(key)}<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="big">${hamSVG(hamOf(key))}</div>
+    <div style="text-align:center;font-size:13px">
+      <b style="font-size:16px">${nameOf(key)}</b>
+      <span style="font-size:14px">${'⭐'.repeat(d.g)}${'☆'.repeat(4-d.g)}</span>
+      <div class="muted" style="margin-top:2px">${SHAPES[m.shape].name}모양 · 섞은 색 · ${PATTERNS[d.p]}${wearCount(key)?' · 꾸미기 '+wearCount(key)+'가지':''}</div>
+    </div>
+    <div class="card" style="margin:9px 0 0;font-size:12.5px;line-height:1.8">
+      <div class="row" style="justify-content:center;gap:6px;align-items:center;margin-bottom:6px">
+        <span class="hs" style="width:40px;height:40px">${hamSVG(hamOf(m.a))}</span>
+        <span>＋</span>
+        <span class="hs" style="width:40px;height:40px">${hamSVG(hamOf(m.b))}</span>
+      </div>
+      👨‍👩‍👧 부모는 <b>${nameOf(m.a)}</b> 와 <b>${nameOf(m.b)}</b> 예요<br>
+      💗 친한 정도 <b>${heartStr(key)}</b> — 놀아줄 때 코인 <b>+${hearts(key)*20}%</b>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:10px">
+      <button class="btn" onclick="openCloset('${key}')">👗 꾸미기</button>
+      <button class="btn g" onclick="closeModal();seatFirst('${key}')">🏠 방에 두기</button>
+    </div>`);
+}
+
+/* ---------- 🎨 방 배경 (테마) ---------- */
 const THEMES={
   day  :{name:'낮 가게', em:'☀️', lv:1,
     v:{tsky:'#ffeef4', tsky2:'#f3e3cf', tawn1:'#ff9fba', tawn2:'#fff5f8', tawnb:'#ef8ba9',
@@ -2365,19 +3143,21 @@ const THEMES={
 };
 function themeOk(k){ return S.lv>=THEMES[k].lv; }
 function applyTheme(){
-  const t=THEMES[S.theme]||THEMES.day, r=document.documentElement.style;
+  const t=THEMES[room().theme]||THEMES.day, r=document.documentElement.style;
   Object.keys(t.v).forEach(k=>r.setProperty('--'+k, t.v[k]));
 }
 function themeSpHTML(){
-  const t=THEMES[S.theme]||THEMES.day;
+  const t=THEMES[room().theme]||THEMES.day;
   return (t.sp||[]).map(([e,l,tp,sz],i)=>
     `<span class="tsp" style="left:${l}%;top:${tp}%;font-size:${sz}px;animation-delay:${(i*0.4).toFixed(1)}s">${e}</span>`).join('');
 }
 function setTheme(k){
   if(!THEMES[k]) return;
   if(!themeOk(k)){ sfx('boo'); toast(`🔒 가게 Lv.${THEMES[k].lv} 가 되면 고를 수 있어요`); return; }
-  S.theme=k; applyTheme(); sfx('star4'); vib(20); checkBadges(); save(); renderView();
-  toast(`${THEMES[k].em} 테라스를 <b>${THEMES[k].name}</b> 로 바꿨어요!`);
+  room().theme=k; applyTheme(); sfx('star4'); vib(20); checkBadges(); save(); renderView();
+  /* 🎨 창을 열어둔 채로 골랐으면 고른 표시만 새로 그린다 */
+  if($('#veil').classList.contains('on')) openRoomDeco();
+  toast(`${THEMES[k].em} <b>${roomName()}</b> 배경을 ${THEMES[k].name} 로 바꿨어요!`);
 }
 
 /* ---------- ⚙️ 설정 · 저장 코드 ---------- */
@@ -2495,16 +3275,19 @@ function openModal(html){
     if(!_backArmed){ _backArmed=true; try{ history.pushState({m:1},''); }catch(e){} }
   }
 }
+let _selfBack=0;                     /* 내가 부른 뒤로가기가 몇 개 날아가 있는지 */
 function closeModal(fromBack){
   const veil=$('#veil');
   if(!veil.classList.contains('on')){ _backArmed=false; return; }
   veil.classList.remove('on');
   if(_backArmed){
     _backArmed=false;
-    if(!fromBack) try{ history.back(); }catch(e){}
+    if(!fromBack){ _selfBack++; try{ history.back(); }catch(e){} }
   }
 }
 window.addEventListener('popstate',()=>{
+  /* 창을 닫으려고 내가 부른 뒤로가기라면 여기서 끝 — 탭까지 움직이면 안 된다 */
+  if(_selfBack>0){ _selfBack--; return; }
   if($('#veil').classList.contains('on')){ closeModal(true); return; }   /* 창만 닫고 앱은 그대로 */
   /* 다른 탭에 있었다면 먼저 첫 탭으로 — 실수로 앱이 닫히는 것을 막는다 */
   if(typeof tab!=='undefined' && tab!=='scoop'){
