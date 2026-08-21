@@ -1033,6 +1033,27 @@ const WEAR={
       <path d="M${x+1.5} ${y-18} C${x-8} ${y-26} ${x-8} ${y-36} ${x+1.5} ${y-32}
                C${x+11} ${y-36} ${x+11} ${y-26} ${x+1.5} ${y-18} Z" fill="#ff9fc0" stroke="#e5799f" stroke-width="1.2"/>
       <ellipse cx="${x-2}" cy="${y-29}" rx="2.2" ry="2.8" fill="#fff" opacity=".65"/>`},
+    dotumb:{name:'물방울 우산', em:'💧', coin:600, d:(x,y)=>`
+      <path d="M${x} ${y+5} v-17" stroke="#8a6a44" stroke-width="2" stroke-linecap="round"/>
+      <path d="M${x} ${y+5} q4 3 0 5" stroke="#8a6a44" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M${x-13} ${y-12} a13 11 0 0 1 26 0 z" fill="#9fd0f2" stroke="#5f9ec9" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle cx="${x-6}" cy="${y-15}" r="1.9" fill="#fff" opacity=".85"/>
+      <circle cx="${x+1}" cy="${y-19}" r="1.6" fill="#fff" opacity=".85"/>
+      <circle cx="${x+7}" cy="${y-15}" r="1.9" fill="#fff" opacity=".85"/>`},
+    rainbowumb:{name:'무지개 우산', em:'🌈', coin:900, d:(x,y)=>`
+      <path d="M${x} ${y+5} v-17" stroke="#8a6a44" stroke-width="2" stroke-linecap="round"/>
+      <path d="M${x} ${y+5} q4 3 0 5" stroke="#8a6a44" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M${x-13} ${y-12} a13 11 0 0 1 26 0 z" fill="#8fc2f0"/>
+      <path d="M${x} ${y-23} Q${x-11} ${y-20} ${x-13} ${y-12} L${x-6.5} ${y-12.8} Q${x-5} ${y-19} ${x} ${y-23} Z" fill="#ff8fae"/>
+      <path d="M${x} ${y-23} Q${x-5} ${y-19} ${x-6.5} ${y-12.8} L${x} ${y-13.2} Z" fill="#ffd75e"/>
+      <path d="M${x} ${y-23} Q${x+5} ${y-19} ${x+6.5} ${y-12.8} L${x} ${y-13.2} Z" fill="#8fd88f"/>
+      <path d="M${x-13} ${y-12} a13 11 0 0 1 26 0 z" fill="none" stroke="#7b93ab" stroke-width="1.2" stroke-linejoin="round"/>`},
+    rainumb:{name:'노란 우산', em:'☔', coin:350, d:(x,y)=>`
+      <path d="M${x} ${y+5} v-17" stroke="#8a6a44" stroke-width="2" stroke-linecap="round"/>
+      <path d="M${x} ${y+5} q4 3 0 5" stroke="#8a6a44" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M${x-13} ${y-12} a13 11 0 0 1 26 0 z" fill="#ffd75e" stroke="#d8a72b" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M${x-13} ${y-12} q6.5 -3 6.5 -11 M${x} ${y-23} v11 M${x+13} ${y-12} q-6.5 -3 -6.5 -11"
+            stroke="#d8a72b" stroke-width="1" fill="none"/>`},
     umbrella:{name:'꽃 우산', em:'☂️', coin:1400, d:(x,y)=>`
       <path d="M${x} ${y+5} v-17" stroke="#a2743f" stroke-width="2" stroke-linecap="round"/>
       <path d="M${x} ${y+5} q4 3 0 5" stroke="#a2743f" stroke-width="2" fill="none" stroke-linecap="round"/>
@@ -1266,7 +1287,15 @@ const ROOMS=[
   {dn:'넷째 방', lv:15}
 ];
 function roomOk(i){ return !!ROOMS[i] && S.lv>=ROOMS[i].lv; }
-function openRooms(){ return ROOMS.filter((r,i)=>roomOk(i)).length; }
+/* 열린 방은 「개수」가 아니라 「번호 목록」으로 다룬다 — 레벨 순서가 아닌 방이 생겨도 안 어긋난다 */
+function openIdx(){ const a=[]; for(let i=0;i<ROOMS.length;i++) if(roomOk(i)) a.push(i); return a; }
+function openRooms(){ return openIdx().length; }
+/* 아직 안 열린 방 중 제일 먼저 열리는 것 */
+function nextRoom(){
+  let best=null;
+  ROOMS.forEach((r,i)=>{ if(!roomOk(i) && (!best||r.lv<best.lv)) best=r; });
+  return best;
+}
 /* 방 한 칸을 꺼낸다 — 없으면 그때 만든다 */
 function room(i){
   if(i===undefined) i=S.room|0;
@@ -1299,17 +1328,18 @@ function seatArr(){ return room().seat; }
 function roomHams(i){ return room(i).seat.slice(0,seats()).filter(k=>k&&S.dex[k]); }
 /* 모든 방을 돌며 그 햄쮜가 어디에 있는지 찾는다 */
 function whereSeated(k){
-  for(let i=0;i<openRooms();i++){
-    const j=room(i).seat.indexOf(k);
-    if(j>=0) return {r:i, s:j};
+  const a=openIdx();
+  for(let n=0;n<a.length;n++){
+    const j=room(a[n]).seat.indexOf(k);
+    if(j>=0) return {r:a[n], s:j};
   }
   return null;
 }
 function unseat(k){
-  for(let i=0;i<openRooms();i++){
+  openIdx().forEach(i=>{
     const s=room(i).seat;
     s.forEach((x,j)=>{ if(x===k) s[j]=null; });
-  }
+  });
 }
 function goRoom(i){
   if(!roomOk(i)){ sfx('boo'); toast(`🔒 가게 Lv.${ROOMS[i].lv} 가 되면 열려요`); return; }
@@ -1335,8 +1365,9 @@ function napLeft(){ return Math.max(0,(S.play&&S.play.napTill||0)-Date.now()); }
 /* noBuff=true 면 낮잠 보너스를 빼고 센다 — 안 보던 동안의 계산에 두 배를 소급하면 안 된다 */
 function autoIncome(noBuff){
   let c=0;
-  for(let i=0;i<openRooms();i++)
+  openIdx().forEach(i=>{
     roomHams(i).forEach(k=>{ c+=S.dex[k].g*(1+0.3*hearts(k))*0.3; });
+  });
   const buff=(!noBuff && napLeft())?NAP_MUL:1;
   return c*(1+upgLv('regul')*0.25)*(1+S.lv*0.08)*buff;
 }
@@ -1536,7 +1567,9 @@ const COUPONS={
   '김찌돌라빈스31':{em:'🍨', name:'김찌돌라빈스 31호점 개점 축하', coin:3100, top:31,
                       wear:['hat_party','neck_lei'], tub:['galaxy'], furn:['sign']},
   '엽떡먹은찌동이':{em:'🌶️', name:'엽떡 먹고 딸기우유', coin:2000, top:20,
-                      wear:['hat_bunny','neck_bell'], tub:['strawm'], furn:['tv']}
+                      wear:['hat_bunny','neck_bell'], tub:['strawm'], furn:['tv']},
+  '햄찌에게우산선물':{em:'☔', name:'햄찌에게 우산 선물',
+                      wear:['hand_rainumb','hand_dotumb','hand_rainbowumb','hand_umbrella']}
 };
 function openCoupon(){
   const used=(S.coupon||[]).filter(c=>COUPONS[c]);
@@ -1898,7 +1931,8 @@ function seatFirst(k){
   /* 지금 방에 빈자리가 없으면 다른 방의 빈자리를 찾아본다 */
   let ri=S.room|0, i=room(ri).seat.findIndex(x=>!x);
   if(i<0){
-    for(let j=0;j<openRooms();j++){ const s=room(j).seat.findIndex(x=>!x); if(s>=0){ ri=j; i=s; break; } }
+    const oa=openIdx();
+    for(let n=0;n<oa.length;n++){ const s=room(oa[n]).seat.findIndex(x=>!x); if(s>=0){ ri=oa[n]; i=s; break; } }
   }
   if(i<0){ go('play'); toast('방이 다 꽉 찼어요 — 자리를 눌러 바꿔주세요'); return; }
   room(ri).seat[i]=k; S.room=ri; applyTheme(); save(); go('play');
@@ -2059,7 +2093,7 @@ function spotOf(sk){ return SPOTS.find(s=>s.k===sk); }
 /* 이 방의 어느 자리에 무엇이 놓여 있는지 */
 function furnAt(sk,i){ const v=room(i).spot[sk]; return (v && FURN[v])?v:null; }
 /* 네 자리를 다 채운 방의 수 */
-function roomsDone(){ let n=0; for(let i=0;i<openRooms();i++) if(SPOT_KEYS.every(sk=>furnAt(sk,i))) n++; return n; }
+function roomsDone(){ let n=0; openIdx().forEach(i=>{ if(SPOT_KEYS.every(sk=>furnAt(sk,i))) n++; }); return n; }
 /* 빈 자리에 가진 가구 중 제일 좋은 것을 알아서 놓는다 (옛 저장본 옮길 때만 쓴다) */
 function autoFurn(i){
   const r=room(i);
@@ -2415,7 +2449,7 @@ function renderPlayTab(){
       — <b>모든 방</b>의 햄쮜가 함께 벌어줘요
       ${napLeft()?`<br>😴 낮잠 중이라 <b>${NAP_MUL}배</b>로 모여요 (${Math.ceil(napLeft()/1000)}초 남음)`:''}
       ${seats()<6?'<br>🪑 자리는 🛒상점의 <b>자리 늘리기</b> 로 늘려요 (모든 방이 같이 늘어나요)':''}
-      ${openRooms()<ROOMS.length?`<br>🔒 다음 방 <b>${ROOMS[openRooms()].dn}</b> — 가게 Lv.${ROOMS[openRooms()].lv}`:''}
+      ${nextRoom()?`<br>🔒 다음 <b>${nextRoom().dn}</b> — 가게 Lv.${nextRoom().lv}`:''}
       ${emptySpots?`<br>🛋️ <b>${roomName()}</b> 에 빈 자리가 ${emptySpots}곳 있어요 —
         <span style="text-decoration:underline;cursor:pointer" onclick="openRoomDeco()">🎨 방 꾸미기</span> 에서 가구를 놓아요`
        :`<br>🛋️ 가구 ${furnCount()} / ${FURN_KEYS.length}가지 — 🎨 방 꾸미기 에서 바꿔 놓을 수 있어요`}
