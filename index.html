@@ -388,6 +388,15 @@ header{margin-bottom:8px}
 .dcard .hs{width:100%;aspect-ratio:1;display:block}
 .dcard .nm{font-size:10px;font-weight:700;line-height:1.2;word-break:keep-all}
 .dcard .st{position:absolute;left:3px;top:2px;font-size:8.5px;color:var(--gold);letter-spacing:-1.5px}
+/* 🕵️탐정 힌트가 하트·짝꿍·특별 햄쮜를 물어보므로 카드에서 그것들이 보여야 한다.
+   하트를 💗🤍 다섯 개로 늘어놓으면 카드가 좁아서 8px 밖에 안 되고, 🤍는 흰 카드에 묻혀
+   아예 안 보인다 → 「💗3」 처럼 개수로 적고 글자를 키운다.
+   카드가 아주 좁을 때 「💗」와 숫자가 두 줄로 쪼개지므로 nowrap 으로 한 줄에 붙여둔다. */
+.dcard .ht{
+  display:inline-block;margin-top:2px;font-size:12px;font-weight:800;line-height:1.4;
+  white-space:nowrap;color:var(--ink);background:var(--line);border-radius:999px;padding:0 7px
+}
+.dcard .kd{position:absolute;left:3px;bottom:2px;font-size:9px;line-height:1;z-index:2}
 .dcard .qm{font-size:30px;line-height:1.9;opacity:.35}
 .dcard .chk{position:absolute;right:3px;top:1px;font-size:13px;z-index:2}
 .dcard.g5{border-color:#e98cc8;background:linear-gradient(#fff0fa,#ffe4f4,#e9f2ff)}
@@ -4285,8 +4294,11 @@ function drawDet(pay){
                  onclick="${done?'':`detPick('${k}')`}">
       ${done&&k===dg.who?'<span class="chk">🕵️</span>':''}
       <span class="st">${'★'.repeat(S.dex[k].g)}</span>
+      ${isSp(k)?'<span class="kd" title="특별 햄쮜">🎁</span>'
+        :isMix(k)?'<span class="kd" title="짝꿍에서 나온 햄쮜">💞</span>':''}
       <span class="hs">${hamSVG(hamOf(k))}</span>
       <div class="nm">${nameOf(k)}</div>
+      <span class="ht">💗${hearts(k)}</span>
     </div>`;
   }).join('');
   const clues=dg.clues.map((c,i)=>i<dg.open
@@ -4298,6 +4310,7 @@ function drawDet(pay){
   openModal(`<h2>🕵️ 햄쮜 탐정<span class="x" onclick="closeModal()">닫기</span></h2>
     <div class="muted" style="line-height:1.7;margin-bottom:8px">
       🍨 <b>아이스크림 한 통이 사라졌어요!</b> 힌트를 읽고 범인 햄쮜를 찾아주세요.
+      <br><span style="font-size:.94em">카드에 ★별 · 💗하트 · 🎁특별 · 💞짝꿍 이 적혀 있어요 — 힌트와 맞춰보세요!</span>
       <br>오늘 남은 판 <b>${detLeft()}</b> / ${detMax()} · 지금까지 맞힌 것 <b>${S.det.all||0}</b>번
       ${done?'':`<br>고를 기회는 <b>두 번</b>이에요 ${dg.tries?'— 한 번 틀렸어요!':''}`}
     </div>
@@ -5036,7 +5049,7 @@ function openMixLab(slot){
     return `<div class="mpick ${on?'on':''}" onclick="setMix('${which}','${k}')" title="${nameOf(k)}">
       <span class="hs">${hamSVG(hamOf(k))}</span>
       <div class="nm">${nameOf(k)}</div>
-      <div class="ht">${low?'💗0':'💗'+hearts(k)}</div>
+      <div class="ht">💗${hearts(k)}${low?' <span style="color:var(--no)">부족</span>':''}</div>
     </div>`;
   }).join('');
   openModal(`<h2>💞 짝꿍 만들기<span class="x" onclick="closeModal()">닫기</span></h2>
