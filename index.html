@@ -176,7 +176,7 @@ header{margin-bottom:8px}
 .tub.locked{opacity:.42;cursor:pointer}
 
 /* ---------- 🏠 방 고르기 줄 ---------- */
-.rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:7px}
+.rooms{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:7px}
 .rooms>div{
   background:var(--card);border:2px solid var(--line);border-radius:13px;padding:5px 2px 4px;
   text-align:center;font-size:10.5px;font-weight:700;cursor:pointer;box-shadow:var(--sh);
@@ -215,9 +215,42 @@ header{margin-bottom:8px}
     repeating-conic-gradient(var(--tflo1) 0 25%, var(--tflo2) 0 50%) 0 0/28px 28px;
   border-top:3px solid var(--tflob)
 }
+/* 🌳 마당 — 차양이 없고 바닥이 잔디다 */
+#terrace.yard{background:linear-gradient(var(--tsky) 0 52%,var(--tsky2) 52%)}
+#terrace.yard .floor{
+  height:50%;
+  background:
+    repeating-linear-gradient(84deg,rgba(255,255,255,.22) 0 3px,transparent 3px 11px),
+    repeating-conic-gradient(var(--tflo1) 0 25%, var(--tflo2) 0 50%) 0 0/34px 34px
+}
+#terrace.yard .hint{top:8px}
+#terrace.yard #photocam{top:8px}
+/* 날씨 그림은 흐릿해지면 못 알아보니 또렷하게 둔다 */
+#terrace.yard .tsp{animation:twk2 3.4s ease-in-out infinite}
+@keyframes twk2{0%,100%{opacity:.8;transform:scale(.96)}50%{opacity:1;transform:scale(1.1)}}
+#terrace.yard .deco{z-index:2}
 /* 테마마다 하늘에 뜨는 작은 장식 */
 #terrace .tsp{position:absolute;line-height:1;z-index:1;animation:twk 2.6s ease-in-out infinite}
-#terrace .deco{position:absolute;transform:translateX(-50%);line-height:1;filter:drop-shadow(0 2px 1px rgba(140,90,100,.2))}
+#terrace .deco{position:absolute;transform:translateX(-50%);line-height:1;z-index:1;
+  filter:drop-shadow(0 2px 1px rgba(140,90,100,.2))}   /* 배경보다 위, 햄쮜(z 3~7)보다 아래 */
+/* 눌러서 노는 것은 살짝 흔들려서 눌러보라고 알려준다 */
+#terrace .deco.tapme{cursor:pointer;animation:tapme 2.4s ease-in-out infinite}
+#terrace .deco.rbounce{animation:rbounce .85s ease-out}
+@keyframes tapme{0%,86%,100%{transform:translateX(-50%) rotate(0)}90%{transform:translateX(-50%) rotate(-7deg) scale(1.06)}95%{transform:translateX(-50%) rotate(7deg) scale(1.06)}}
+@keyframes rbounce{0%,100%{transform:translateX(-50%) scale(1)}30%{transform:translateX(-50%) scale(1.24) rotate(-8deg)}60%{transform:translateX(-50%) scale(1.1) rotate(6deg)}}
+/* 🛝 마당 놀이기구 — 큰 그림. 누르면 햄쮜가 걸어가서 타고 논다 */
+#terrace.yard{height:344px}
+#terrace .ride{
+  position:absolute;transform:translateX(-50%);line-height:0;z-index:2;cursor:pointer;
+  filter:drop-shadow(0 3px 2px rgba(120,80,90,.22));animation:rideidle 3.2s ease-in-out infinite
+}
+#terrace .ride svg{display:block;width:100%;height:auto}
+#terrace .ride.rbounce{animation:rbounce .9s ease-out}
+@keyframes rideidle{0%,92%,100%{transform:translateX(-50%) rotate(0)}96%{transform:translateX(-50%) rotate(-1.2deg)}}
+/* 타는 동안은 놀이기구보다 앞에 — 사다리·활강로 위에 올라탄 게 보이게 */
+#terrace .tham.riding{z-index:9;animation-play-state:paused} /* 산책을 멈춰야 타는 자리가 흔들리지 않는다 */
+#terrace .tham.riding .hs{animation:none}
+#terrace .tham.riding .hb{opacity:0}          /* 타는 중에는 말풍선만 감춘다 */
 #terrace .hint{
   position:absolute;left:8px;top:41px;font-size:10.5px;color:#8a4a67;z-index:5;
   background:rgba(255,255,255,.85);border-radius:9px;padding:2px 7px
@@ -356,6 +389,8 @@ header{margin-bottom:8px}
 .dcard .nm{font-size:10px;font-weight:700;line-height:1.2;word-break:keep-all}
 .dcard .st{position:absolute;left:3px;top:2px;font-size:8.5px;color:var(--gold);letter-spacing:-1.5px}
 .dcard .qm{font-size:30px;line-height:1.9;opacity:.35}
+.dcard .chk{position:absolute;right:3px;top:1px;font-size:13px;z-index:2}
+.dcard.g5{border-color:#e98cc8;background:linear-gradient(#fff0fa,#ffe4f4,#e9f2ff)}
 .dcard.g4{border-color:#f0c65a;background:linear-gradient(#fffaeb,#fff3d4)}
 .dcard.g3{border-color:#d3b6ec}
 
@@ -459,13 +494,11 @@ header{margin-bottom:8px}
   repeating-linear-gradient(-45deg,rgba(140,88,36,.32) 0 2px,transparent 2px 8px),
   linear-gradient(#e9b77a,#c68c4c)}
 .cone.rain{background:linear-gradient(90deg,#ff9fba 0 20%,#ffd98a 20% 40%,#a8e6a3 40% 60%,#9fd4f5 60% 80%,#cbaaf0 80% 100%)}
-.cone.cupc{
-  height:42px;margin-top:12px;
-  background:linear-gradient(#fffdfb,#ffe0ea);border:2.5px solid #f0a8c4;
-  border-radius:7px 7px 42% 42%/7px 7px 24px 24px
-}
+/* 예쁜 컵은 SVG 로 그린다 — 굽 달린 파르페 컵 */
+.cone.cupc{height:58px;margin-top:4px;background:none;border:0;border-radius:0}
+.cone.cupc svg{display:block;width:100%;height:100%;overflow:visible}
 .cone.sm{width:30px;height:34px;margin:0 auto 3px}
-.cone.cupc.sm{height:26px;margin-top:8px;border-width:2px;border-radius:5px 5px 42% 42%/5px 5px 15px 15px}
+.cone.cupc.sm{height:37px;margin:0 auto 1px}
 @keyframes icpop{from{transform:scale(.4) translateY(-9px);opacity:0}to{transform:scale(1);opacity:1}}
 .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
 .opts.c3{grid-template-columns:repeat(3,1fr)}
@@ -635,6 +668,7 @@ nav .dot{position:absolute;top:5px;right:22%;width:8px;height:8px;border-radius:
 .rcard{border:2px solid var(--line);background:var(--card);border-radius:13px;padding:4px 2px;text-align:center;box-shadow:var(--sh)}
 .rcard .hs{width:100%;aspect-ratio:1;display:block}
 .rcard .nm{font-size:9.5px;font-weight:700;word-break:keep-all;line-height:1.2}
+.rcard.g5{border-color:#e98cc8;background:linear-gradient(#fff0fa,#ffe4f4,#e9f2ff)}
 .rcard.g4{border-color:#f0c65a;background:linear-gradient(#fffaeb,#fff3d4)}
 .rcard.g3{border-color:#d3b6ec}
 #toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:120;display:flex;flex-direction:column;gap:5px;align-items:center;pointer-events:none;width:92%;max-width:420px}
@@ -726,8 +760,10 @@ function cdLabel(ms){
 }
 function fmt(n){
   n=Math.floor(n);
-  if(n>=100000000) return (n/100000000).toFixed(2).replace(/\.?0+$/,'')+'억';
-  if(n>=10000) return (n/10000).toFixed(n>=100000?0:2).replace(/\.?0+$/,'')+'만';
+  /* 소수점 뒤의 0 만 지운다 — 예전엔 정수 끝의 0 까지 지워서 300만이 「3만」으로 나왔다 */
+  const cut=t=>t.replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');
+  if(n>=100000000) return cut((n/100000000).toFixed(2))+'억';
+  if(n>=10000) return cut((n/10000).toFixed(n>=100000?0:2))+'만';
   return n.toLocaleString('ko-KR');
 }
 function toast(msg){
@@ -866,6 +902,324 @@ const SHAPES={
              <circle cx="50" cy="27" r="3.8" fill="${c.light}" opacity=".65"/>`,
     face:{x:50,y:46,s:.93}, feet:0, tail:0},
 
+  /* ---- 🍨 통마다 저만의 모양 ----
+     통 50가지가 「색만 다른 같은 애」로 보이지 않게 통마다 모양을 따로 그렸다.
+     규칙 두 가지 — 실루엣은 그 맛(과일·과자)을 닮게, 귀와 얼굴은 그대로 둬서 햄쮜로 보이게. */
+
+  bean:{name:'초코블록', w:32, top:26,
+    body:f=>`<rect x="17" y="33" width="66" height="55" rx="9" ${f}/>`,
+    ears:c=>`<rect x="19" y="19" width="19" height="18" rx="5" fill="${c.base}"/><rect x="62" y="19" width="19" height="18" rx="5" fill="${c.base}"/>
+             <rect x="24" y="24" width="9" height="8" rx="3" fill="${c.cheek}"/><rect x="67" y="24" width="9" height="8" rx="3" fill="${c.cheek}"/>`,
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2" opacity=".45" fill="none"><path d="M50 33 V88 M17 60.5 H83"/></g>`,
+    face:{x:50,y:57,s:1}, feet:1, tail:0},
+
+  bottle:{name:'우유병', w:24, top:15,
+    body:f=>`<path d="M41 22 h18 v9 q13 8 13 25 v20 q0 12 -12 12 h-20 q-12 0 -12 -12 v-20 q0 -17 13 -25 z" ${f}/>`,
+    ears:c=>`<ellipse cx="33" cy="27" rx="9" ry="9" fill="${c.base}"/><ellipse cx="67" cy="27" rx="9" ry="9" fill="${c.base}"/>
+             <circle cx="33" cy="27" r="4.4" fill="${c.cheek}"/><circle cx="67" cy="27" r="4.4" fill="${c.cheek}"/>`,
+    deco:c=>`<rect x="38" y="18" width="24" height="6" rx="3" fill="${c.light}" stroke="${c.dark}" stroke-width="1.6" stroke-opacity=".4"/>`,
+    face:{x:50,y:62,s:.95}, feet:1, tail:0, shine:1},
+
+  bunch:{name:'포도송이', w:34, top:20, grp:1,
+    body:f=>`<g ${f}><circle cx="50" cy="35" r="13"/><circle cx="33" cy="51" r="14"/><circle cx="67" cy="51" r="14"/>
+             <circle cx="41" cy="69" r="13"/><circle cx="59" cy="69" r="13"/><circle cx="50" cy="84" r="10.5"/></g>`,
+    ears:c=>`<path d="M44 22 q-13 -12 -22 -6 q4 12 20 11 z" fill="#8ac888"/><path d="M56 22 q13 -12 22 -6 q-4 12 -20 11 z" fill="#8ac888"/>`,
+    face:{x:50,y:52,s:.9}, feet:0, tail:0},
+
+  cookie:{name:'쿠키', w:34, top:22,
+    /* 오른쪽 위를 한 입 베어 먹었다 — 동그란 애들과 실루엣이 확실히 달라진다 */
+    body:f=>`<path d="M74 39 a10 10 0 0 1 -9 -12 A32 32 0 1 0 82 51 a10 10 0 0 1 -8 -12 z" ${f}/>`,
+    ears:c=>`<circle cx="25" cy="32" r="11" fill="${c.base}"/>
+             <circle cx="25" cy="32" r="5.4" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="#6b4526" opacity=".72"><circle cx="27" cy="52" r="3.4"/><circle cx="72" cy="49" r="3"/>
+             <circle cx="34" cy="76" r="3.2"/><circle cx="66" cy="78" r="2.8"/><circle cx="50" cy="83" r="2.6"/></g>`,
+    face:{x:50,y:56,s:.98}, feet:1, tail:1},
+
+  fizz:{name:'탄산방울', w:36, top:24, grp:1,
+    body:f=>`<g ${f}><circle cx="50" cy="62" r="27"/><circle cx="27" cy="41" r="11"/><circle cx="72" cy="39" r="9"/><circle cx="50" cy="31" r="8"/></g>`,
+    ears:c=>``,
+    deco:c=>`<g fill="#fff" opacity=".55"><circle cx="38" cy="74" r="4"/><circle cx="62" cy="78" r="3.2"/><circle cx="52" cy="83" r="2.6"/></g>`,
+    face:{x:50,y:60,s:.96}, feet:0, tail:0, shine:1},
+
+  melon:{name:'멜론', w:34, top:20,
+    body:f=>`<ellipse cx="50" cy="60" rx="34" ry="30" ${f}/>`,
+    /* 귀 대신 꼭지 잎 — 멜론다운 실루엣 */
+    ears:c=>`<path d="M50 32 q-16 -14 -26 -6 q5 14 24 12 z" fill="#8ac888"/>
+             <path d="M50 32 q16 -14 26 -6 q-5 14 -24 12 z" fill="#7cbf7a"/>
+             <rect x="47" y="20" width="6" height="14" rx="3" fill="#6fae6d"/>`,
+    deco:c=>`<g stroke="${c.light}" stroke-width="2.4" fill="none" opacity=".85">
+             <path d="M22 44 q14 8 28 0 q14 -8 28 0"/><path d="M20 58 h60"/><path d="M22 72 q14 -8 28 0 q14 8 28 0"/>
+             <path d="M50 27 V89"/></g>`,
+    face:{x:50,y:57,s:.98}, feet:1, tail:1},
+
+  lemon:{name:'레몬', w:34, top:22,
+    body:f=>`<path d="M50 26 q28 4 32 30 q-4 26 -32 30 q-28 -4 -32 -30 q4 -26 32 -30 z" ${f}/>`,
+    ears:c=>`<ellipse cx="31" cy="29" rx="9" ry="8.6" fill="${c.base}" transform="rotate(-20 31 29)"/>
+             <ellipse cx="69" cy="29" rx="9" ry="8.6" fill="${c.base}" transform="rotate(20 69 29)"/>
+             <circle cx="31" cy="29" r="4.2" fill="${c.cheek}"/><circle cx="69" cy="29" r="4.2" fill="${c.cheek}"/>`,
+    deco:c=>`<ellipse cx="50" cy="24" rx="4" ry="3" fill="${c.dark}" opacity=".6"/>`,
+    face:{x:50,y:57,s:.96}, feet:1, tail:1},
+
+  kiwi:{name:'키위', w:34, top:22,
+    /* 가로로 자른 단면이라 넓적하다 */
+    body:f=>`<ellipse cx="50" cy="60" rx="38" ry="27" ${f}/>`,
+    ears:c=>`<ellipse cx="20" cy="40" rx="8" ry="7" fill="${c.base}" transform="rotate(-30 20 40)"/>
+             <ellipse cx="80" cy="40" rx="8" ry="7" fill="${c.base}" transform="rotate(30 80 40)"/>
+             <circle cx="20" cy="40" r="3.6" fill="${c.cheek}"/><circle cx="80" cy="40" r="3.6" fill="${c.cheek}"/>`,
+    /* 키위 단면 — 가운데 흰 심에 씨가 둘러 있다 */
+    deco:c=>`<ellipse cx="50" cy="60" rx="29" ry="20" fill="${c.light}" opacity=".45"/>
+             <ellipse cx="50" cy="60" rx="6" ry="6" fill="#fff" opacity=".8"/>
+             <g fill="#4a3a22" opacity=".72">${[0,1,2,3,4,5,6,7,8,9].map(i=>{const a=i*Math.PI/5;
+               return `<ellipse cx="${(50+Math.cos(a)*20).toFixed(1)}" cy="${(60+Math.sin(a)*14).toFixed(1)}" rx="1.6" ry="2.4"/>`;}).join('')}</g>`,
+    face:{x:50,y:58,s:.94}, feet:1, tail:1},
+
+  berry:{name:'블루베리', w:32, top:22,
+    /* 꼭지 쪽이 납작하게 눌린 열매 */
+    body:f=>`<path d="M50 28 q31 0 32 32 q1 29 -32 29 q-33 0 -32 -29 q1 -32 32 -32 z" ${f}/>`,
+    ears:c=>`<circle cx="26" cy="36" r="9.4" fill="${c.base}"/><circle cx="74" cy="36" r="9.4" fill="${c.base}"/>
+             <circle cx="26" cy="36" r="4.4" fill="${c.cheek}"/><circle cx="74" cy="36" r="4.4" fill="${c.cheek}"/>`,
+    /* 블루베리 꼭지의 별 모양 홈 */
+    deco:c=>`<ellipse cx="50" cy="33" rx="9" ry="4.6" fill="${c.dark}" opacity=".28"/>
+             <g stroke="${c.dark}" stroke-width="1.8" opacity=".5" stroke-linecap="round">
+             ${[0,1,2,3,4].map(i=>{const a=-Math.PI/2+i*2*Math.PI/5;
+               return `<path d="M50 33 l${(Math.cos(a)*6.4).toFixed(1)} ${(Math.sin(a)*3.4).toFixed(1)}"/>`;}).join('')}</g>`,
+    face:{x:50,y:61,s:.96}, feet:1, tail:1},
+
+  leafy:{name:'찻잎', w:30, top:18,
+    body:f=>`<path d="M50 15 q34 20 30 44 q-4 24 -30 27 q-26 -3 -30 -27 q-4 -24 30 -44 z" ${f}/>`,
+    ears:c=>``,
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2" fill="none" opacity=".4" stroke-linecap="round">
+             <path d="M50 26 V84"/><path d="M50 46 l-13 -8 M50 46 l13 -8 M50 62 l-15 -7 M50 62 l15 -7 M50 76 l-11 -6 M50 76 l11 -6"/></g>`,
+    face:{x:50,y:56,s:.9}, feet:0, tail:1},
+
+  pine:{name:'파인애플', w:30, top:14,
+    body:f=>`<rect x="21" y="36" width="58" height="54" rx="22" ${f}/>`,
+    ears:c=>`<g fill="#8ac888" stroke="#5f9c5c" stroke-width="1.4" stroke-linejoin="round">
+             <path d="M50 36 L36 10 L45 30 L41 5 L52 28 L59 5 L55 30 L64 10 Z"/></g>`,
+    deco:c=>`<g stroke="${c.dark}" stroke-width="1.7" fill="none" opacity=".45">
+             <path d="M28 48 L72 72 M28 62 L72 86 M28 76 L60 94 M72 48 L28 72 M72 62 L28 86 M72 76 L40 94"/></g>`,
+    face:{x:50,y:60,s:.94}, feet:1, tail:0},
+
+  orange:{name:'오렌지', w:34, top:20,
+    body:f=>`<circle cx="50" cy="60" r="31" ${f}/>`,
+    /* 한쪽 귀는 초록 잎 — 꼭지 달린 오렌지처럼 */
+    ears:c=>`<ellipse cx="24" cy="36" rx="10" ry="9" fill="${c.base}"/>
+             <circle cx="24" cy="36" r="4.6" fill="${c.cheek}"/>
+             <rect x="47" y="22" width="6" height="12" rx="3" fill="#7d9c5c"/>
+             <path d="M53 26 q16 -10 24 -2 q-11 11 -24 4 z" fill="#8ac888"/>`,
+    /* 껍질을 벗긴 오렌지 조각선 */
+    deco:c=>`<g stroke="${c.light}" stroke-width="2.6" opacity=".75" stroke-linecap="round">
+             ${[0,1,2,3,4,5].map(i=>{const a=i*Math.PI/6-Math.PI/2;
+               return `<path d="M${(50-Math.cos(a)*24).toFixed(1)} ${(60-Math.sin(a)*24).toFixed(1)} L${(50+Math.cos(a)*24).toFixed(1)} ${(60+Math.sin(a)*24).toFixed(1)}"/>`;}).join('')}</g>`,
+    face:{x:50,y:60,s:.96}, feet:1, tail:1},
+
+  cherry:{name:'체리', w:30, top:22, grp:1,
+    body:f=>`<g ${f}><circle cx="35" cy="66" r="21"/><circle cx="68" cy="63" r="18"/></g>`,
+    ears:c=>`<g stroke="#5f9c5c" stroke-width="3.2" fill="none" stroke-linecap="round">
+             <path d="M35 45 q2 -18 15 -22"/><path d="M68 45 q-2 -16 -18 -22"/></g>
+             <path d="M50 23 q11 -6 15 3 q-11 5 -15 -3 z" fill="#8ac888"/>`,
+    face:{x:38,y:64,s:.86}, feet:0, tail:0, shine:1},
+
+  plum:{name:'자두', w:33, top:22,
+    body:f=>`<path d="M50 25 q30 2 32 30 q2 28 -32 33 q-34 -5 -32 -33 q2 -28 32 -30 z" ${f}/>`,
+    ears:c=>`<ellipse cx="28" cy="32" rx="10" ry="9" fill="${c.base}"/><ellipse cx="72" cy="32" rx="10" ry="9" fill="${c.base}"/>
+             <circle cx="28" cy="32" r="4.6" fill="${c.cheek}"/><circle cx="72" cy="32" r="4.6" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M50 28 q-6 26 0 58" stroke="${c.dark}" stroke-width="2.6" fill="none" opacity=".4"/>`,
+    face:{x:50,y:58,s:.96}, feet:1, tail:1},
+
+  cube:{name:'카라멜', w:32, top:24, grp:1,
+    body:f=>`<g ${f}><path d="M22 40 L50 28 L78 40 L50 52 Z"/><rect x="22" y="40" width="56" height="46" rx="5"/></g>`,
+    ears:c=>`<rect x="24" y="20" width="16" height="15" rx="4" fill="${c.base}"/><rect x="60" y="20" width="16" height="15" rx="4" fill="${c.base}"/>`,
+    deco:c=>`<path d="M22 40 L50 52 L78 40" stroke="${c.dark}" stroke-width="2" fill="none" opacity=".4"/>
+             <path d="M50 52 V86" stroke="${c.dark}" stroke-width="1.8" fill="none" opacity=".25"/>`,
+    face:{x:50,y:64,s:.94}, feet:1, tail:0},
+
+  pear:{name:'청포도배', w:30, top:16,
+    body:f=>`<path d="M50 20 q13 3 13 15 q0 10 8 17 q10 9 10 21 q0 15 -31 15 q-31 0 -31 -15 q0 -12 10 -21 q8 -7 8 -17 q0 -12 13 -15 z" ${f}/>`,
+    ears:c=>`<ellipse cx="37" cy="24" rx="8" ry="7.4" fill="${c.base}"/><ellipse cx="63" cy="24" rx="8" ry="7.4" fill="${c.base}"/>
+             <circle cx="37" cy="24" r="3.6" fill="${c.cheek}"/><circle cx="63" cy="24" r="3.6" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M50 21 q7 -10 15 -8 q-4 10 -14 9 z" fill="#8ac888"/>`,
+    face:{x:50,y:65,s:.92}, feet:1, tail:1},
+
+  swirl:{name:'소용돌이', w:32, top:14, grp:1,
+    body:f=>`<g ${f}><ellipse cx="50" cy="80" rx="30" ry="14"/><ellipse cx="50" cy="62" rx="26" ry="13"/>
+             <ellipse cx="50" cy="46" rx="20" ry="11"/><ellipse cx="50" cy="32" rx="13" ry="9"/><circle cx="50" cy="22" r="6"/></g>`,
+    ears:c=>``,
+    deco:c=>`<g stroke="${c.dark}" stroke-width="1.8" fill="none" opacity=".3">
+             <path d="M22 78 q28 10 56 0"/><path d="M25 60 q25 9 50 0"/><path d="M31 44 q19 7 38 0"/></g>`,
+    face:{x:50,y:68,s:.92}, feet:0, tail:0, shine:1},
+
+  coco:{name:'코코넛', w:34, top:30,
+    body:f=>`<path d="M14 52 h72 a36 36 0 0 1 -72 0 z" ${f}/>`,
+    ears:c=>`<ellipse cx="24" cy="44" rx="10" ry="9" fill="${c.base}"/><ellipse cx="76" cy="44" rx="10" ry="9" fill="${c.base}"/>
+             <circle cx="24" cy="44" r="4.4" fill="${c.cheek}"/><circle cx="76" cy="44" r="4.4" fill="${c.cheek}"/>`,
+    /* 반으로 쪼갠 코코넛 — 하얀 속살이 테두리에 보인다 */
+    deco:c=>`<rect x="14" y="50" width="72" height="6" rx="3" fill="#fffaf2" opacity=".85"/>`,
+    face:{x:50,y:66,s:.9}, feet:0, tail:1},
+
+  nut:{name:'피스타치오', w:30, top:22, grp:1,
+    body:f=>`<g ${f}><ellipse cx="42" cy="60" rx="25" ry="29" transform="rotate(-10 42 60)"/>
+             <ellipse cx="66" cy="62" rx="17" ry="24" transform="rotate(12 66 62)"/></g>`,
+    ears:c=>`<ellipse cx="30" cy="30" rx="9" ry="8" fill="${c.base}" transform="rotate(-25 30 30)"/>
+             <ellipse cx="64" cy="34" rx="8" ry="7" fill="${c.base}" transform="rotate(20 64 34)"/>
+             <circle cx="30" cy="30" r="4" fill="${c.cheek}"/><circle cx="64" cy="34" r="3.6" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M58 36 q-4 26 2 50" stroke="${c.dark}" stroke-width="2.4" fill="none" opacity=".45"/>`,
+    face:{x:42,y:60,s:.9}, feet:1, tail:0},
+
+  mango:{name:'망고', w:32, top:20,
+    body:f=>`<path d="M60 22 q26 8 26 34 q0 30 -32 33 q-32 -3 -34 -28 q-2 -24 18 -32 q11 -5 22 -7 z" ${f}/>`,
+    ears:c=>`<ellipse cx="35" cy="30" rx="9" ry="8" fill="${c.base}" transform="rotate(-18 35 30)"/>
+             <ellipse cx="68" cy="26" rx="9" ry="8" fill="${c.base}" transform="rotate(18 68 26)"/>
+             <circle cx="35" cy="30" r="4.2" fill="${c.cheek}"/><circle cx="68" cy="26" r="4.2" fill="${c.cheek}"/>`,
+    deco:c=>`<ellipse cx="68" cy="42" rx="12" ry="7" fill="${c.light}" opacity=".5" transform="rotate(-28 68 42)"/>`,
+    face:{x:49,y:58,s:.95}, feet:1, tail:1},
+
+  drip:{name:'흑당', w:33, top:20,
+    body:f=>`<circle cx="50" cy="57" r="31" ${f}/>`,
+    ears:c=>`<circle cx="27" cy="32" r="10" fill="${c.base}"/><circle cx="73" cy="32" r="10" fill="${c.base}"/>
+             <circle cx="27" cy="32" r="4.6" fill="${c.cheek}"/><circle cx="73" cy="32" r="4.6" fill="${c.cheek}"/>`,
+    /* 흘러내리는 흑당 시럽 — 얼굴을 덮지 않게 아래쪽에만 */
+    deco:c=>`<path d="M21 68 q4 10 2 18 q8 5 11 -3 q6 10 12 1 q6 9 12 -1 q3 -8 10 -15 q-24 -12 -47 0 z"
+                   fill="#7b4a26" opacity=".78"/>
+             <g fill="#5a3419" opacity=".8"><circle cx="35" cy="84" r="3.4"/><circle cx="50" cy="87" r="3.6"/><circle cx="64" cy="83" r="3.2"/></g>`,
+    face:{x:50,y:56,s:.96}, feet:1, tail:1},
+
+  seed:{name:'흑임자', w:34, top:22, grp:1,
+    body:f=>`<g ${f}><ellipse cx="50" cy="60" rx="30" ry="27"/><ellipse cx="28" cy="38" rx="11" ry="8" transform="rotate(-30 28 38)"/>
+             <ellipse cx="72" cy="37" rx="11" ry="8" transform="rotate(30 72 37)"/></g>`,
+    ears:c=>``,
+    deco:c=>`<g fill="${c.dark}" opacity=".55">${[[30,52,-20],[70,50,25],[38,76,10],[62,78,-15],[26,66,0],[74,66,0],[50,82,30]]
+             .map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="3.6" ry="2.2" transform="rotate(${r} ${x} ${y})"/>`).join('')}</g>`,
+    face:{x:50,y:58,s:.96}, feet:1, tail:1},
+
+  crystal:{name:'소금결정', w:32, top:16,
+    body:f=>`<path d="M50 18 L82 38 L82 74 L50 94 L18 74 L18 38 Z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<path d="M30 34 L16 20 L36 24 Z" fill="${c.base}"/><path d="M70 34 L84 20 L64 24 Z" fill="${c.base}"/>`,
+    deco:c=>`<g stroke="${c.light}" stroke-width="2.2" fill="none" opacity=".7">
+             <path d="M18 38 L50 56 L82 38"/></g>`,
+    face:{x:50,y:58,s:.94}, feet:0, tail:1, shine:1},
+
+  mochi:{name:'인절미떡', w:33, top:26,
+    body:f=>`<path d="M22 34 q28 -5 56 0 q6 26 0 52 q-28 5 -56 0 q-6 -26 0 -52 z" ${f}/>`,
+    ears:c=>`<rect x="23" y="21" width="17" height="16" rx="6" fill="${c.base}"/><rect x="60" y="21" width="17" height="16" rx="6" fill="${c.base}"/>
+             <rect x="27" y="25" width="8" height="8" rx="3" fill="${c.cheek}"/><rect x="65" y="25" width="8" height="8" rx="3" fill="${c.cheek}"/>`,
+    /* 콩가루가 솔솔 묻어 있다 */
+    deco:c=>`<g fill="#d9b878" opacity=".7">${[[30,44],[42,38],[58,42],[70,48],[34,76],[50,82],[66,76],[26,64],[74,64]]
+             .map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.2"/>`).join('')}</g>`,
+    face:{x:50,y:58,s:.98}, feet:1, tail:0},
+
+  melonw:{name:'수박조각', w:34, top:24,
+    body:f=>`<path d="M14 42 q36 -22 72 0 q-4 32 -36 48 q-32 -16 -36 -48 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="26" cy="30" rx="10" ry="8.6" fill="${c.base}"/><ellipse cx="74" cy="30" rx="10" ry="8.6" fill="${c.base}"/>
+             <circle cx="26" cy="30" r="4.4" fill="${c.cheek}"/><circle cx="74" cy="30" r="4.4" fill="${c.cheek}"/>`,
+    /* 위쪽은 초록 껍질, 속에는 씨 */
+    deco:c=>`<path d="M14 42 q36 -22 72 0 q-1 6 -2.6 12 q-33 -19 -66.8 0 q-1.6 -6 -2.6 -12 z" fill="#8ac888" opacity=".9"/>
+             <g fill="#3c3226" opacity=".75"><ellipse cx="36" cy="66" rx="2.4" ry="3.4"/><ellipse cx="50" cy="74" rx="2.4" ry="3.4"/>
+             <ellipse cx="63" cy="65" rx="2.4" ry="3.4"/></g>`,
+    face:{x:50,y:56,s:.9}, feet:0, tail:1},
+
+  bun:{name:'찐빵', w:36, top:24,
+    body:f=>`<path d="M9 82 q0 -40 41 -40 q41 0 41 40 q-20 6 -41 6 q-21 0 -41 -6 z" ${f}/>`,
+    ears:c=>`<ellipse cx="28" cy="36" rx="10" ry="9" fill="${c.base}"/><ellipse cx="72" cy="36" rx="10" ry="9" fill="${c.base}"/>
+             <circle cx="28" cy="36" r="4.6" fill="${c.cheek}"/><circle cx="72" cy="36" r="4.6" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M50 45 q7 3 6 9 q-1 6 -7 5" stroke="${c.dark}" stroke-width="2.4" fill="none" opacity=".35" stroke-linecap="round"/>`,
+    face:{x:50,y:62,s:.96}, feet:0, tail:1},
+
+  citron:{name:'유자', w:34, top:20,
+    body:f=>`<path d="M50 25 q11 -3 16 5 q11 -1 13 10 q9 5 5 16 q6 8 -2 15 q0 11 -12 12 q-6 8 -16 4 q-10 5 -17 -3
+             q-12 0 -13 -12 q-8 -6 -3 -16 q-5 -11 5 -16 q1 -11 12 -10 q5 -8 12 -5 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="27" cy="32" rx="9" ry="8" fill="${c.base}"/><ellipse cx="73" cy="32" rx="9" ry="8" fill="${c.base}"/>
+             <circle cx="27" cy="32" r="4.2" fill="${c.cheek}"/><circle cx="73" cy="32" r="4.2" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="${c.dark}" opacity=".28"><circle cx="33" cy="52" r="2.4"/><circle cx="68" cy="49" r="2.2"/>
+             <circle cx="40" cy="78" r="2.2"/><circle cx="63" cy="79" r="2"/></g>`,
+    face:{x:50,y:57,s:.94}, feet:1, tail:1},
+
+  rose:{name:'장미', w:32, top:18, grp:1,
+    body:f=>`<g ${f}><circle cx="50" cy="56" r="31"/><ellipse cx="28" cy="36" rx="13" ry="10" transform="rotate(-35 28 36)"/>
+             <ellipse cx="72" cy="36" rx="13" ry="10" transform="rotate(35 72 36)"/><ellipse cx="50" cy="86" rx="15" ry="9"/></g>`,
+    ears:c=>``,
+    /* 소용돌이 꽃잎 — 얼굴 아래쪽에만 */
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2.2" fill="none" opacity=".32" stroke-linecap="round">
+             <path d="M50 66 q14 3 13 15 M32 70 q3 -12 17 -13"/></g>`,
+    face:{x:50,y:55,s:.9}, feet:0, tail:1},
+
+  rasp:{name:'라즈베리', w:32, top:20, grp:1,
+    body:f=>`<g ${f}><circle cx="50" cy="34" r="11"/><circle cx="34" cy="46" r="11"/><circle cx="66" cy="46" r="11"/>
+             <circle cx="26" cy="62" r="10"/><circle cx="50" cy="58" r="11"/><circle cx="74" cy="62" r="10"/>
+             <circle cx="37" cy="76" r="10"/><circle cx="63" cy="76" r="10"/><circle cx="50" cy="86" r="8.5"/></g>`,
+    ears:c=>`<path d="M42 22 q-12 -10 -20 -4 q4 11 18 9 z" fill="#8ac888"/><path d="M58 22 q12 -10 20 -4 q-4 11 -18 9 z" fill="#8ac888"/>`,
+    face:{x:50,y:52,s:.86}, feet:0, tail:0},
+
+  boba:{name:'버블티', w:30, top:18,
+    body:f=>`<path d="M27 28 h46 l-6 52 q-1 10 -17 10 q-16 0 -17 -10 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="22" rx="9" ry="8" fill="${c.base}"/><ellipse cx="70" cy="22" rx="9" ry="8" fill="${c.base}"/>
+             <circle cx="30" cy="22" r="4.2" fill="${c.cheek}"/><circle cx="70" cy="22" r="4.2" fill="${c.cheek}"/>`,
+    /* 바닥에 깔린 타피오카 펄 */
+    deco:c=>`<g fill="#4a3020" opacity=".8"><circle cx="41" cy="82" r="3.8"/><circle cx="52" cy="85" r="4"/>
+             <circle cx="61" cy="81" r="3.6"/><circle cx="47" cy="76" r="3.2"/></g>`,
+    face:{x:50,y:52,s:.9}, feet:1, tail:0, shine:1},
+
+  gum:{name:'버블껌', w:32, top:22,
+    body:f=>`<circle cx="46" cy="58" r="30" ${f}/>`,
+    ears:c=>`<circle cx="24" cy="35" r="10" fill="${c.base}"/><circle cx="66" cy="32" r="10" fill="${c.base}"/>
+             <circle cx="24" cy="35" r="4.6" fill="${c.cheek}"/><circle cx="66" cy="32" r="4.6" fill="${c.cheek}"/>`,
+    /* 옆으로 불어놓은 풍선 */
+    deco:c=>`<circle cx="84" cy="76" r="11" fill="${c.light}" opacity=".7" stroke="${c.dark}" stroke-width="1.6" stroke-opacity=".3"/>
+             <circle cx="81" cy="72" r="3" fill="#fff" opacity=".65"/>`,
+    face:{x:46,y:58,s:.96}, feet:1, tail:0, shine:1},
+
+  yam:{name:'고구마', w:28, top:18,
+    body:f=>`<path d="M64 20 q22 12 18 34 q-4 24 -26 34 q-22 8 -32 -8 q-9 -15 2 -32 q11 -18 38 -28 z" ${f}/>`,
+    ears:c=>`<ellipse cx="40" cy="26" rx="9" ry="7.6" fill="${c.base}" transform="rotate(-30 40 26)"/>
+             <ellipse cx="72" cy="26" rx="8" ry="7" fill="${c.base}" transform="rotate(25 72 26)"/>
+             <circle cx="40" cy="26" r="4" fill="${c.cheek}"/><circle cx="72" cy="26" r="3.6" fill="${c.cheek}"/>`,
+    deco:c=>`<g stroke="${c.dark}" stroke-width="1.8" fill="none" opacity=".3">
+             <path d="M34 74 q18 -6 34 -14"/></g>`,
+    face:{x:50,y:56,s:.9}, feet:1, tail:1},
+
+  arch:{name:'무지개', w:38, top:22, grp:1,
+    body:f=>`<g ${f}><path d="M12 86 a38 38 0 0 1 76 0 l-16 0 a22 22 0 0 0 -44 0 z"/><ellipse cx="50" cy="76" rx="24" ry="16"/></g>`,
+    ears:c=>``,
+    /* 아치에 색깔 띠 세 줄 */
+    deco:c=>`<g fill="none" stroke-width="4.4" opacity=".8">
+             <path d="M17 86 a33 33 0 0 1 66 0" stroke="#ff9db4"/>
+             <path d="M22 86 a28 28 0 0 1 56 0" stroke="#ffd074"/>
+             <path d="M27 86 a23 23 0 0 1 46 0" stroke="#a3e0a8"/></g>`,
+    face:{x:50,y:76,s:.86}, feet:0, tail:0},
+
+  sun:{name:'해', w:32, top:12, grp:1,
+    body:f=>`<g ${f}><circle cx="50" cy="57" r="27"/>
+             ${[0,1,2,3,4,5,6,7,8,9,10,11].map(i=>{const a=i*Math.PI/6;
+               return `<circle cx="${(50+Math.cos(a)*32).toFixed(1)}" cy="${(57+Math.sin(a)*32).toFixed(1)}" r="6.2"/>`;}).join('')}</g>`,
+    ears:c=>``,
+    deco:c=>`<circle cx="50" cy="57" r="19" fill="${c.light}" opacity=".4"/>`,
+    face:{x:50,y:57,s:.92}, feet:0, tail:0},
+
+  comet:{name:'별똥별', w:30, top:22, grp:1,
+    /* 동그란 머리 뒤로 꼬리가 길게 날린다 — 왼쪽 위로 흐르게 두면 얼굴을 가리지 않는다 */
+    body:f=>`<g ${f}><circle cx="58" cy="60" r="27"/><path d="M40 44 L6 12 q3 27 24 45 z"/></g>`,
+    ears:c=>`<path d="M48 36 L42 19 L60 30 Z" fill="${c.base}"/><path d="M74 38 L86 24 L82 44 Z" fill="${c.base}"/>`,
+    deco:c=>`<g fill="${c.light}" opacity=".8"><circle cx="26" cy="30" r="3.2"/><circle cx="16" cy="20" r="2.2"/>
+             <circle cx="34" cy="42" r="2.4"/></g>`,
+    face:{x:58,y:60,s:.92}, feet:0, tail:0},
+
+  waffle:{name:'와플', w:34, top:24,
+    body:f=>`<rect x="15" y="31" width="70" height="58" rx="12" ${f}/>`,
+    ears:c=>`<rect x="18" y="17" width="19" height="17" rx="5" fill="${c.base}"/><rect x="63" y="17" width="19" height="17" rx="5" fill="${c.base}"/>
+             <rect x="23" y="21" width="9" height="8" rx="3" fill="${c.cheek}"/><rect x="68" y="21" width="9" height="8" rx="3" fill="${c.cheek}"/>`,
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2.6" opacity=".35" fill="none">
+             <path d="M15 50 H85 M15 70 H85 M37 31 V89 M63 31 V89"/></g>`,
+    face:{x:50,y:58,s:.98}, feet:1, tail:0},
+
+  wedge:{name:'케이크조각', w:32, top:22,
+    body:f=>`<path d="M50 22 q26 6 32 60 q-32 8 -64 0 q6 -54 32 -60 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="34" cy="28" rx="9" ry="8" fill="${c.base}" transform="rotate(-18 34 28)"/>
+             <ellipse cx="66" cy="28" rx="9" ry="8" fill="${c.base}" transform="rotate(18 66 28)"/>
+             <circle cx="34" cy="28" r="4.2" fill="${c.cheek}"/><circle cx="66" cy="28" r="4.2" fill="${c.cheek}"/>`,
+    /* 아래는 쿠키 밑판, 위에는 크림 한 점 */
+    deco:c=>`<path d="M19 74 q31 8 62 0 q.6 4 1 8 q-32 8 -64 0 q.4 -4 1 -8 z" fill="#d9a86a" opacity=".8"/>`,
+    face:{x:50,y:54,s:.94}, feet:0, tail:1},
+
   /* ---- 🎁 특별 햄쮜만 쓰는 모양 여섯 가지 ----
      deco 는 몸통·무늬 위, 얼굴 아래에 그려진다 (수염·카라멜·보석 면을 얼굴이 가리지 않게) */
   bunny:{name:'토끼', w:32, top:34,
@@ -907,7 +1261,48 @@ const SHAPES={
     ears:c=>``,
     deco:()=>`<g stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round" opacity=".38">
               <path d="M50 15 L33 45 M50 15 L67 45 M15 45 L85 45 M33 45 L50 93 M67 45 L50 93"/></g>`,
-    face:{x:50,y:53,s:.84}, feet:0, tail:0, shine:1}
+    face:{x:50,y:53,s:.84}, feet:0, tail:0, shine:1},
+  chick:{name:'병아리', w:31, top:22,
+    body:f=>`<ellipse cx="50" cy="61" rx="30" ry="27" ${f}/>`,
+    ears:c=>`<ellipse cx="19" cy="64" rx="8.4" ry="13" fill="${c.light}" stroke="${c.dark}" stroke-width="1.5" stroke-opacity=".35" transform="rotate(-16 19 64)"/>
+             <ellipse cx="81" cy="64" rx="8.4" ry="13" fill="${c.light}" stroke="${c.dark}" stroke-width="1.5" stroke-opacity=".35" transform="rotate(16 81 64)"/>
+             <path d="M50 37 q-5 -12 2 -15 q-2 8 5 10 q4 -9 8 -4 q-6 3 -5 10 z" fill="${c.base}" stroke="${c.dark}" stroke-width="1.4" stroke-opacity=".3" stroke-linejoin="round"/>`,
+    /* 갓 깨어난 알 껍질을 아직 입고 있다 */
+    deco:()=>`<path d="M22 77 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 L80 84 Q80 90 50 90 Q22 90 22 84 Z"
+              fill="#fffdf7" stroke="#ddd1b8" stroke-width="1.6" stroke-linejoin="round"/>`,
+    face:{x:50,y:53,s:.94}, feet:0, tail:0, shine:1},
+
+  panda:{name:'판다', w:36, top:18,
+    body:f=>`<ellipse cx="50" cy="61" rx="34" ry="29" ${f}/>`,
+    ears:c=>`<circle cx="23" cy="24" r="13" fill="#4f4857"/><circle cx="77" cy="24" r="13" fill="#4f4857"/>
+             <circle cx="23" cy="24" r="6" fill="#736a7d"/><circle cx="77" cy="24" r="6" fill="#736a7d"/>`,
+    /* 검은 눈 무늬 — 눈은 이 위에 그려진다 */
+    deco:(c,fx,fy,s)=>`<ellipse cx="${fx-11*s}" cy="${fy-1*s}" rx="${8.8*s}" ry="${10.4*s}" fill="#4f4857" transform="rotate(-13 ${fx-11*s} ${fy-1*s})"/>
+             <ellipse cx="${fx+11*s}" cy="${fy-1*s}" rx="${8.8*s}" ry="${10.4*s}" fill="#4f4857" transform="rotate(13 ${fx+11*s} ${fy-1*s})"/>
+             <circle cx="${fx-10.5*s}" cy="${fy}" r="${6.3*s}" fill="#fdfaf6"/><circle cx="${fx+10.5*s}" cy="${fy}" r="${6.3*s}" fill="#fdfaf6"/>`,
+    face:{x:50,y:58,s:1.04}, feet:1, tail:0},
+
+  unicorn:{name:'유니콘', w:33, top:34,
+    body:f=>`<ellipse cx="50" cy="63" rx="31" ry="27" ${f}/>`,
+    ears:c=>`<path d="M29 42 L24 20 L43 34 Z" fill="${c.base}" stroke="${c.dark}" stroke-width="1.6" stroke-opacity=".4" stroke-linejoin="round"/>
+             <path d="M71 42 L76 20 L57 34 Z" fill="${c.base}" stroke="${c.dark}" stroke-width="1.6" stroke-opacity=".4" stroke-linejoin="round"/>
+             <g stroke-width="4.4" fill="none" stroke-linecap="round">
+               <path d="M28 33 q-10 9 -9 20" stroke="#ff9fba"/><path d="M33 29 q-12 11 -12 24" stroke="#ffd75e"/>
+               <path d="M67 29 q12 11 12 24" stroke="#8fd88f"/><path d="M72 33 q10 9 9 20" stroke="#8fc2f0"/></g>
+             <path d="M44.4 36 L50 8 L55.6 36 Z" fill="#ffe07a" stroke="#e0ac2c" stroke-width="1.5" stroke-linejoin="round"/>
+             <path d="M46.6 27 h6.8 M47.8 20 h4.4" stroke="#e0ac2c" stroke-width="1.3"/>`,
+    face:{x:50,y:61,s:.97}, feet:1, tail:1, shine:1},
+
+  angel:{name:'천사', w:33, top:32,
+    body:f=>`<ellipse cx="50" cy="63" rx="31" ry="27" ${f}/>`,
+    ears:c=>`<path d="M18 62 q-15 -15 -4 -22 q11 -6 13 13 z" fill="#fffdf8" stroke="#dbd2e6" stroke-width="1.6" stroke-linejoin="round"/>
+             <path d="M82 62 q15 -15 4 -22 q-11 -6 -13 13 z" fill="#fffdf8" stroke="#dbd2e6" stroke-width="1.6" stroke-linejoin="round"/>
+             <path d="M15 55 q-7 -9 -2 -14 M85 55 q7 -9 2 -14" stroke="#dbd2e6" stroke-width="1.3" fill="none"/>
+             <circle cx="30" cy="40" r="11.5" fill="${c.base}"/><circle cx="70" cy="40" r="11.5" fill="${c.base}"/>
+             <circle cx="30" cy="40" r="5.8" fill="${c.cheek}"/><circle cx="70" cy="40" r="5.8" fill="${c.cheek}"/>
+             <ellipse cx="50" cy="21" rx="15" ry="4.8" fill="none" stroke="#ffe07a" stroke-width="3.6"/>
+             <ellipse cx="50" cy="21" rx="15" ry="4.8" fill="none" stroke="#fff6cf" stroke-width="1.4"/>`,
+    face:{x:50,y:61,s:.98}, feet:1, tail:0, shine:1},
 };
 const COLORS={
   cream :{name:'크림',   base:'#f4d9a8', light:'#fbeccb', dark:'#d3a061', cheek:'#f7b7c6'},
@@ -947,13 +1342,56 @@ const ANCHOR={
   acorn :{hat:{x:50,y:23,s:.78},   hand:{x:83,y:76}},
   tulip :{hat:{x:50,y:25,s:.78},   hand:{x:82,y:72}},
   mush  :{hat:{x:50,y:26,s:.85},   hand:{x:84,y:62}},
+  /* 🍨 통마다 저만의 모양 — 모자는 머리 제일 높은 곳, 손 소품은 몸 오른쪽 아래에 */
+  bean  :{hat:{x:50,y:22},         hand:{x:85,y:74}},
+  bottle:{hat:{x:50,y:19,s:.7},    hand:{x:76,y:74}},
+  bunch :{hat:{x:50,y:26,s:.78},   hand:{x:82,y:70}},
+  cookie:{hat:{x:50,y:22},         hand:{x:82,y:74}},
+  fizz  :{hat:{x:50,y:26,s:.7},    hand:{x:80,y:76}},
+  melon :{hat:{x:50,y:22},         hand:{x:82,y:74}},
+  lemon :{hat:{x:50,y:26,s:.82},   hand:{x:82,y:74}},
+  kiwi  :{hat:{x:50,y:22},         hand:{x:82,y:74}},
+  berry :{hat:{x:50,y:26,s:.82},   hand:{x:82,y:76}},
+  leafy :{hat:{x:50,y:24,s:.72},   hand:{x:78,y:74}},
+  pine  :{hat:{x:50,y:34,s:.7},    hand:{x:80,y:76}},
+  orange:{hat:{x:50,y:22},         hand:{x:82,y:74}},
+  cherry:{hat:{x:38,y:44,s:.72},   hand:{x:85,y:76}},
+  plum  :{hat:{x:50,y:24},         hand:{x:82,y:74}},
+  cube  :{hat:{x:50,y:24,s:.82},   hand:{x:82,y:76}},
+  pear  :{hat:{x:50,y:20,s:.76},   hand:{x:80,y:78}},
+  swirl :{hat:{x:50,y:19,s:.66},   hand:{x:80,y:78}},
+  coco  :{hat:{x:50,y:44,s:.82},   hand:{x:84,y:66}},
+  nut   :{hat:{x:42,y:32,s:.76},   hand:{x:82,y:76}},
+  mango :{hat:{x:52,y:24,s:.82},   hand:{x:84,y:74}},
+  drip  :{hat:{x:50,y:22},         hand:{x:82,y:74}},
+  seed  :{hat:{x:50,y:30,s:.78},   hand:{x:80,y:76}},
+  crystal:{hat:{x:50,y:24,s:.8},   hand:{x:80,y:74}},
+  mochi :{hat:{x:50,y:23},         hand:{x:82,y:74}},
+  melonw:{hat:{x:50,y:28,s:.78},   hand:{x:80,y:72}},
+  bun   :{hat:{x:50,y:42,s:.86},   hand:{x:86,y:74}},
+  citron:{hat:{x:50,y:24},         hand:{x:82,y:74}},
+  rose  :{hat:{x:50,y:24,s:.76},   hand:{x:82,y:76}},
+  rasp  :{hat:{x:50,y:26,s:.76},   hand:{x:82,y:72}},
+  boba  :{hat:{x:50,y:22,s:.7},    hand:{x:76,y:74}},
+  gum   :{hat:{x:46,y:24},         hand:{x:74,y:76}},
+  yam   :{hat:{x:54,y:22,s:.78},   hand:{x:80,y:76}},
+  arch  :{hat:{x:50,y:52,s:.7},    hand:{x:80,y:82}},
+  sun   :{hat:{x:50,y:24,s:.68},   hand:{x:82,y:80}},
+  comet :{hat:{x:58,y:28,s:.76},   hand:{x:80,y:76}},
+  waffle:{hat:{x:50,y:20},         hand:{x:84,y:74}},
+  wedge :{hat:{x:50,y:26,s:.82},   hand:{x:80,y:74}},
   /* 특별 햄쮜 — 토끼·고양이는 귀가 있어서 모자를 머리 위가 아니라 귀 사이에 얹는다 */
   bunny :{hat:{x:50,y:40,s:.78},   hand:{x:78,y:78}},
   cat   :{hat:{x:50,y:32,s:.82},   hand:{x:80,y:75}},
   bear  :{hat:{x:50,y:28,s:.92},   hand:{x:85,y:75}},
   flower:{hat:{x:50,y:36,s:.72},   hand:{x:78,y:77}},
   pudding:{hat:{x:50,y:27,s:.85},  hand:{x:80,y:80}},
-  gem   :{hat:{x:50,y:26,s:.72},   hand:{x:73,y:74}}
+  gem   :{hat:{x:50,y:26,s:.72},   hand:{x:73,y:74}},
+  /* 병아리는 솜털 위, 판다는 귀 사이, 유니콘은 뿔 아래 이마, 천사는 후광 밑 */
+  chick :{hat:{x:50,y:30,s:.8},    hand:{x:82,y:74}},
+  panda :{hat:{x:50,y:30,s:.9},    hand:{x:86,y:75}},
+  unicorn:{hat:{x:50,y:44,s:.74},  hand:{x:80,y:76}},
+  angel :{hat:{x:50,y:40,s:.76},   hand:{x:79,y:77}}
 };
 function _star(cx,cy,r,fill,stroke){
   const p=[];
@@ -1071,13 +1509,58 @@ const WEAR={
       <circle cx="${x-2.4}" cy="${y-16.5}" r="1" fill="#5b422c"/><circle cx="${x+2.4}" cy="${y-16.5}" r="1" fill="#5b422c"/>
       <ellipse cx="${x}" cy="${y-13}" rx="2.6" ry="2" fill="#f2dcbe"/>
       <path d="M${x-1.6} ${y-12.8} h3.2" stroke="#5b422c" stroke-width=".8"/>`}
+  }},
+  /* 🍨 콘 타기 — 햄쮜가 아이스크림 한 스쿱이 되어 콘 위에 올라앉는다.
+     art(c) 는 콘 그림(c = 그 햄쮜의 맛 색). hy·hs 는 몸을 얼마나 올리고 줄일지. */
+  cone:{name:'콘 타기', em:'🍨', items:{
+    /* 🧇 격자무늬가 있는 기본 와플콘 */
+    cwaffle:{name:'와플콘', em:'🧇', coin:900, hy:33, hs:.74, art:c=>`
+      <path d="M26 62 L50 98 L74 62 Z" fill="#e6b678" stroke="#b3803f" stroke-width="2.4" stroke-linejoin="round"/>
+      <g stroke="#c08c4c" stroke-width="1.5" opacity=".75" fill="none">
+        <path d="M33 62 L50 89 M41 62 L50 75 M59 62 L50 75 M67 62 L50 89"/>
+        <path d="M29 70 L71 70 M32 78 L68 78 M37 86 L63 86"/></g>
+      <ellipse cx="50" cy="62" rx="24" ry="5.6" fill="#f2cd97" stroke="#b3803f" stroke-width="2.2"/>
+      <ellipse cx="50" cy="60.8" rx="19" ry="3.4" fill="${c}" opacity=".5"/>`},
+    /* 🍦 매끈한 나선 슈가콘 */
+    csugar:{name:'슈가콘', em:'🍦', coin:1400, hy:33, hs:.74, art:c=>`
+      <path d="M26 61 L50 99 L74 61 Z" fill="#dda45f" stroke="#a9762f" stroke-width="2.4" stroke-linejoin="round"/>
+      <g stroke="#bd8740" stroke-width="1.7" opacity=".8" fill="none">
+        <path d="M27 66 L69 61 M30 74 L64 66 M34 82 L59 71 M39 91 L54 77"/></g>
+      <ellipse cx="50" cy="61" rx="24" ry="5.6" fill="#eec084" stroke="#a9762f" stroke-width="2.2"/>
+      <path d="M31 59.8 q9.4 4.2 19 0" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round" opacity=".65"/>`},
+    /* 🍫 초코를 두르고 뿌리기를 얹은 콘 */
+    cchoco:{name:'초코콘', em:'🍫', coin:2600, hy:33, hs:.74, art:c=>`
+      <path d="M26 61 L50 99 L74 61 Z" fill="#8a5a34" stroke="#5f3a1e" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M26 61 q5 8 3.6 14 q8 3.6 11 -3 q6.4 7.4 12 0 q6.4 5.6 11 -2 q2.6 -4.6 10.4 -9 Z"
+            fill="#6b4222" stroke="#5f3a1e" stroke-width="1.6" stroke-linejoin="round"/>
+      <ellipse cx="50" cy="61" rx="24" ry="5.6" fill="#a06c3e" stroke="#5f3a1e" stroke-width="2.2"/>
+      ${[['#ff8fae',-15,-.4,-28],['#ffd45e',-7,1.4,22],['#8fd89b',1,-.8,-14],['#8fc4f0',9,1.6,36],['#c9a4ee',16,-.2,-42]]
+        .map(([k,dx,dy,r])=>`<rect x="${49.1+dx}" y="${57.4+dy}" width="1.8" height="4.4" rx=".9" fill="${k}" transform="rotate(${r} ${50+dx} ${59.6+dy})"/>`).join('')}`},
+    /* 🌈 무지개 줄무늬 콘 */
+    crain:{name:'무지개콘', em:'🌈', top:16, hy:33, hs:.74, art:c=>`
+      <defs><clipPath id="rc${++_uid}"><path d="M26 62 L50 98 L74 62 Z"/></clipPath></defs>
+      <path d="M26 62 L50 98 L74 62 Z" fill="#fff2f7"/>
+      <g clip-path="url(#rc${_uid})">
+        ${['#ff9db4','#ffd074','#ffef94','#a3e0a8','#9ec9f2','#c9a8ee']
+          .map((k,i)=>`<rect x="24" y="${62+i*6.2}" width="52" height="6.4" fill="${k}"/>`).join('')}</g>
+      <path d="M26 62 L50 98 L74 62 Z" fill="none" stroke="#e58aae" stroke-width="2.4" stroke-linejoin="round"/>
+      <ellipse cx="50" cy="62" rx="24" ry="5.6" fill="#fff6fa" stroke="#e58aae" stroke-width="2.2"/>
+      <ellipse cx="50" cy="60.8" rx="19" ry="3.4" fill="${c}" opacity=".45"/>`},
+    /* 🍨 굽 달린 유리 파르페 컵 — 콘 대신 컵에 앉는다 */
+    ccup:{name:'예쁜 컵', em:'🍨', top:24, hy:31, hs:.68, art:c=>`
+      <ellipse cx="50" cy="96" rx="15" ry="4" fill="#f0b6d2"/>
+      <ellipse cx="50" cy="94.6" rx="15" ry="4" fill="#fff2f8" stroke="#e07fb0" stroke-width="2"/>
+      <path d="M46.8 80 q-.8 6.4 -3.8 11.6 h14 q-3 -5.2 -3.8 -11.6 z" fill="#ffe6f1" stroke="#e07fb0" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M27 58 L73 58 L60 80 q-1.8 5.4 -10 5.4 q-8.2 0 -10 -5.4 Z" fill="#fff8fc" opacity=".93" stroke="#e07fb0" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M36 60 L44 78 M50 60 L50 84 M64 60 L56 78" stroke="#ffdcec" stroke-width="1.7" fill="none"/>
+      <ellipse cx="50" cy="58" rx="23" ry="5" fill="${c}" opacity=".4" stroke="#e07fb0" stroke-width="2.2"/>`},
   }}
 };
 const WEAR_SLOTS=Object.keys(WEAR);
 function ownWear(slot,key){ return (S.closet||[]).includes(slot+'_'+key); }
 function wearOf(k){ const d=S.dex[k]; return (d&&d.w)||{}; }
 function wearCount(k){ const w=wearOf(k); return WEAR_SLOTS.filter(s=>w[s]).length; }
-function isFullSet(k){ return wearCount(k)===3; }
+function isFullSet(k){ return ['hat','neck','hand'].every(s=>wearOf(k)[s]); }
 function dressedCount(){ return Object.keys(S.dex).filter(k=>wearCount(k)>0).length; }
 /* 소품 그림 조각 */
 function wearSVG(h,w){
@@ -1092,6 +1575,7 @@ function wearSVG(h,w){
     const a=A.hat||{x:F.x,y:sh.top};
     g+=`<g transform="translate(${a.x},${a.y})${a.s?` scale(${a.s})`:''}">${WEAR.hat.items[w.hat].d()}</g>`;
   }
+  /* 🍨 콘은 여기서 그리지 않는다 — 햄쮜가 콘 「위에 올라타는」 것이라 buildHamSVG 에서 몸 전체를 올려놓는다 */
   return g;
 }
 
@@ -1102,7 +1586,7 @@ const _svgCache=new Map();
 const SVG_CACHE_MAX=800;
 function hamKey(h){
   const w=h.wear||{};
-  return h.shape+'|'+h.color+'|'+h.pattern+'|'+h.grade+'|'+(h.cone||'')+'|'+(w.hat||'')+'|'+(w.neck||'')+'|'+(w.hand||'');
+  return h.shape+'|'+h.color+'|'+h.pattern+'|'+h.grade+'|'+(h.cone||'')+'|'+(w.hat||'')+'|'+(w.neck||'')+'|'+(w.hand||'')+'|'+(w.cone||'');
 }
 function hamSVG(h){
   const k=hamKey(h);
@@ -1120,7 +1604,8 @@ function buildHamSVG(h){
   const fx=F.x, fy=F.y, s=F.s;
   let g='';
 
-  if(h.grade>=4) g+=`<circle cx="50" cy="54" r="46" fill="#ffe9a8" opacity=".45"/>`;
+  if(h.grade>=5) g+=`<circle cx="50" cy="54" r="48" fill="#ffd0ea" opacity=".5"/><circle cx="50" cy="54" r="44" fill="#cfe6ff" opacity=".45"/>`;
+  if(h.grade===4) g+=`<circle cx="50" cy="54" r="46" fill="#ffe9a8" opacity=".45"/>`;
   if(h.grade>=3) g+=`<circle cx="50" cy="54" r="44" fill="${c.light}" opacity=".35"/>`;
 
   if(sh.tail) g+=`<path d="M82 78 q10 1 8 9" stroke="${c.dark}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
@@ -1168,19 +1653,21 @@ function buildHamSVG(h){
       <path d="M${fx} ${fy+10*s} q${-4*s} ${5*s} ${-8*s} ${1.6*s} M${fx} ${fy+10*s} q${4*s} ${5*s} ${8*s} ${1.6*s}"
             stroke="${c.dark}" stroke-width="${2*s}" fill="none" stroke-linecap="round"/>`;
 
-  const ax=sh.acc?sh.acc.x:fx+16, ay=sh.acc?sh.acc.y:sh.top;
-  if(h.grade===2) g+=`<path d="M${ax+2} ${ay-2} q11 -8 13 5 q-11 7 -13 -5 z" fill="#7fc47a"/><path d="M${ax+2} ${ay-2} q7 -1 11 3" stroke="#5aa057" stroke-width="1.4" fill="none"/>`;
-  if(h.grade===3) g+=`<g transform="translate(${ax},${ay-4})">${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-6" rx="4" ry="6" fill="#f7a8c0" transform="rotate(${a})"/>`).join('')}<circle r="3.2" fill="#ffe07a"/></g>`;
-  if(h.grade===4) g+=`<path d="M${ax-16} ${ay-2} l4 -13 l8 8 l4 -12 l4 12 l8 -8 l4 13 z" fill="#ffd75e" stroke="#e0ac2c" stroke-width="1.5" stroke-linejoin="round"/>
-                      <text x="12" y="26" font-size="14">✨</text><text x="80" y="82" font-size="12">✨</text>`;
-
-  /* 아이스크림 가게 햄쮜는 콘을 하나씩 들고 있다 — 손에 소품을 들면 콘은 내려놓는다 */
-  if(h.cone && !(h.wear&&h.wear.hand)) g+=`<g transform="translate(86,74) scale(.34)">
-      <path d="M-14 -4 L0 34 L14 -4 Z" fill="#e0b06a" stroke="#bd8a4b" stroke-width="3" stroke-linejoin="round"/>
-      <circle cx="0" cy="-14" r="17" fill="${h.cone}" stroke="rgba(0,0,0,.12)" stroke-width="2"/></g>`;
+  /* ⭐ 등급 장식은 몸에 아무것도 붙이지 않는다 — 꾸미기 아이템을 가리지 않게.
+     등급은 뒤에 깔린 은은한 후광과 화면에 적히는 ★ 글자로만 보여준다. */
 
   /* 꾸미기 소품 */
   g+=wearSVG(h,h.wear);
+
+  /* 🍨 콘 타기 — 햄쮜가 아이스크림 한 스쿱이 되어 콘 위에 올라앉는다.
+     몸(소품까지 전부)을 한 덩어리로 줄여서 위로 올리고, 그 아래에 큰 콘을 그린다.
+     콘 테두리를 몸보다 나중에 그려야 햄쮜가 콘 「안에」 들어앉은 것처럼 보인다. */
+  const cw=h.wear&&h.wear.cone, ci=cw&&WEAR.cone.items[cw];
+  if(ci){
+    const hy=ci.hy||34, hs=ci.hs||0.68;
+    g=`<g transform="translate(50,${hy}) scale(${hs}) translate(-50,-50)">${g}</g>`
+      + ci.art(h.cone||'#ffe0ec');
+  }
 
   return `<svg viewBox="0 0 100 100">${g}</svg>`;
 }
@@ -1192,56 +1679,56 @@ function hamPic(h,style){ return `<span class="hs" style="${style||''}">${hamSVG
       ⚠️ lv 오름차순으로 정렬해 둔다 (상점의 「곧 열려요」가 이 순서를 그대로 쓴다)
 ================================================================== */
 const FLAVORS=[
- {k:'vanilla', n:'바닐라',     c:'#f7e6bb', c2:'#fffaf0', lv:1, shape:'round', color:'cream', hn:'바닐라쮜'},
- {k:'straw',   n:'딸기',       c:'#ffa8c2', c2:'#ffd9e4', lv:1, shape:'heart', color:'berry', hn:'딸기쮜'},
- {k:'choco',   n:'초코',       c:'#a9754e', c2:'#cd9d76', lv:1, shape:'round', color:'cocoa', hn:'초코쮜'},
- {k:'milk',    n:'우유',       c:'#fbf4e8', c2:'#ffffff', lv:1, shape:'cloud', color:'snow',  hn:'우유쮜'},
- {k:'banana',  n:'바나나',     c:'#ffdf85', c2:'#fff3c6', lv:2, shape:'long',  color:'gold',  hn:'바나나쮜'},
- {k:'mint',    n:'민트초코',   c:'#9fe2c9', c2:'#d7f5ea', lv:2, shape:'tri',   color:'mint',  hn:'민트초코쮜'},
- {k:'strawm',  n:'딸기우유',   c:'#ffd3de', c2:'#fff1f5', lv:2, shape:'drop',  color:'berry', hn:'딸기우유쮜'},
- {k:'peach',   n:'복숭아',     c:'#ffc2a0', c2:'#ffe4d3', lv:3, shape:'jelly', color:'peach', hn:'복숭아쮜'},
- {k:'grape',   n:'포도',       c:'#bd9ce8', c2:'#e0cef7', lv:3, shape:'drop',  color:'lav',   hn:'포도쮜'},
- {k:'cotton',  n:'솜사탕',     c:'#ffbfe0', c2:'#dbe6ff', lv:3, shape:'cloud', color:'rose',  hn:'솜사탕쮜'},
- {k:'cookie',  n:'쿠키앤크림', c:'#e9dfd2', c2:'#fffdf9', lv:4, shape:'round', color:'snow',  hn:'쿠키쮜'},
- {k:'soda',    n:'소다',       c:'#9fd4f5', c2:'#d6eefc', lv:4, shape:'drop',  color:'sky',   hn:'소다쮜'},
- {k:'marsh',   n:'마시멜로',   c:'#ffe6ef', c2:'#ffffff', lv:4, shape:'square',color:'rose',  hn:'마시멜로쮜'},
- {k:'melon',   n:'멜론',       c:'#aee29a', c2:'#dcf5cf', lv:5, shape:'round', color:'mint',  hn:'멜론쮜'},
- {k:'coffee',  n:'커피',       c:'#8a6446', c2:'#b58f6c', lv:5, shape:'moon',  color:'cocoa', hn:'커피쮜'},
- {k:'gpgrape', n:'청포도',     c:'#cfe89a', c2:'#eef8d2', lv:5, shape:'round', color:'mint',  hn:'청포도쮜'},
- {k:'lemon',   n:'레몬',       c:'#ffe86f', c2:'#fff6bd', lv:6, shape:'long',  color:'gold',  hn:'레몬쮜'},
- {k:'blue',    n:'블루베리',   c:'#8ba4e0', c2:'#c2d2f5', lv:6, shape:'drop',  color:'sky',   hn:'블루베리쮜'},
- {k:'kiwi',    n:'키위',       c:'#9ecf72', c2:'#d8ecb8', lv:6, shape:'jelly', color:'grass', hn:'키위쮜'},
- {k:'orange',  n:'오렌지',     c:'#ffae5e', c2:'#ffd7ac', lv:7, shape:'jelly', color:'gold',  hn:'오렌지쮜'},
- {k:'matcha',  n:'말차',       c:'#9bbf74', c2:'#cde0b4', lv:7, shape:'square',color:'mint',  hn:'말차쮜'},
- {k:'pine',    n:'파인애플',   c:'#ffdf6b', c2:'#fff6c6', lv:7, shape:'square',color:'gold',  hn:'파인애플쮜'},
- {k:'cherry',  n:'체리',       c:'#f06a88', c2:'#ffb1c1', lv:8, shape:'heart', color:'berry', hn:'체리쮜'},
- {k:'caramel', n:'카라멜',     c:'#dda45f', c2:'#f0cb99', lv:8, shape:'square',color:'gold',  hn:'카라멜쮜'},
- {k:'plum',    n:'자두',       c:'#d96a9c', c2:'#f5a6c6', lv:8, shape:'round', color:'plum',  hn:'자두쮜'},
- {k:'coconut', n:'코코넛',     c:'#f6eddd', c2:'#ffffff', lv:9, shape:'cloud', color:'snow',  hn:'코코넛쮜'},
- {k:'yogurt',  n:'요거트',     c:'#fbeee8', c2:'#fffdfb', lv:9, shape:'round', color:'peach', hn:'요거트쮜'},
- {k:'pistach', n:'피스타치오', c:'#c3d698', c2:'#e8f2d4', lv:9, shape:'acorn', color:'grass', hn:'피스타치오쮜'},
- {k:'sesame',  n:'흑임자',     c:'#6f6a72', c2:'#a09aa4', lv:10,shape:'moon',  color:'coal',  hn:'흑임자쮜'},
- {k:'mango',   n:'망고',       c:'#ffc94e', c2:'#ffe6a3', lv:10,shape:'jelly', color:'gold',  hn:'망고쮜'},
- {k:'brown',   n:'흑당',       c:'#8f6440', c2:'#bb8d63', lv:10,shape:'drop',  color:'cocoa', hn:'흑당쮜'},
- {k:'melonw',  n:'수박',       c:'#ff8f8f', c2:'#a9e0a0', lv:11,shape:'tri',   color:'berry', hn:'수박쮜'},
- {k:'injeol',  n:'인절미',     c:'#e6d0a6', c2:'#f7ead0', lv:11,shape:'square',color:'cream', hn:'인절미쮜'},
- {k:'salt',    n:'소금우유',   c:'#eef5f8', c2:'#ffffff', lv:11,shape:'moon',  color:'ocean', hn:'소금우유쮜'},
- {k:'redbean', n:'단팥',       c:'#a4645f', c2:'#c68d88', lv:12,shape:'square',color:'cocoa', hn:'단팥쮜'},
- {k:'chest',   n:'밤',         c:'#c9a06a', c2:'#e2c4a0', lv:12,shape:'round', color:'cream', hn:'밤톨쮜'},
- {k:'lavender',n:'라벤더',     c:'#c4a8e8', c2:'#e8dcf9', lv:12,shape:'tulip', color:'lav',   hn:'라벤더쮜'},
- {k:'rose',    n:'로즈',       c:'#f2a0c0', c2:'#ffd6e6', lv:13,shape:'heart', color:'lav',   hn:'로즈쮜'},
- {k:'rasp',    n:'라즈베리',   c:'#e0628f', c2:'#f39fbb', lv:13,shape:'long',  color:'berry', hn:'라즈베리쮜'},
- {k:'yuja',    n:'유자',       c:'#ffd25e', c2:'#fff2bd', lv:13,shape:'heart', color:'gold',  hn:'유자쮜'},
- {k:'candy',   n:'별사탕',     c:'#c6daff', c2:'#eef4ff', lv:14,shape:'star',  color:'sky',   hn:'별사탕쮜', top:60},
- {k:'pumpkin', n:'호박',       c:'#ffb85e', c2:'#ffdfb0', lv:14,shape:'mush',  color:'honey', hn:'호박쮜'},
- {k:'bubble',  n:'버블껌',     c:'#ff9ecf', c2:'#ffd4ea', lv:15,shape:'tulip', color:'rose',  hn:'버블껌쮜'},
- {k:'milktea', n:'밀크티',     c:'#e2c39a', c2:'#f7e8d2', lv:15,shape:'mush',  color:'sand',  hn:'밀크티쮜'},
- {k:'rainbow', n:'무지개',     c:'#f6a8d8', c2:'#a8e0f6', lv:16,shape:'cloud', color:'lav',   hn:'무지개쮜', top:120},
- {k:'sweetp',  n:'자색고구마', c:'#a06fb0', c2:'#cb9fd8', lv:16,shape:'long',  color:'plum',  hn:'고구마쮜'},
- {k:'waffle',  n:'와플',       c:'#e6b06a', c2:'#f7d9ab', lv:17,shape:'square',color:'honey', hn:'와플쮜'},
- {k:'cheese',  n:'치즈케이크', c:'#f7dd9e', c2:'#fff4d6', lv:17,shape:'acorn', color:'cream', hn:'치즈케이크쮜'},
- {k:'golden',  n:'황금',       c:'#ffd14e', c2:'#fff0b8', lv:18,shape:'star',  color:'gold',  hn:'황금쮜',   top:220},
- {k:'galaxy',  n:'은하',       c:'#7a6ab8', c2:'#cbaaf2', lv:20,shape:'star',  color:'lav',   hn:'은하쮜',   top:340}
+ {k:'vanilla', n:'바닐라',     c:'#f7e6bb', c2:'#fffaf0', lv:1, shape:'round',  color:'cream',  hn:'바닐라쮜'},
+ {k:'straw',   n:'딸기',       c:'#ffa8c2', c2:'#ffd9e4', lv:1, shape:'heart',  color:'berry',  hn:'딸기쮜'},
+ {k:'choco',   n:'초코',       c:'#a9754e', c2:'#cd9d76', lv:1, shape:'bean',  color:'cocoa',  hn:'초코쮜'},
+ {k:'milk',    n:'우유',       c:'#fbf4e8', c2:'#ffffff', lv:1, shape:'bottle',  color:'snow',   hn:'우유쮜'},
+ {k:'banana',  n:'바나나',     c:'#ffdf85', c2:'#fff3c6', lv:2, shape:'long',   color:'gold',   hn:'바나나쮜'},
+ {k:'mint',    n:'민트초코',   c:'#9fe2c9', c2:'#d7f5ea', lv:2, shape:'tri',    color:'mint',   hn:'민트초코쮜'},
+ {k:'strawm',  n:'딸기우유',   c:'#ffd3de', c2:'#fff1f5', lv:2, shape:'drop',   color:'berry',  hn:'딸기우유쮜'},
+ {k:'peach',   n:'복숭아',     c:'#ffc2a0', c2:'#ffe4d3', lv:3, shape:'jelly',  color:'peach',  hn:'복숭아쮜'},
+ {k:'grape',   n:'포도',       c:'#bd9ce8', c2:'#e0cef7', lv:3, shape:'bunch',   color:'lav',    hn:'포도쮜'},
+ {k:'cotton',  n:'솜사탕',     c:'#ffbfe0', c2:'#dbe6ff', lv:3, shape:'cloud',  color:'rose',   hn:'솜사탕쮜'},
+ {k:'cookie',  n:'쿠키앤크림', c:'#e9dfd2', c2:'#fffdf9', lv:4, shape:'cookie',  color:'snow',   hn:'쿠키쮜'},
+ {k:'soda',    n:'소다',       c:'#9fd4f5', c2:'#d6eefc', lv:4, shape:'fizz',   color:'sky',    hn:'소다쮜'},
+ {k:'marsh',   n:'마시멜로',   c:'#ffe6ef', c2:'#ffffff', lv:4, shape:'square', color:'rose',   hn:'마시멜로쮜'},
+ {k:'melon',   n:'멜론',       c:'#aee29a', c2:'#dcf5cf', lv:5, shape:'melon',  color:'mint',   hn:'멜론쮜'},
+ {k:'coffee',  n:'커피',       c:'#8a6446', c2:'#b58f6c', lv:5, shape:'moon',   color:'cocoa',  hn:'커피쮜'},
+ {k:'gpgrape', n:'청포도',     c:'#cfe89a', c2:'#eef8d2', lv:5, shape:'pear',  color:'mint',   hn:'청포도쮜'},
+ {k:'lemon',   n:'레몬',       c:'#ffe86f', c2:'#fff6bd', lv:6, shape:'lemon',   color:'gold',   hn:'레몬쮜'},
+ {k:'blue',    n:'블루베리',   c:'#8ba4e0', c2:'#c2d2f5', lv:6, shape:'berry',  color:'ocean',  hn:'블루베리쮜'},
+ {k:'kiwi',    n:'키위',       c:'#9ecf72', c2:'#d8ecb8', lv:6, shape:'kiwi',  color:'grass',  hn:'키위쮜'},
+ {k:'orange',  n:'오렌지',     c:'#ffae5e', c2:'#ffd7ac', lv:7, shape:'orange',  color:'gold',   hn:'오렌지쮜'},
+ {k:'matcha',  n:'말차',       c:'#9bbf74', c2:'#cde0b4', lv:7, shape:'leafy', color:'mint',   hn:'말차쮜'},
+ {k:'pine',    n:'파인애플',   c:'#ffdf6b', c2:'#fff6c6', lv:7, shape:'pine', color:'gold',   hn:'파인애플쮜'},
+ {k:'cherry',  n:'체리',       c:'#f06a88', c2:'#ffb1c1', lv:8, shape:'cherry',   color:'rose',   hn:'체리쮜'},
+ {k:'caramel', n:'카라멜',     c:'#dda45f', c2:'#f0cb99', lv:8, shape:'cube', color:'sand',   hn:'카라멜쮜'},
+ {k:'plum',    n:'자두',       c:'#d96a9c', c2:'#f5a6c6', lv:8, shape:'plum',  color:'plum',   hn:'자두쮜'},
+ {k:'coconut', n:'코코넛',     c:'#f6eddd', c2:'#ffffff', lv:9, shape:'coco',  color:'sand',   hn:'코코넛쮜'},
+ {k:'yogurt',  n:'요거트',     c:'#fbeee8', c2:'#fffdfb', lv:9, shape:'swirl',  color:'peach',  hn:'요거트쮜'},
+ {k:'pistach', n:'피스타치오', c:'#c3d698', c2:'#e8f2d4', lv:9, shape:'nut',  color:'grass',  hn:'피스타치오쮜'},
+ {k:'sesame',  n:'흑임자',     c:'#6f6a72', c2:'#a09aa4', lv:10,shape:'seed',   color:'coal',   hn:'흑임자쮜'},
+ {k:'mango',   n:'망고',       c:'#ffc94e', c2:'#ffe6a3', lv:10,shape:'mango',   color:'honey',  hn:'망고쮜'},
+ {k:'brown',   n:'흑당',       c:'#8f6440', c2:'#bb8d63', lv:10,shape:'drip',   color:'cocoa',  hn:'흑당쮜'},
+ {k:'melonw',  n:'수박',       c:'#ff8f8f', c2:'#a9e0a0', lv:11,shape:'melonw',    color:'berry',  hn:'수박쮜'},
+ {k:'injeol',  n:'인절미',     c:'#e6d0a6', c2:'#f7ead0', lv:11,shape:'mochi', color:'cream',  hn:'인절미쮜'},
+ {k:'salt',    n:'소금우유',   c:'#eef5f8', c2:'#ffffff', lv:11,shape:'crystal',   color:'ocean',  hn:'소금우유쮜'},
+ {k:'redbean', n:'단팥',       c:'#a4645f', c2:'#c68d88', lv:12,shape:'bun', color:'cocoa',  hn:'단팥쮜'},
+ {k:'chest',   n:'밤',         c:'#c9a06a', c2:'#e2c4a0', lv:12,shape:'acorn',  color:'sand',   hn:'밤톨쮜'},
+ {k:'lavender',n:'라벤더',     c:'#c4a8e8', c2:'#e8dcf9', lv:12,shape:'tulip',  color:'lav',    hn:'라벤더쮜'},
+ {k:'rose',    n:'로즈',       c:'#f2a0c0', c2:'#ffd6e6', lv:13,shape:'rose',  color:'lav',    hn:'로즈쮜'},
+ {k:'rasp',    n:'라즈베리',   c:'#e0628f', c2:'#f39fbb', lv:13,shape:'rasp',   color:'berry',  hn:'라즈베리쮜'},
+ {k:'yuja',    n:'유자',       c:'#ffd25e', c2:'#fff2bd', lv:13,shape:'citron',  color:'gold',   hn:'유자쮜'},
+ {k:'candy',   n:'별사탕',     c:'#c6daff', c2:'#eef4ff', lv:14,shape:'star',   color:'sky',    hn:'별사탕쮜', top:60},
+ {k:'pumpkin', n:'호박',       c:'#ffb85e', c2:'#ffdfb0', lv:14,shape:'mush',   color:'honey',  hn:'호박쮜'},
+ {k:'bubble',  n:'버블껌',     c:'#ff9ecf', c2:'#ffd4ea', lv:15,shape:'gum',  color:'rose',   hn:'버블껌쮜'},
+ {k:'milktea', n:'밀크티',     c:'#e2c39a', c2:'#f7e8d2', lv:15,shape:'boba',   color:'sand',   hn:'밀크티쮜'},
+ {k:'rainbow', n:'무지개',     c:'#f6a8d8', c2:'#a8e0f6', lv:16,shape:'arch',  color:'lav',    hn:'무지개쮜', top:120},
+ {k:'sweetp',  n:'자색고구마', c:'#a06fb0', c2:'#cb9fd8', lv:16,shape:'yam',   color:'plum',   hn:'고구마쮜'},
+ {k:'waffle',  n:'와플',       c:'#e6b06a', c2:'#f7d9ab', lv:17,shape:'waffle', color:'honey',  hn:'와플쮜'},
+ {k:'cheese',  n:'치즈케이크', c:'#f7dd9e', c2:'#fff4d6', lv:17,shape:'wedge',  color:'cream',  hn:'치즈케이크쮜'},
+ {k:'golden',  n:'황금',       c:'#ffd14e', c2:'#fff0b8', lv:18,shape:'sun',   color:'gold',   hn:'황금쮜',   top:220},
+ {k:'galaxy',  n:'은하',       c:'#7a6ab8', c2:'#cbaaf2', lv:20,shape:'comet',   color:'lav',    hn:'은하쮜',   top:340}
 ];
 const FL={}; const FKEYS=[]; const NTUB=FLAVORS.length;
 {
@@ -1264,11 +1751,14 @@ function scoopCost(f){ return Math.max(6, Math.round(f.scoop*(1-upgLv('spoon')*0
    3. 업그레이드
 ================================================================== */
 const UPG={
-  spoon:{name:'큰 스쿱',    em:'🥄', max:5, base:600,  mul:2.5, desc:'한 번 뜨는 값이 싸져요'},
-  luck :{name:'요정 스쿱',  em:'🍀', max:5, base:900,  mul:2.8, desc:'⭐가 많은 햄쮜가 더 잘 나와요'},
-  charm:{name:'인기 가게',  em:'🎀', max:6, base:500,  mul:2.3, desc:'놀아줄 때 코인을 더 줘요'},
-  seat :{name:'자리 늘리기',em:'🪑', max:4, base:1200, mul:3.0, desc:'모든 방의 자리가 하나 늘어요'},
-  regul:{name:'단골 손님',  em:'⏰', max:5, base:1500, mul:2.9, desc:'저절로 모이는 코인이 늘어요'}
+  spoon:{name:'큰 스쿱',    em:'🥄', max:8,  base:600,   mul:2.20, desc:'한 번 뜨는 값이 싸져요'},
+  luck :{name:'요정 스쿱',  em:'🍀', max:8,  base:900,   mul:2.45, desc:'⭐가 많은 햄쮜가 더 잘 나와요'},
+  charm:{name:'인기 가게',  em:'🎀', max:10, base:500,   mul:2.05, desc:'놀아줄 때 코인을 더 줘요'},
+  seat :{name:'자리 늘리기',em:'🪑', max:6,  base:1200,  mul:2.80, desc:'모든 방의 자리가 하나 늘어요'},
+  regul:{name:'단골 손님',  em:'⏰', max:8,  base:1500,  mul:2.55, desc:'저절로 모이는 코인이 늘어요'},
+  bell :{name:'주문 종',    em:'🔔', max:6,  base:2400,  mul:2.50, desc:'주문 놀이에서 코인을 더 받아요'},
+  cozy :{name:'푹신 쿠션',  em:'🛏️', max:6,  base:3200,  mul:2.60, desc:'놀아줄 때 하트가 더 빨리 차요'},
+  tray :{name:'큰 쟁반',    em:'🍽️', max:5,  base:12000, mul:3.00, desc:'뜰 때 덤으로 한 마리 더 나올 수 있어요'}
 };
 const UPG_KEYS=Object.keys(UPG);
 function upgLv(k){ return (S&&S.upg&&S.upg[k])||0; }
@@ -1284,8 +1774,12 @@ const ROOMS=[
   {dn:'첫째 방', lv:1},
   {dn:'둘째 방', lv:5},
   {dn:'셋째 방', lv:10},
-  {dn:'넷째 방', lv:15}
+  {dn:'넷째 방', lv:15},
+  /* 🌳 마당 — 배경은 테마가 아니라 「오늘 날씨」가 정한다. 반드시 맨 뒤에 둔다 */
+  {dn:'마당', lv:8, yard:1}
 ];
+function isYard(i){ if(i===undefined) i=S.room|0; return !!(ROOMS[i]&&ROOMS[i].yard); }
+const YARD_I=ROOMS.findIndex(r=>r.yard);
 function roomOk(i){ return !!ROOMS[i] && S.lv>=ROOMS[i].lv; }
 /* 열린 방은 「개수」가 아니라 「번호 목록」으로 다룬다 — 레벨 순서가 아닌 방이 생겨도 안 어긋난다 */
 function openIdx(){ const a=[]; for(let i=0;i<ROOMS.length;i++) if(roomOk(i)) a.push(i); return a; }
@@ -1308,7 +1802,7 @@ function room(i){
   if(!THEMES[r.theme]) r.theme='day';
   /* 놓은 가구 — 없어진 가구나 자리에 안 맞는 가구(벽 것을 바닥에)는 치운다 */
   if(!r.spot || typeof r.spot!=='object') r.spot={};
-  SPOTS.forEach(sp=>{
+  spotsOf(i).forEach(sp=>{
     const v=r.spot[sp.k];
     if(v && (!FURN[v] || FURN[v].kind!==sp.kind || !haveFurn(v))) r.spot[sp.k]=null;
   });
@@ -1323,7 +1817,7 @@ function room(i){
   return r;
 }
 function roomName(i){ if(i===undefined) i=S.room|0; return room(i).name || ROOMS[i].dn; }
-function roomEm(i){ return THEMES[room(i).theme].em; }
+function roomEm(i){ return isYard(i) ? wxNow().em : THEMES[room(i).theme].em; }
 function seatArr(){ return room().seat; }
 function roomHams(i){ return room(i).seat.slice(0,seats()).filter(k=>k&&S.dex[k]); }
 /* 모든 방을 돌며 그 햄쮜가 어디에 있는지 찾는다 */
@@ -1344,11 +1838,49 @@ function unseat(k){
 function goRoom(i){
   if(!roomOk(i)){ sfx('boo'); toast(`🔒 가게 Lv.${ROOMS[i].lv} 가 되면 열려요`); return; }
   S.room=i; room(i); applyTheme(); sfx('tap'); save(); renderView();
+  if(isYard(i)) wxWake();                 /* 마당에 들어오면 날씨를 확인한다 */
+}
+/* 🛝 마당 놀이기구 줄 — 지금 놓인 것과 쉬는 시간 */
+function rideBarHTML(){
+  const on=YSPOT_KEYS.map(sk=>({sk, k:furnAt(sk)})).filter(x=>x.k);
+  if(!on.length) return `<div class="muted" style="margin-top:7px">
+    🛝 아직 놀이기구가 없어요 — <b>🎨 놀이기구 놓기</b> 에서 미끄럼틀부터 놓아봐요!</div>`;
+  return `<div class="toys" style="margin-top:8px">${on.map(({sk,k})=>{
+    const f=FURN[k], left=rideLeft(k);
+    return `<div class="toy ${left?'':'on'}" onclick="rideGo('${sk}')">
+      <div class="e">${f.em}</div><div class="n">${f.n}</div>
+      <div class="c">${left?Math.ceil(left/1000)+'초 뒤':'타기!'}</div></div>`;
+  }).join('')}</div>`;
+}
+/* 📍 날씨 위치 정하기 */
+function openWxPlace(){
+  const gps=(S.wx&&S.wx.mode)!=='city';
+  const canGeo=!!navigator.geolocation && !!window.isSecureContext;
+  openModal(`<h2>📍 날씨 위치<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="line-height:1.7;margin-bottom:9px">
+      마당 배경은 <b>지금 그곳의 날씨</b>를 따라가요. 위치는 날씨를 물어볼 때만 쓰고,
+      <b>동네 단위로 뭉뚱그려서</b> 보내요 (집 주소는 안 나가요).
+    </div>
+    <div class="card" style="margin:0">
+      <h3>${gps?'✅ ':''}📱 폰 위치 자동</h3>
+      <div class="muted">폰이 알려주는 위치로 날씨를 봐요. 처음 한 번 <b>허용</b>을 눌러주면 돼요.
+        ${canGeo?'':'<br><b style="color:var(--acc)">지금 방식으로 열면 쓸 수 없어요</b> — 아래에서 도시를 골라주세요.'}</div>
+      <button class="btn ${gps?'w':''} sm" style="width:100%;margin-top:7px" ${canGeo?'':'disabled'}
+              onclick="closeModal();wxUseGeo(1)">📱 폰 위치로 보기</button>
+    </div>
+    <div class="card" style="margin:9px 0 0">
+      <h3>${gps?'':'✅ '}🏙️ 도시 고르기</h3>
+      <div class="frames" style="grid-template-columns:repeat(4,1fr);margin-top:7px">${CITIES.map(c=>
+        `<div class="${(!gps && (S.wx&&S.wx.city)===c.k)?'on':''}" onclick="closeModal();wxUseCity('${c.k}')">
+          <span class="e">🏙️</span>${c.n}</div>`).join('')}</div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn" onclick="closeModal()">확인</button></div>`);
 }
 function playMul(){ return (1+upgLv('charm')*0.15)*(1+S.lv*0.05); }
 function gradeW(){
   const bonus=upgLv('luck')*2;                 /* ★3 이상 확률 +2%p 씩 */
-  return {1:58-bonus, 2:28, 3:11+bonus*0.75, 4:3+bonus*0.25};
+  return {1:58.4-bonus, 2:28, 3:11+bonus*0.72, 4:2.2+bonus*0.24, 5:0.4+bonus*0.04};
 }
 function expNeed(lv){ return Math.floor(60*Math.pow(lv,1.3)); }
 function dexCount(){ return Object.keys(S.dex).filter(isTub).length; }
@@ -1363,10 +1895,17 @@ function totalHearts(){ return Object.keys(S.dex).reduce((a,k)=>a+hearts(k),0); 
 const NAP_MS=180000, NAP_MUL=2;
 function napLeft(){ return Math.max(0,(S.play&&S.play.napTill||0)-Date.now()); }
 /* noBuff=true 면 낮잠 보너스를 빼고 센다 — 안 보던 동안의 계산에 두 배를 소급하면 안 된다 */
+/* 🌳 마당 햄쮜는 오늘 날씨를 탄다 — 비·눈에는 우산을 든 햄쮜가 오히려 제일 잘 번다 */
+function yardOne(k){
+  const w=wxNow();
+  if(w.wet && /umb/.test(wearOf(k).hand||'')) return 1.50;
+  return w.mul;
+}
 function autoIncome(noBuff){
   let c=0;
   openIdx().forEach(i=>{
-    roomHams(i).forEach(k=>{ c+=S.dex[k].g*(1+0.3*hearts(k))*0.3; });
+    const yard=isYard(i);
+    roomHams(i).forEach(k=>{ c+=S.dex[k].g*(1+0.3*hearts(k))*0.3*(yard?yardOne(k):1); });
   });
   const buff=(!noBuff && napLeft())?NAP_MUL:1;
   return c*(1+upgLv('regul')*0.25)*(1+S.lv*0.08)*buff;
@@ -1378,16 +1917,24 @@ function autoIncome(noBuff){
 const SPECIAL={
   bunny  :{hn:'토끼쮜',  shape:'bunny',   color:'snow',  c:'#ffdce8', star:5, g:2,   em:'🐰',
            d:'주문을 잘 받는다는 소문을 듣고 폴짝폴짝 찾아왔어요'},
+  chick  :{hn:'병아리쮜',shape:'chick',   color:'gold',  c:'#ffe6a0', star:9, g:2,  em:'🐤',
+           d:'알을 톡 깨고 나와서 아이스크림 냄새를 따라왔어요'},
   cat    :{hn:'냥쮜',    shape:'cat',     color:'cream', c:'#ffe0b8', star:14, g:2,  em:'🐱',
            d:'창문 밖에서 계속 쳐다보다가 슬쩍 들어왔어요'},
   bear   :{hn:'곰돌쮜',  shape:'bear',    color:'cocoa', c:'#cd9d76', star:28, g:3,  em:'🧸',
            d:'제일 큰 아이스크림을 먹으러 온 커다란 친구예요'},
+  panda  :{hn:'판다쮜',  shape:'panda',   color:'snow',  c:'#e8e4ee', star:38, g:3,  em:'🐼',
+           d:'대나무보다 아이스크림이 더 좋다며 데굴데굴 굴러왔어요'},
   flower :{hn:'꽃쮜',    shape:'flower',  color:'rose',  c:'#ffc2da', star:48, g:3,  em:'🌸',
            d:'가게 앞 화단에서 피어난 것 같은 아이예요'},
+  unicorn:{hn:'유니콘쮜',shape:'unicorn', color:'lav',   c:'#dcc6f5', star:60, g:4,  em:'🦄',
+           d:'무지개 갈기를 흩날리며 구름을 타고 내려왔어요'},
   pudding:{hn:'푸딩쮜',  shape:'pudding', color:'honey', c:'#f5d08a', star:72, g:4,  em:'🍮',
            d:'카라멜을 머리에 얹고 사뿐사뿐 걸어왔어요'},
-  gem    :{hn:'보석쮜',  shape:'gem',     color:'aqua',  c:'#cdf0f2', star:100, g:4, em:'💎',
-           d:'반짝반짝 — 아주 아주 귀한 손님이에요'}
+  gem    :{hn:'보석쮜',  shape:'gem',     color:'aqua',  c:'#cdf0f2', star:100, g:5, em:'💎',
+           d:'반짝반짝 — 아주 아주 귀한 손님이에요'},
+  angel  :{hn:'천사쮜',  shape:'angel',   color:'sky',   c:'#d6e8fb', star:140, g:5, em:'👼',
+           d:'착한 가게에만 온다는 소문의 친구 — 정말 왔어요!'}
 };
 const SP_KEYS=Object.keys(SPECIAL);
 function spId(k){ return 'sp_'+k; }
@@ -1456,9 +2003,11 @@ function freshState(){
     err:{d:'', t:[], got:0},      // 🎯 오늘의 심부름 (마지막 날, 세 가지, 선물 받았는지)
     errAll:0,                     // 심부름을 다 한 날이 며칠인지
     album:[],                     // 사진첩
-    play:{toy:'pet', ballAt:0, bubbleAt:0},
+    play:{toy:'pet', ballAt:0, bubbleAt:0, ride:{}},
+    wx:{key:null, temp:null, at:0, mode:'gps', city:'seoul', place:'', err:0}, // 🌤️ 오늘 날씨
+    det:{d:'', n:0, win:0, all:0},// 🕵️ 햄쮜 탐정 (마지막 날, 오늘 판 수, 오늘 맞힌 수, 전체 맞힌 수)
     giftAt:0,
-    stats:{scoop:0, pet:0, best4:0},
+    stats:{scoop:0, pet:0, best4:0, best5:0},
     snd:true, vib:true, tut:0, t:Date.now()
   };
 }
@@ -1473,6 +2022,7 @@ const BADGES=[
   {k:'dall',  em:'🏆', n:'모두 모았어요',d:'통에 사는 햄쮜를 다 모았어요!',ok:()=>dexCount()>=NTUB, top:60},
   {k:'s4',    em:'✨', n:'반짝 별넷',    d:'⭐4개 햄쮜를 처음 만났어요',   ok:()=>S.stats.best4>=1, top:5},
   {k:'s4x5',  em:'🌟', n:'별넷 다섯',    d:'⭐4개를 5번 만났어요',         ok:()=>S.stats.best4>=5, top:12},
+  {k:'s5',    em:'💫', n:'별다섯 전설',  d:'⭐5개 햄쮜를 처음 만났어요',   ok:()=>(S.stats.best5||0)>=1, top:20},
   {k:'h5',    em:'💖', n:'단짝',        d:'하트를 꽉 채운 친구가 생겼어요', ok:()=>Object.keys(S.dex).some(k=>hearts(k)>=5), top:6},
   {k:'h3',    em:'💞', n:'인기쟁이',    d:'하트 꽉 찬 친구가 셋이에요',   ok:()=>Object.keys(S.dex).filter(k=>hearts(k)>=5).length>=3, top:14},
   {k:'w1',    em:'🎀', n:'첫 꾸미기',    d:'햄쮜를 처음 꾸며줬어요',      ok:()=>dressedCount()>=1, top:3},
@@ -1510,7 +2060,14 @@ const BADGES=[
   {k:'cont1', em:'🏆', n:'대회 1등',     d:'꾸미기 대회에서 1등을 했어요',  ok:()=>(S.cont.win||0)>=1, top:10},
   {k:'cont5', em:'👑', n:'패션 스타',    d:'꾸미기 대회 1등을 5번 했어요',  ok:()=>(S.cont.win||0)>=5, top:20},
   {k:'wall',  em:'🛍️', n:'옷장 부자',    d:'꾸미기 소품을 다 모았어요',
-     ok:()=>S.closet.length>=WEAR_SLOTS.reduce((a,sl)=>a+Object.keys(WEAR[sl].items).length,0), top:25}
+     ok:()=>S.closet.length>=WEAR_SLOTS.reduce((a,sl)=>a+Object.keys(WEAR[sl].items).length,0), top:25},
+  {k:'yard',  em:'🌳', n:'마당 첫 손님',  d:'마당에 햄쮜를 앉혔어요',      ok:()=>roomOk(YARD_I)&&roomHams(YARD_I).length>=1, top:8},
+  {k:'ride1', em:'🛝', n:'첫 미끄럼틀',   d:'마당 놀이기구를 처음 탔어요', ok:()=>(S.stats.ride||0)>=1,  top:6},
+  {k:'ride50',em:'🎠', n:'놀이기구 왕',   d:'놀이기구를 50번 탔어요',      ok:()=>(S.stats.ride||0)>=50, top:20},
+  {k:'wx3',   em:'🌈', n:'날씨 박사',     d:'마당에서 날씨 3가지를 봤어요', ok:()=>((S.wx&&S.wx.seen)||[]).length>=3, top:12},
+  {k:'det1',  em:'🕵️', n:'꼬마 탐정',     d:'햄쮜 탐정 범인을 처음 맞혔어요', ok:()=>(S.det&&S.det.all||0)>=1,  top:8},
+  {k:'det10', em:'🔍', n:'명탐정',        d:'햄쮜 탐정 범인을 10번 맞혔어요', ok:()=>(S.det&&S.det.all||0)>=10, top:24},
+  {k:'spup',  em:'💫', n:'별 올려주기',   d:'특별 햄쮜의 ⭐를 올려줬어요',  ok:()=>(S.stats.spUp||0)>=1,  top:10}
 ];
 function checkBadges(){
   BADGES.forEach(b=>{
@@ -1569,7 +2126,13 @@ const COUPONS={
   '엽떡먹은찌동이':{em:'🌶️', name:'엽떡 먹고 딸기우유', coin:2000, top:20,
                       wear:['hat_bunny','neck_bell'], tub:['strawm'], furn:['tv']},
   '햄찌에게우산선물':{em:'☔', name:'햄찌에게 우산 선물',
-                      wear:['hand_rainumb','hand_dotumb','hand_rainbowumb','hand_umbrella']}
+                      wear:['hand_rainumb','hand_dotumb','hand_rainbowumb','hand_umbrella']},
+  /* 「밥을 맛시게 먹은 찌돌이」 — 잘 먹은 날의 상. 찐빵 모양 단팥쮜와 먹을 것들 */
+  '밥을맛시게먹은찌돌이':{em:'🍚', name:'밥을 맛시게 먹은 찌돌이', coin:4000, top:25,
+                      wear:['hat_berry','hand_lolly','cone_cwaffle'], tub:['redbean'], furn:['cake']},
+  /* 「퐁실 마음이 갈기갈기」 — 퐁실퐁실한 것들과 갈래갈래 리본 */
+  '퐁실마음이갈기갈기':{em:'🫧', name:'퐁실 마음이 갈기갈기', coin:3000, top:22,
+                      wear:['neck_scarf','hand_balloon','cone_ccup'], tub:['cotton'], furn:['sofa','ribbon']}
 };
 function openCoupon(){
   const used=(S.coupon||[]).filter(c=>COUPONS[c]);
@@ -1674,8 +2237,21 @@ function load(){
     if(!S.dex||typeof S.dex!=='object') S.dex={};
     if(!S.upg||typeof S.upg!=='object') S.upg={};
     if(!S.play||typeof S.play!=='object') S.play={toy:'pet',ballAt:0,bubbleAt:0};
-    if(!S.stats) S.stats={scoop:0,pet:0,best4:0};
+    if(!S.play.ride||typeof S.play.ride!=='object') S.play.ride={};
+    if(!S.wx ||typeof S.wx !=='object') S.wx={key:null,temp:null,at:0,mode:'gps',city:'seoul',place:'',err:0};
+    if(!cityOf(S.wx.city)) S.wx.city='seoul';
+    if(S.wx.mode!=='city' && S.wx.mode!=='gps') S.wx.mode='gps';
+    if(!S.det ||typeof S.det !=='object') S.det={d:'',n:0,win:0,all:0};
+    if(!S.stats) S.stats={scoop:0,pet:0,best4:0,best5:0};
+    if(S.stats.best5===undefined) S.stats.best5=0;
     if(!Array.isArray(S.closet)) S.closet=[];
+    /* 옛 저장에는 없어진 소품 키가 남아 있을 수 있다(예: 콘 위에 얹던 🍒체리).
+       옷장에 남은 것은 그리는 쪽에서 무시되지만, 입고 있는 것은 「뭔가 입은 걸로」 세어져서
+       풀코디 판정이 어긋나므로 여기서 비워준다. */
+    S.closet=S.closet.filter(id=>{ const [sl,key]=String(id).split('_');
+      return WEAR[sl] && WEAR[sl].items[key]; });
+    Object.keys(S.dex).forEach(k=>{ const w=S.dex[k]&&S.dex[k].w; if(!w) return;
+      WEAR_SLOTS.forEach(sl=>{ if(w[sl] && !WEAR[sl].items[w[sl]]) w[sl]=null; }); });
     if(!Array.isArray(S.badge)) S.badge=[];
     if(!Array.isArray(S.coupon)) S.coupon=[];
     if(!S.stamp||typeof S.stamp!=='object') S.stamp={d:'',n:0,all:0};
@@ -1729,7 +2305,7 @@ function load(){
       if(!e.p) e.p='plain';
       if(!e.g) e.g=1;
       if(e.n==null) e.n=1;
-      if(!e.w||typeof e.w!=='object') e.w={hat:null,neck:null,hand:null};
+      if(!e.w||typeof e.w!=='object') e.w={hat:null,neck:null,hand:null,cone:null};
     });
     /* 가게를 닫아둔 동안에도 단골 손님이 절반 속도로 벌어둔다 */
     const dt=clamp((Date.now()-(d.t||Date.now()))/1000,0,OFFLINE_MAX);
@@ -1830,13 +2406,13 @@ function rollOne(k,forceHigh){
   let g=+wpick(gradeW());
   S.pity++;
   if(S.pity>=15 && g<3){ g=3; }           /* 15번 안에 ★3 이상은 반드시 */
-  if(forceHigh && g<3){ g=Math.random()<0.22?4:3; }   /* 골든 스쿱 */
+  if(forceHigh && g<3){ const r=Math.random(); g=r<0.02?5:r<0.24?4:3; }   /* 골든 스쿱 */
   if(g>=3) S.pity=0;
   const p=wpick(PAT_W);
   const d=S.dex[k];
   const res={k, g, p, isNew:!d, up:false};
   if(!d){
-    S.dex[k]={g, p, n:1, bond:0, w:{hat:null,neck:null,hand:null}};
+    S.dex[k]={g, p, n:1, bond:0, w:{hat:null,neck:null,hand:null,cone:null}};
     S.top+=2; addExp(26);
   }else{
     d.n++;
@@ -1845,13 +2421,17 @@ function rollOne(k,forceHigh){
     addExp(5);
   }
   if(g===3){ S.top+=1; }
-  if(g===4){ S.top+=2; S.stats.best4++; }
+  if(g>=4){ S.top+=2; S.stats.best4++; }
+  if(g>=5){ S.top+=3; S.stats.best5=(S.stats.best5||0)+1; }   /* ⭐5 는 통틀어 🍒+5 */
   S.stats.scoop++;
   return res;
 }
 function finishScoop(k,n,forceHigh){
   const out=[];
   for(let i=0;i<n;i++) out.push(rollOne(k,forceHigh));
+  /* 🍽️큰 쟁반 — 값을 안 내고 한 마리가 더 나올 때가 있다 */
+  const tray=upgLv('tray') && Math.random()<upgLv('tray')*0.09;
+  if(tray) out.push(rollOne(k,forceHigh));
   const best=out.reduce((a,o)=>Math.max(a,o.g),0);
   const anyNew=out.some(o=>o.isNew);
   errBump('scoop',n); errBump('newham',out.filter(o=>o.isNew).length);
@@ -1859,9 +2439,9 @@ function finishScoop(k,n,forceHigh){
   if(anyNew||best>=4) vib([0,35,55,35]); else if(best>=3) vib(28);
   checkBadges();
   save(); renderHUD(); renderScoopTab();
-  showResult(FL[k], out, forceHigh);
+  showResult(FL[k], out, forceHigh, tray);
 }
-function showResult(f,out,gold){
+function showResult(f,out,gold,tray){
   const one=out.length===1;
   const news=out.filter(o=>o.isNew).length;
   const best=out.reduce((a,o)=>Math.max(a,o.g),0);
@@ -1870,9 +2450,10 @@ function showResult(f,out,gold){
   if(one){
     const o=out[0];
     const h=hamOf(f.k);
-    const star='⭐'.repeat(o.g)+'☆'.repeat(4-o.g);
+    const star='⭐'.repeat(o.g)+'☆'.repeat(5-o.g);
     openModal(`<h2>${gold?'🍒 골든 스쿱!':o.isNew?'💖 새 친구가 나왔어요!':'🐹 앗, 햄쮜다!'}<span class="x" onclick="closeModal()">닫기</span></h2>
-      ${o.g===4?'<div style="text-align:center;font-size:15px;letter-spacing:4px">✨🌟✨</div>':''}
+      ${o.g>=5?'<div style="text-align:center;font-size:17px;letter-spacing:4px">💫✨🌟✨💫</div>'
+        :o.g===4?'<div style="text-align:center;font-size:15px;letter-spacing:4px">✨🌟✨</div>':''}
       <div class="big burst">${hamSVG(h)}</div>
       <div style="text-align:center;font-size:14px">
         <b style="font-size:18px">${nameOf(f.k)}</b>
@@ -1882,7 +2463,9 @@ function showResult(f,out,gold){
           ${o.isNew?`<b>처음 만난 친구예요!</b> 🍒+2`
             :o.g>=S.dex[f.k].g?`⭐ 가 <b>${S.dex[f.k].g}개</b>로 더 늘었어요!`
             :`이미 만난 친구예요 <span class="muted">(전에 만난 별 ${S.dex[f.k].g}개가 더 많아요)</span>`}
-          ${o.g===4?'<br>✨ <b style="color:#d99a1a">별 네 개! 아주 귀한 친구예요</b> 🍒+2':o.g===3?'<br>🌸 별 세 개! 🍒+1':''}
+          ${o.g>=5?'<br>💫 <b style="color:#c46bab">별 다섯 개!! 정말정말 드문 친구예요</b> 🍒+5'
+            :o.g===4?'<br>✨ <b style="color:#d99a1a">별 네 개! 아주 귀한 친구예요</b> 🍒+2'
+            :o.g===3?'<br>🌸 별 세 개! 🍒+1':''}
         </div>
       </div>
       ${o.isNew?`
@@ -1892,7 +2475,7 @@ function showResult(f,out,gold){
                onkeydown="if(event.key==='Enter'){saveName('${f.k}')}">
         <div class="row" style="margin-top:7px">
           <button class="btn" onclick="saveName('${f.k}')">💕 이 이름으로!</button>
-          <button class="btn w" onclick="closeModal();seatFirst('${f.k}')">그냥 ${f.hn} 로 할래요</button>
+          <button class="btn w" onclick="closeModal();seatQuiet('${f.k}')">그냥 ${f.hn} 로 할래요</button>
         </div>
       </div>`
       :`<div class="row" style="justify-content:center;margin-top:12px">
@@ -1901,7 +2484,8 @@ function showResult(f,out,gold){
       </div>`}`);
     if(o.isNew) setTimeout(()=>{ const i=$('#nm-in'); if(i) i.focus(); },120);
   }else{
-    openModal(`<h2>🍨 ${out.length}번 떴어요!<span class="x" onclick="closeModal()">닫기</span></h2>
+    openModal(`<h2>🍨 ${out.length}마리 나왔어요!<span class="x" onclick="closeModal()">닫기</span></h2>
+      ${tray?'<div class="muted" style="text-align:center;margin-bottom:5px">🍽️ <b>큰 쟁반</b> 덕분에 한 마리가 덤으로 왔어요!</div>':''}
       <div class="muted" style="margin-bottom:7px">
         ${f.n} 통에서 ${out.length}마리 · 새 친구 <b>${news}</b>마리 · 가장 반짝 <b>⭐${best}</b>
       </div>
@@ -1910,10 +2494,21 @@ function showResult(f,out,gold){
           <span class="hs">${hamSVG({shape:f.shape,color:f.color,pattern:o.p,grade:o.g,cone:f.c})}</span>
           <div class="nm">${o.isNew?'🆕 ':''}${'⭐'.repeat(o.g)}</div>
         </div>`).join('')}</div>
-      <div class="row" style="justify-content:center;margin-top:12px">
+      ${news&&!S.dex[f.k].name?`
+      <div class="card" style="margin:10px 0 0">
+        <h3>✏️ 새 친구에게 이름을 지어줄래요?</h3>
+        <input id="nm-in" class="tin" maxlength="8" placeholder="${f.hn}" value=""
+               onkeydown="if(event.key==='Enter'){saveName('${f.k}')}">
+        <div class="row" style="margin-top:7px">
+          <button class="btn" onclick="saveName('${f.k}')">💕 이 이름으로!</button>
+          <button class="btn w" onclick="closeModal();seatQuiet('${f.k}')">그냥 ${f.hn} 로 할래요</button>
+        </div>
+      </div>`
+      :`<div class="row" style="justify-content:center;margin-top:12px">
         <button class="btn" onclick="closeModal()">확인</button>
         ${seated?`<button class="btn w" onclick="closeModal();seatFirst('${f.k}')">🏠 방에 두기</button>`:''}
-      </div>`);
+      </div>`}`);
+    if(news&&!S.dex[f.k].name) setTimeout(()=>{ const i=$('#nm-in'); if(i) i.focus(); },120);
   }
 }
 /* 아이가 지어준 이름 저장 */
@@ -1923,19 +2518,28 @@ function saveName(k){
   v=v.replace(/[<>&"'`]/g,'').slice(0,8);          /* 이름에 태그가 섞이지 않게 */
   if(v){ S.dex[k].name=v; sfx('heart'); toast(`💕 <b>${v}</b> 라고 부를게요!`); }
   else toast(`${baseName(k)} 라고 부를게요 🐹`);
-  save(); closeModal(); seatFirst(k);
+  save(); closeModal(); seatQuiet(k);
 }
-function seatFirst(k){
+/* 이름만 지어줬을 때 — 자리에는 앉히되 보고 있던 화면에서 튕겨나가지 않는다 */
+function seatQuiet(k){ seatFirst(k,true); }
+function seatFirst(k,quiet){
+  /* quiet 이면 탭을 바꾸지 않고 지금 화면만 다시 그린다 */
+  const show=()=>{ if(quiet) renderAll(); else go('play'); };
   const at=whereSeated(k);
-  if(at){ S.room=at.r; applyTheme(); go('play'); toast(`${eun(nameOf(k))} 이미 <b>${roomName(at.r)}</b>에 있어요`); return; }
+  if(at){
+    if(!quiet){ S.room=at.r; applyTheme(); go('play'); toast(`${eun(nameOf(k))} 이미 <b>${roomName(at.r)}</b>에 있어요`); }
+    return;
+  }
   /* 지금 방에 빈자리가 없으면 다른 방의 빈자리를 찾아본다 */
   let ri=S.room|0, i=room(ri).seat.findIndex(x=>!x);
   if(i<0){
     const oa=openIdx();
     for(let n=0;n<oa.length;n++){ const s=room(oa[n]).seat.findIndex(x=>!x); if(s>=0){ ri=oa[n]; i=s; break; } }
   }
-  if(i<0){ go('play'); toast('방이 다 꽉 찼어요 — 자리를 눌러 바꿔주세요'); return; }
-  room(ri).seat[i]=k; S.room=ri; applyTheme(); save(); go('play');
+  if(i<0){ show(); toast('방이 다 꽉 찼어요 — 🏠놀이방에서 자리를 눌러 바꿔주세요'); return; }
+  room(ri).seat[i]=k;
+  if(!quiet){ S.room=ri; applyTheme(); }        /* 조용히 앉힐 때는 보고 있던 방을 바꾸지 않는다 */
+  save(); show();
   toast(`${ega(nameOf(k))} ${euro('<b>'+roomName(ri)+'</b>')} 왔어요 🏠`);
 }
 
@@ -2008,6 +2612,8 @@ function renderScoopTab(){
         🏆 꾸미기 대회${contReady()?'!':' (내일 또)'}</button>
       <button class="btn ${cupLeft()?'w':'g'} sm" onclick="openCup()">
         🙈 숨바꼭질${cupLeft()?` (${Math.ceil(cupLeft()/60000)}분 뒤)`:''}</button>
+      <button class="btn ${detLeft()?'g':'w'} sm" style="grid-column:1/-1" onclick="openDet()">
+        🕵️ 햄쮜 탐정${detLeft()?` (오늘 ${detLeft()}판 남음)`:' (내일 또)'}</button>
     </div>
     ${star?`<div class="slot on" style="margin-top:8px" onclick="go('play')">
         <span class="hs">${hamSVG(hamOf(star))}</span>
@@ -2050,13 +2656,24 @@ const TOY_KEYS=Object.keys(TOYS);
 /* ---------- 🛋️ 방 가구 ----------
    자리는 바닥 둘·벽 둘, 모두 네 곳. 가구는 한 번 사면 모든 방에서 쓸 수 있고
    「어느 방의 어느 자리에 무엇을 놓을지」는 방마다 따로 정한다. */
+/* 가구는 마당 놀이기구만큼 큼직하게 — 작은 이모지는 방에 놓아도 있는 줄 모른다.
+   커진 만큼 화면 가장자리에서 잘리지 않게 좌우 위치를 안쪽으로 당겼다 */
 const SPOTS=[
-  {k:'flL', kind:'floor', n:'왼쪽 바닥',   em:'⬅️', l:6,  b:44,  s:27},
-  {k:'flR', kind:'floor', n:'오른쪽 바닥', em:'➡️', l:94, b:42,  s:27},
-  {k:'wlL', kind:'wall',  n:'왼쪽 벽',     em:'↖️', l:14, b:150, s:24},
-  {k:'wlR', kind:'wall',  n:'오른쪽 벽',   em:'↗️', l:86, b:150, s:24}
+  {k:'flL', kind:'floor', n:'왼쪽 바닥',   em:'⬅️', l:13, b:98,  s:60},
+  {k:'flR', kind:'floor', n:'오른쪽 바닥', em:'➡️', l:87, b:98,  s:56},
+  {k:'wlL', kind:'wall',  n:'왼쪽 벽',     em:'↖️', l:19, b:170, s:46},
+  {k:'wlR', kind:'wall',  n:'오른쪽 벽',   em:'↗️', l:81, b:170, s:46}
 ];
 const SPOT_KEYS=SPOTS.map(s=>s.k);
+/* 🌳 마당은 벽이 없다 — 놀이기구를 놓는 자리 셋 */
+const YSPOTS=[
+  {k:'ydL', kind:'ride', n:'왼쪽 자리',   em:'⬅️', l:22, b:88,  w:132},
+  {k:'ydR', kind:'ride', n:'오른쪽 자리', em:'➡️', l:81, b:90,  w:120},
+  {k:'ydB', kind:'ride', n:'가운데 뒤',   em:'⬆️', l:53, b:148, w:86}
+];
+const YSPOT_KEYS=YSPOTS.map(s=>s.k);
+function spotsOf(i){ return isYard(i) ? YSPOTS : SPOTS; }
+function spotKeysOf(i){ return isYard(i) ? YSPOT_KEYS : SPOT_KEYS; }
 const FURN={
   /* --- 바닥에 놓는 것 --- */
   chair  :{em:'🪑',  n:'의자',          kind:'floor', coin:0},
@@ -2083,23 +2700,31 @@ const FURN={
   window :{em:'🪟',  n:'창문',          kind:'wall',  coin:10500},
   mirror :{em:'🪞',  n:'거울',          kind:'wall',  coin:16000},
   sign   :{em:'🍧',  n:'아이스크림 간판',kind:'wall',  coin:23000},
-  crown  :{em:'👑',  n:'왕관 장식',     kind:'wall',  top:30}
+  crown  :{em:'👑',  n:'왕관 장식',     kind:'wall',  top:30},
+  /* --- 🎮 눌러서 노는 것 (방 안) --- */
+  arcade :{em:'🕹️',  n:'햄쮜 탐정 게임기', kind:'floor', coin:25000, tap:'det'},
+  /* --- 🌳 마당 놀이기구 — 누르면 햄쮜가 실제로 타고 논다 --- */
+  slide  :{em:'🛝',  n:'미끄럼틀',      kind:'ride', coin:6000,  pay:26, tip:'쪼르르 내려와요'},
+  merry  :{em:'🎠',  n:'회전목마',      kind:'ride', coin:18000, pay:44, tip:'빙글빙글 돌아요'},
+  kite   :{em:'🪁',  n:'연날리기',      kind:'ride', coin:42000,  pay:70, tip:'바람 따라 달려요'},
+  sandy  :{em:'🏖️',  n:'모래성',        kind:'ride', coin:90000,  pay:112,tip:'모래를 파닥파닥'},
+  swingy :{em:'🎋',  n:'그네',          kind:'ride', top:40,     pay:150,tip:'앞뒤로 흔들흔들'}
 };
 const FURN_KEYS=Object.keys(FURN);
 const FURN_FREE=['chair','balloon'];      /* 처음부터 가지고 있는 것 */
 function haveFurn(k){ return Array.isArray(S.furn) && S.furn.indexOf(k)>=0; }
 function furnCount(){ return Array.isArray(S.furn)?S.furn.length:0; }
-function spotOf(sk){ return SPOTS.find(s=>s.k===sk); }
+function spotOf(sk){ return SPOTS.find(s=>s.k===sk) || YSPOTS.find(s=>s.k===sk); }
 /* 이 방의 어느 자리에 무엇이 놓여 있는지 */
 function furnAt(sk,i){ const v=room(i).spot[sk]; return (v && FURN[v])?v:null; }
 /* 네 자리를 다 채운 방의 수 */
-function roomsDone(){ let n=0; openIdx().forEach(i=>{ if(SPOT_KEYS.every(sk=>furnAt(sk,i))) n++; }); return n; }
+function roomsDone(){ let n=0; openIdx().forEach(i=>{ if(spotKeysOf(i).every(sk=>furnAt(sk,i))) n++; }); return n; }
 /* 빈 자리에 가진 가구 중 제일 좋은 것을 알아서 놓는다 (옛 저장본 옮길 때만 쓴다) */
 function autoFurn(i){
-  const r=room(i);
-  SPOTS.forEach(sp=>{
+  const r=room(i), keys=spotKeysOf(i);
+  spotsOf(i).forEach(sp=>{
     if(r.spot[sp.k]) return;
-    const pick=S.furn.filter(k=>FURN[k].kind===sp.kind && !SPOT_KEYS.some(x=>r.spot[x]===k))
+    const pick=S.furn.filter(k=>FURN[k].kind===sp.kind && !keys.some(x=>r.spot[x]===k))
                      .sort((a,b)=>FURN_KEYS.indexOf(b)-FURN_KEYS.indexOf(a));
     if(pick.length) r.spot[sp.k]=pick[0];
   });
@@ -2108,7 +2733,7 @@ function autoFurn(i){
 function placeFurn(sk,k){
   const r=room(), sp=spotOf(sk);
   if(!sp || !FURN[k] || FURN[k].kind!==sp.kind || !haveFurn(k)){ sfx('boo'); return; }
-  SPOT_KEYS.forEach(x=>{ if(r.spot[x]===k) r.spot[x]=null; });
+  spotKeysOf().forEach(x=>{ if(r.spot[x]===k) r.spot[x]=null; });
   r.spot[sk]=k;
   errBump('furn');
   sfx('heart'); checkBadges(); save(); renderView(); closeModal();
@@ -2157,7 +2782,8 @@ function seatHams(){ return roomHams(S.room|0); }
 function petHam(k,ev){
   const d=S.dex[k]; if(!d) return;
   const now=Date.now();
-  if(now-(d.petAt||0)<2200){ toast(`${eun(nameOf(k))} 지금 배부른가봐요 😌`); return; }
+  /* 쓰담쓰담은 「언제나」 할 수 있다 — 두 번 눌린 것만 조용히 걸러낸다 */
+  if(now-(d.petAt||0)<380) return;
   d.petAt=now;
   const sm=starMul(k);                      /* 🌟오늘의 친구는 두 배 */
   const gain=Math.ceil((5+d.g*4)*(1+hearts(k)*0.2)*playMul()*sm);
@@ -2177,11 +2803,180 @@ function treatHam(k,ev){
 function addBond(k,v){
   const d=S.dex[k]; if(!d) return;
   const b0=hearts(k);
-  d.bond=clamp((d.bond||0)+v,0,100);
+  d.bond=clamp((d.bond||0)+v*(1+upgLv('cozy')*0.2),0,100);   /* 🛏️푹신 쿠션 */
   if(hearts(k)>b0){
     addExp(8); sfx('star4'); checkBadges();
     toast(`💗 ${wagwa(nameOf(k))} 더 친해졌어요! 하트 ${hearts(k)}개 — 코인을 더 많이 물어와요`);
   }
+}
+/* ==================================================================
+   🛝 마당 놀이기구 그림과 「타는 길」
+   놀이기구는 이모지가 아니라 큰 그림(SVG)으로 그린다.
+   PATH 는 그림 안에서의 좌표(왼쪽 위가 0,0) — 햄쮜가 발을 딛는 자리다.
+   rideAnim() 이 이걸 화면 좌표로 바꿔서 햄쮜를 실제로 걸어가 타게 만든다.
+================================================================== */
+const RIDE_ART={
+  /* 미끄럼틀 — 왼쪽에 사다리, 오른쪽으로 쭉 내려오는 활강로 */
+  slide:{w:132, h:130, art:`<svg viewBox="0 0 132 130">
+    <ellipse cx="66" cy="124" rx="60" ry="6" fill="#000" opacity=".10"/>
+    <!-- 활강로: 두꺼운 테두리 → 안쪽 색 → 반짝임. 끝은 살짝 들려 있다 -->
+    <path d="M50 40 Q78 66 100 98 Q106 108 118 108" stroke="#c2536f" stroke-width="19"
+          fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M50 40 Q78 66 100 98 Q106 108 118 108" stroke="#ff8fae" stroke-width="13"
+          fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M53 42 Q80 68 101 100" stroke="#ffd7e4" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <!-- 활강로 옆벽 -->
+    <path d="M42 46 Q72 74 94 106" stroke="#e0708f" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- 받침 기둥 -->
+    <rect x="86" y="90" width="8" height="34" rx="4" fill="#9aa7b8"/>
+    <rect x="84" y="118" width="12" height="6" rx="3" fill="#7d8b9c"/>
+    <!-- 올라서는 발판 -->
+    <rect x="12" y="30" width="46" height="10" rx="5" fill="#5ea6d8"/>
+    <rect x="12" y="26" width="46" height="6" rx="3" fill="#a8d8f8"/>
+    <!-- 사다리 -->
+    <rect x="18" y="36" width="7" height="88" rx="3.5" fill="#5ea6d8"/>
+    <rect x="40" y="36" width="7" height="88" rx="3.5" fill="#5ea6d8"/>
+    <g fill="#8fcbee">
+      <rect x="22" y="48" width="21" height="6" rx="3"/><rect x="22" y="62" width="21" height="6" rx="3"/>
+      <rect x="22" y="76" width="21" height="6" rx="3"/><rect x="22" y="90" width="21" height="6" rx="3"/>
+      <rect x="22" y="104" width="21" height="6" rx="3"/></g>
+    <!-- 손잡이 -->
+    <path d="M15 30 q0 -20 14 -20 M50 30 q0 -20 -14 -20" stroke="#5ea6d8" stroke-width="6"
+          fill="none" stroke-linecap="round"/>
+    <circle cx="29" cy="9" r="5" fill="#ffd75e" stroke="#e0ac2c" stroke-width="1.6"/>
+    <circle cx="36" cy="9" r="5" fill="#ff8fae" stroke="#e0708f" stroke-width="1.6"/>
+  </svg>`,
+  /* 사다리밑 → 사다리 중간 → 발판 → 앉기 → 미끄럼 중간 → 끝 → 착지 */
+  path:[[32,118,0,.86],[32,74,0,.78],[33,30,0,.70],[54,42,14,.70],[82,72,26,.78],[108,100,12,.86],[120,116,0,.90]]},
+
+  /* 회전목마 — 기둥에 지붕, 말이 매달려 돈다 */
+  merry:{w:110, h:104, art:`<svg viewBox="0 0 110 104">
+    <ellipse cx="55" cy="98" rx="46" ry="6" fill="#000" opacity=".10"/>
+    <ellipse cx="55" cy="90" rx="42" ry="11" fill="#e8d7bd" stroke="#c9b394" stroke-width="2"/>
+    <rect x="51" y="26" width="8" height="62" rx="4" fill="#c9a06a"/>
+    <path d="M55 4 L100 34 L10 34 Z" fill="#ff8fae" stroke="#e0708f" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M55 4 L78 34 L55 34 Z" fill="#ffd0de"/>
+    <path d="M12 34 q10 7 21 0 q10 7 21 0 q10 7 21 0 q10 7 21 0" stroke="#e0708f" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="55" cy="4" r="5" fill="#ffd75e" stroke="#e0ac2c" stroke-width="1.6"/>
+    <path d="M28 36 v16 M82 36 v16" stroke="#c9a06a" stroke-width="3" stroke-linecap="round"/>
+    <g transform="translate(82,64)"><text x="-11" y="6" font-size="22">🎠</text></g>
+    <g transform="translate(28,64)"><text x="-11" y="6" font-size="20">🐴</text></g>
+  </svg>`,
+  /* 기둥 옆으로 붙었다가 한 바퀴 돈다 */
+  path:[[86,86,0,.82],[86,80,0,.78],[55,72,0,.7],[24,80,0,.78],[55,88,0,.86],[86,80,0,.8]]},
+
+  /* 연날리기 — 땅에 박은 말뚝에 연이 매달려 하늘로 */
+  kite:{w:96, h:112, art:`<svg viewBox="0 0 96 112">
+    <ellipse cx="48" cy="106" rx="26" ry="5" fill="#000" opacity=".10"/>
+    <path d="M48 100 q14 -26 22 -54" stroke="#c9b394" stroke-width="2" fill="none" stroke-dasharray="3 3"/>
+    <rect x="44" y="88" width="8" height="18" rx="4" fill="#a8896a"/>
+    <g transform="translate(70,30) rotate(18)">
+      <path d="M0 -24 L18 0 L0 24 L-18 0 Z" fill="#8fc2f0" stroke="#5f8fc0" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M0 -24 L0 24 M-18 0 L18 0" stroke="#5f8fc0" stroke-width="1.6"/>
+      <path d="M0 -24 L-18 0 L0 0 Z" fill="#ff8fae"/><path d="M0 24 L18 0 L0 0 Z" fill="#ffd75e"/>
+      <path d="M0 24 q7 8 -2 14 q9 5 1 13" stroke="#ff8fae" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </g>
+  </svg>`,
+  /* 연을 잡고 좌우로 달린다 */
+  path:[[48,100,0,.86],[6,98,-8,.9],[48,96,0,.86],[90,98,8,.9],[48,100,0,.86],[24,98,-6,.88]]},
+
+  /* 모래성 — 양동이랑 삽을 놓고 파닥파닥 */
+  sandy:{w:104, h:86, art:`<svg viewBox="0 0 104 86">
+    <ellipse cx="52" cy="80" rx="48" ry="7" fill="#e8d0a8"/>
+    <ellipse cx="52" cy="78" rx="44" ry="6" fill="#f2e0bd"/>
+    <path d="M22 76 L22 50 L34 50 L34 40 L46 40 L46 30 L58 30 L58 40 L70 40 L70 50 L82 50 L82 76 Z"
+          fill="#e6c894" stroke="#c9a86a" stroke-width="2" stroke-linejoin="round"/>
+    <g fill="#c9a86a"><rect x="27" y="56" width="9" height="12" rx="2"/><rect x="47" y="48" width="9" height="12" rx="2"/>
+      <rect x="67" y="56" width="9" height="12" rx="2"/></g>
+    <path d="M52 30 L52 16" stroke="#a8896a" stroke-width="2"/>
+    <path d="M52 16 L66 21 L52 26 Z" fill="#ff8fae"/>
+    <g transform="translate(90,60) rotate(18)"><rect x="-6" y="-14" width="12" height="16" rx="3" fill="#7fbfe8"/>
+      <rect x="-7" y="-16" width="14" height="4" rx="2" fill="#5ea6d8"/></g>
+  </svg>`,
+  path:[[52,74,0,.86],[46,76,-12,.84],[52,68,4,.84],[58,76,12,.84],[46,70,-6,.84],[52,74,0,.86]]},
+
+  /* 그네 — 나무 기둥에 앉는 판이 달려 있다 */
+  swingy:{w:112, h:110, art:`<svg viewBox="0 0 112 110">
+    <ellipse cx="56" cy="104" rx="48" ry="6" fill="#000" opacity=".10"/>
+    <path d="M18 104 L44 16 M94 104 L68 16" stroke="#a8896a" stroke-width="8" stroke-linecap="round"/>
+    <path d="M40 16 L72 16" stroke="#8a6a44" stroke-width="8" stroke-linecap="round"/>
+    <path d="M46 18 L46 74 M66 18 L66 74" stroke="#c9b394" stroke-width="3"/>
+    <rect x="40" y="72" width="32" height="8" rx="4" fill="#ff8fae" stroke="#e0708f" stroke-width="2"/>
+    <circle cx="56" cy="14" r="5" fill="#ffd75e" stroke="#e0ac2c" stroke-width="1.6"/>
+    <path d="M30 60 q-8 -6 -4 -14" stroke="#7fc47a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="24" cy="44" r="5" fill="#ffb3d0"/>
+  </svg>`,
+  /* 그네 판에 앉아 앞뒤로 */
+  path:[[56,76,0,.82],[26,58,-24,.8],[56,74,0,.84],[86,58,24,.8],[56,74,0,.84],[34,64,-16,.82]]}
+};
+/* 햄쮜를 실제로 놀이기구까지 걸어가 타게 만든다.
+   놀이기구 그림의 「왼쪽 아래」를 기준점으로 삼아 PATH 좌표를 화면 좌표로 옮긴다. */
+function rideAnim(el, rideEl, kind){
+  const A=RIDE_ART[kind]; if(!A||!el||!rideEl||!el.animate) return 0;
+  const rr=rideEl.getBoundingClientRect(), er=el.getBoundingClientRect();
+  const sx=rr.width/A.w, sy=rr.height/A.h;              /* 그림이 화면에서 얼마나 커졌나 */
+  /* 브라우저가 화면을 확대해 놓았으면 rect 는 확대된 값, transform 은 확대 전 값이다 — 배율을 나눠준다 */
+  const z=(parseFloat(rideEl.style.width)>0) ? rr.width/parseFloat(rideEl.style.width) : 1;
+  const hx=er.left+er.width/2, hy=er.bottom;            /* 햄쮜 발밑 */
+  /* 지금 서 있는 자세를 그대로 출발점으로 쓴다 — 산책 애니메이션이 밀어놓은 만큼을 무시하면 첫 프레임에서 순간이동한다.
+     (.riding 이 붙는 동안 산책은 CSS 에서 멈춰 두므로 이 값은 애니메이션이 끝날 때까지 변하지 않는다) */
+  const cs=getComputedStyle(el).transform;
+  const base=(cs && cs!=='none') ? cs : 'translateX(-50%)';
+  const at=(px,py,rot,sc)=>{
+    const tx=(rr.left+px*sx-hx)/z, ty=(rr.top+py*sy-hy)/z;
+    return `${base} translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) rotate(${rot}deg) scale(${sc})`;
+  };
+  const P=A.path, n=P.length, D=4200;
+  /* 걸어가기(0~14%) → 타기(14~78%) → 잠깐 멈춤(~85%) → 걸어 돌아오기(85~100%)
+     구간마다 easing 을 따로 주어야 한다 — 전체에 ease-in-out 을 걸면 끝에서 후딱 끌려간다 */
+  const frames=[{transform:base, offset:0, easing:'ease-in'}];
+  P.forEach((p,i)=>frames.push({
+    transform:at(p[0],p[1],p[2],p[3]),
+    offset:+(0.14+0.64*(i+1)/n).toFixed(4),
+    easing:'linear'
+  }));
+  const last=P[n-1];
+  frames.push({transform:at(last[0],last[1],last[2],last[3]), offset:0.85, easing:'ease-in-out'});
+  frames.push({transform:base, offset:1});
+  el.animate(frames, {duration:D, fill:'none'});
+  return D;
+}
+
+/* ---------- 🛝 마당 놀이기구 ---------- */
+const RIDE_CD=9000;
+function rideLeft(k){ return Math.max(0, RIDE_CD-(Date.now()-((S.play.ride||{})[k]||0))); }
+function rideGo(sk,ev){
+  if(ev) ev.stopPropagation();
+  const k=furnAt(sk), f=k?FURN[k]:null;
+  if(!f || f.kind!=='ride') return;
+  const list=seatHams();
+  if(!list.length){ sfx('boo'); toast('마당에 놀 햄쮜가 없어요 — 아래에서 불러와요 🪑'); return; }
+  S.play.ride=S.play.ride||{};
+  const left=rideLeft(k);
+  if(left){ toast(`${f.em} ${eun(f.n)} 잠깐 쉬는 중이에요 (${Math.ceil(left/1000)}초 뒤)`); return; }
+  S.play.ride[k]=Date.now();
+
+  /* 햄쮜 한 마리가 놀이기구까지 걸어가서 실제로 타고 논다 */
+  const who=pick(list), idx=list.indexOf(who);
+  const el=$$('#terrace .tham')[idx];
+  const rideEl=$('#terrace .ride[data-sk="'+sk+'"]');
+  if(el && rideEl){
+    el.classList.add('riding');                /* 놀이기구보다 앞에 그리고, 산책을 멈춰 세운다 — 자세를 재기 전에 붙여야 한다 */
+    const ms=rideAnim(el, rideEl, k);
+    if(ms) setTimeout(()=>el.classList.remove('riding'), ms);
+    else el.classList.remove('riding');
+  }
+  if(rideEl){ rideEl.classList.remove('rbounce'); void rideEl.offsetWidth; rideEl.classList.add('rbounce');
+              setTimeout(()=>rideEl.classList.remove('rbounce'),900); }
+
+  const gain=Math.ceil(f.pay*(1+S.dex[who].g*0.35)*(1+hearts(who)*0.15)*playMul()*yardOne(who));
+  S.coin+=gain; addBond(who,5); errBump('ride');
+  S.stats.ride=(S.stats.ride||0)+1;
+  sfx('coin'); vib([0,20,40,20]);
+  if(el){ const r=el.getBoundingClientRect(); popAt(r.left+r.width/2-16, r.top-6, '🪙+'+fmt(gain)); }
+  toast(`${f.em} ${ega(nameOf(who))} ${eul(f.n)} 탔어요! 🪙+${fmt(gain)}`);
+  checkBadges(); save(); renderHUD();
+  const inc=$('#autoinc'); if(inc) inc.textContent=autoIncome()>0?fmt(autoIncome()*60)+' /분':'없음';
 }
 function playAll(kind){
   const t=TOYS[kind], now=Date.now(), key=kind+'At', last=S.play[key]||0;
@@ -2231,20 +3026,23 @@ function playAll(kind){
   checkBadges(); save(); renderHUD(); refreshBond();
   toast(`${t.em} ${t.name}! ${kind==='nap'?'쿨쿨 잘 자요':'다 같이 신났어요'} ${got}`);
 }
+/* 저장된 놀이 이름이 지금 없는 것이면 쓰담쓰담으로 돌린다 — 낡은 저장에서도 놀이방이 멈추지 않게 */
+function curToy(){ return TOYS[S.play&&S.play.toy] ? S.play.toy : 'pet'; }
 function pickToy(k){
+  if(!TOYS[k]) k='pet';
   S.play.toy=k; save();
   $$('#toybar .toy').forEach(e=>e.classList.toggle('on',e.dataset.k===k));
   const t=$('#toytip'); if(t) t.innerHTML=toyTipHTML();
 }
 function toyTipHTML(){
-  const t=TOYS[S.play.toy||'pet'];
+  const t=TOYS[curToy()];
   return t.one ? `${t.em} <b>${t.name}</b> — ${t.tip}. <b>햄쮜를 톡 누르세요!</b>`
                : `${t.em} <b>${t.name}</b> — ${t.tip}. <b>방 아무 곳이나 누르세요!</b>`;
 }
-function terraceBg(){ const t=TOYS[S.play.toy||'pet']; if(!t.one) playAll(S.play.toy); }
+function terraceBg(){ const k=curToy(); if(!TOYS[k].one) playAll(k); }
 function tapHam(k,ev){
   ev.stopPropagation();
-  const kind=S.play.toy||'pet', t=TOYS[kind];
+  const kind=curToy(), t=TOYS[kind];
   if(!t.one){ playAll(kind); return; }
   const i=seatHams().indexOf(k); hop(i<0?null:i);
   if(kind==='pet') petHam(k,ev);
@@ -2359,12 +3157,18 @@ function refreshBond(){
   const inc=$('#autoinc'); if(inc) inc.textContent=autoIncome()>0?fmt(autoIncome()*60)+' /분':'없음';
 }
 function renderPlayTab(){
+  const yard=isYard();                       /* 🌳 마당이냐 방이냐 — 아래 배치와 배경이 모두 여기서 갈린다 */
   const R=room();                            /* 지금 보고 있는 방 (자리 수 보정까지 여기서 한다) */
   const list=seatHams();
   const star=starHam();
   /* 앞줄은 크고 뒷줄은 작게 — 이름표가 겹치지 않게 가로로 벌려 둔다 */
-  const spot=[{l:19,b:6, w:84,d:17,z:5},{l:46,b:44,w:66,d:14,z:4},{l:71,b:5, w:84,d:17,z:5},
-              {l:89,b:42,w:60,d:8, z:4},{l:26,b:78,w:54,d:9, z:3},{l:64,b:80,w:54,d:8, z:3}];
+  const spot = yard
+    /* 🌳 마당 — 앞줄·가운뎃줄만 쓰고 뒤쪽은 놀이기구 자리로 비워둔다 */
+    ? [{l:15,b:4, w:74,d:14,z:7},{l:39,b:2, w:78,d:15,z:7},{l:63,b:4, w:74,d:14,z:7},{l:87,b:2, w:70,d:13,z:7},
+       {l:10,b:48,w:52,d:9, z:6},{l:32,b:52,w:50,d:8, z:6},{l:57,b:52,w:50,d:8, z:6},{l:80,b:48,w:52,d:9, z:6}]
+    : [{l:19,b:6, w:84,d:17,z:5},{l:46,b:44,w:66,d:14,z:4},{l:71,b:5, w:84,d:17,z:5},
+       {l:89,b:42,w:60,d:8, z:4},{l:26,b:78,w:54,d:9, z:3},{l:64,b:80,w:54,d:8, z:3},
+       {l:45,b:6, w:62,d:12,z:6},{l:9, b:40,w:52,d:9, z:4}];
   const said=[];                            /* 같은 말이 두 마리에게 겹치지 않게 */
   const hams=list.map((k,i)=>{
     const s=spot[i]||spot[0], d=S.dex[k];
@@ -2381,13 +3185,23 @@ function renderPlayTab(){
         <b>${isStar?'🌟':''}${nameOf(k)}<i class="hrt">${hn?' 💗'+hn:''}</i></b>
       </span>`;
   }).join('');
-  const dec=SPOTS.map(sp=>{
+  const dec=spotsOf(S.room|0).map(sp=>{
     const k=furnAt(sp.k); if(!k) return '';
-    return `<span class="deco" style="left:${sp.l}%;bottom:${sp.b}px;font-size:${sp.s}px"
-              onclick="event.stopPropagation();openFurnPick('${sp.k}')" title="${FURN[k].n}">${FURN[k].em}</span>`;
+    const f=FURN[k];
+    /* 놀이기구·게임기는 눌러서 놀고, 그냥 가구는 눌러서 바꾼다 */
+    const act = f.kind==='ride' ? `rideGo('${sp.k}',event)`
+              : f.tap==='det'   ? `event.stopPropagation();openDet()`
+              :                   `event.stopPropagation();openFurnPick('${sp.k}')`;
+    /* 마당 놀이기구는 이모지 대신 큰 그림 — 햄쮜가 여기 올라타고 논다 */
+    if(f.kind==='ride' && RIDE_ART[k]) return `<span class="ride" data-sk="${sp.k}"
+              style="left:${sp.l}%;bottom:${sp.b}px;width:${sp.w}px"
+              onclick="${act}" title="${f.n} — ${f.tip}">${RIDE_ART[k].art}</span>`;
+    return `<span class="deco${f.tap?' tapme':''}" data-sk="${sp.k}"
+              style="left:${sp.l}%;bottom:${sp.b}px;font-size:${sp.s||27}px"
+              onclick="${act}" title="${f.n}${f.tip?' — '+f.tip:''}">${f.em}</span>`;
   }).join('');
-  const cur=S.play.toy||'pet';
-  const emptySpots=SPOT_KEYS.filter(sk=>!furnAt(sk)).length;
+  const cur=curToy();
+  const emptySpots=spotKeysOf(S.room|0).filter(sk=>!furnAt(sk)).length;
 
   const slots=R.seat.slice(0,seats()).map((k,i)=>{
     if(!k||!S.dex[k]) return `<div class="slot" onclick="openSeatPick(${i})">
@@ -2413,11 +3227,13 @@ function renderPlayTab(){
 
   $('#view').innerHTML=`
   <div class="rooms">${roomTabs}</div>
-  <div id="terrace" onclick="terraceBg()">
-    <div class="awn"></div><div class="floor"></div>
+  <div id="terrace" class="${yard?'yard':''}" onclick="terraceBg()">
+    ${yard?'':'<div class="awn"></div>'}<div class="floor"></div>
     ${themeSpHTML()}
     ${dec}
-    <div class="hint">🏠 ${roomName()} · 하트 ${totalHearts()}개</div>
+    <div class="hint">${yard
+      ? `${wxNow().em} ${wxPlace()} <b>${wxNow().n}</b>${(S.wx&&S.wx.temp!==undefined&&S.wx.temp!==null)?` ${S.wx.temp}°`:''}`
+      : `🏠 ${roomName()} · 하트 ${totalHearts()}개`}</div>
     <div id="photocam" onclick="event.stopPropagation();takePhoto()" title="사진 찍기">📸</div>
     <div id="tthemebtn" onclick="event.stopPropagation();sfx('tap');openRoomDeco()" title="방 꾸미기">🎨</div>
     ${list.length?hams:`<div class="none">${roomName()} 이 비었어요 🪑<br>
@@ -2425,6 +3241,20 @@ function renderPlayTab(){
       <button class="btn w sm" style="margin-top:7px" onclick="event.stopPropagation();go('scoop')">🍨 뜨러 가기</button></div>`}
   </div>
 
+  ${yard?`<div class="card">
+    <h3>${wxNow().em} 오늘 마당 날씨 <small>${wxPlace()}${(S.wx&&S.wx.temp!==undefined&&S.wx.temp!==null)?` ${S.wx.temp}°`:''}</small></h3>
+    <div class="muted" style="line-height:1.7">
+      <b style="font-size:14px;color:var(--ink)">${wxNow().em} ${wxNow().n}</b> — ${wxNow().tip}<br>
+      마당 햄쮜는 오늘 <b>${Math.round(wxNow().mul*100)}%</b> 로 벌어요${wxNow().wet?' · ☔<b>우산 든 햄쮜는 150%</b>':''}
+      ${(S.wx&&S.wx.err)?'<br><b style="color:var(--acc)">날씨를 못 받아왔어요</b> — 인터넷이 되는지 보고 🔄를 눌러주세요':''}
+    </div>
+    ${rideBarHTML()}
+    <div class="row" style="margin-top:8px">
+      <button class="btn w sm" onclick="wxWake(1)">🔄 날씨 새로 보기</button>
+      <button class="btn w sm" onclick="openWxPlace()">📍 위치 정하기</button>
+      <button class="btn w sm" onclick="openRoomDeco()">🛝 놀이기구 놓기</button>
+    </div>
+  </div>`:''}
   <div class="card">
     <h3>🧸 장난감 <small>고르고 나서 햄쮜를 눌러요</small></h3>
     <div class="toys" id="toybar">${TOY_KEYS.map(k=>{
@@ -2448,11 +3278,11 @@ function renderPlayTab(){
       ⏰ 가만히 있어도 <b id="autoinc">${autoIncome()>0?fmt(autoIncome()*60)+' /분':'없음'}</b> 모여요
       — <b>모든 방</b>의 햄쮜가 함께 벌어줘요
       ${napLeft()?`<br>😴 낮잠 중이라 <b>${NAP_MUL}배</b>로 모여요 (${Math.ceil(napLeft()/1000)}초 남음)`:''}
-      ${seats()<6?'<br>🪑 자리는 🛒상점의 <b>자리 늘리기</b> 로 늘려요 (모든 방이 같이 늘어나요)':''}
+      ${seats()<8?'<br>🪑 자리는 🛒상점의 <b>자리 늘리기</b> 로 늘려요 (모든 방이 같이 늘어나요)':''}
       ${nextRoom()?`<br>🔒 다음 <b>${nextRoom().dn}</b> — 가게 Lv.${nextRoom().lv}`:''}
-      ${emptySpots?`<br>🛋️ <b>${roomName()}</b> 에 빈 자리가 ${emptySpots}곳 있어요 —
-        <span style="text-decoration:underline;cursor:pointer" onclick="openRoomDeco()">🎨 방 꾸미기</span> 에서 가구를 놓아요`
-       :`<br>🛋️ 가구 ${furnCount()} / ${FURN_KEYS.length}가지 — 🎨 방 꾸미기 에서 바꿔 놓을 수 있어요`}
+      ${emptySpots?`<br>${yard?'🛝':'🛋️'} <b>${roomName()}</b> 에 빈 자리가 ${emptySpots}곳 있어요 —
+        <span style="text-decoration:underline;cursor:pointer" onclick="openRoomDeco()">🎨 ${yard?'놀이기구 놓기':'방 꾸미기'}</span> 에서 골라요`
+       :`<br>${yard?'🛝':'🛋️'} 가진 것 ${furnCount()} / ${FURN_KEYS.length}가지 — 🎨 ${yard?'놀이기구 놓기':'방 꾸미기'} 에서 바꿔 놓을 수 있어요`}
     </div>
   </div>`;
 }
@@ -2489,28 +3319,41 @@ function openRoomDeco(){
       </div>
       <div class="muted" style="margin-top:6px">한글 8자까지 — 「공주방」 「딸기방」 처럼 지어봐요</div>
     </div>
+    ${isYard(i)
+      ? `<div class="card" style="margin:9px 0 0">
+          <h3>${wxNow().em} 마당 배경은 <b>오늘 날씨</b>가 정해요</h3>
+          <div class="muted" style="line-height:1.7">
+            지금 <b>${wxPlace()}</b>는 ${wxNow().em} <b>${wxNow().n}</b>${S.wx&&S.wx.temp!==undefined&&S.wx.temp!==null?` · ${S.wx.temp}°`:''} —
+            비가 오면 하늘이 어두워지고, 눈이 오면 마당이 하얘져요.<br>${wxNow().tip}
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button class="btn w sm" onclick="wxWake(1)">🔄 날씨 새로 보기</button>
+            <button class="btn w sm" onclick="openWxPlace()">📍 위치 정하기</button>
+          </div>
+        </div>`
+      : `<div class="card" style="margin:9px 0 0">
+          <h3>🖼️ 배경 고르기</h3>
+          <div class="frames" style="margin-bottom:8px">${Object.keys(THEMES).map(k=>{
+            const t=THEMES[k], ok=themeOk(k);
+            return `<div class="${r.theme===k?'on':''}" style="${ok?'':'opacity:.5'}" onclick="setTheme('${k}')">
+              <span class="e">${ok?t.em:'🔒'}</span>${ok?t.name:'Lv.'+t.lv}</div>`;
+          }).join('')}</div>
+          <div class="muted">방마다 <b>다른 배경</b>을 골라도 돼요! 가게 레벨이 오르면 새 배경이 열려요.</div>
+        </div>`}
     <div class="card" style="margin:9px 0 0">
-      <h3>🖼️ 배경 고르기</h3>
-      <div class="frames" style="margin-bottom:8px">${Object.keys(THEMES).map(k=>{
-        const t=THEMES[k], ok=themeOk(k);
-        return `<div class="${r.theme===k?'on':''}" style="${ok?'':'opacity:.5'}" onclick="setTheme('${k}')">
-          <span class="e">${ok?t.em:'🔒'}</span>${ok?t.name:'Lv.'+t.lv}</div>`;
-      }).join('')}</div>
-      <div class="muted">방마다 <b>다른 배경</b>을 골라도 돼요! 가게 레벨이 오르면 새 배경이 열려요.</div>
-    </div>
-    <div class="card" style="margin:9px 0 0">
-      <h3>🛋️ 가구 놓기 <small>가진 가구 ${furnCount()} / ${FURN_KEYS.length}가지</small></h3>
-      ${SPOTS.map(sp=>{
+      <h3>${isYard(i)?'🛝 놀이기구 놓기':'🛋️ 가구 놓기'} <small>가진 것 ${furnCount()} / ${FURN_KEYS.length}가지</small></h3>
+      ${spotsOf(i).map(sp=>{
         const k=furnAt(sp.k), f=k?FURN[k]:null;
         return `<div class="slot ${k?'on':''}" onclick="openFurnPick('${sp.k}')">
           <span class="ph">${f?f.em:'＋'}</span>
           <div class="info"><b>${sp.n}</b>
-            <div class="muted">${f?f.n:(sp.kind==='floor'?'바닥에 놓을 것을 골라요':'벽에 붙일 것을 골라요')}</div></div>
+            <div class="muted">${f?(f.n+(f.tip?' — '+f.tip:'')):(sp.kind==='ride'?'놀이기구를 골라요':sp.kind==='floor'?'바닥에 놓을 것을 골라요':'벽에 붙일 것을 골라요')}</div></div>
           <span class="muted">고르기 ▸</span></div>`;
       }).join('')}
       <div class="muted" style="margin-top:6px">
-        가구는 여기서 바로 살 수 있어요. 한 번 사면 <b>네 방 모두</b>에서 쓸 수 있고,
-        어느 방에 무엇을 놓을지는 방마다 따로 정해요.
+        ${isYard(i)
+          ? '놀이기구는 <b>누르면 햄쮜가 타고 놀아요</b> — 코인도 받아요! 여기서 바로 살 수 있어요.'
+          : '가구는 여기서 바로 살 수 있어요. 한 번 사면 <b>모든 방</b>에서 쓸 수 있고, 어느 방에 무엇을 놓을지는 방마다 따로 정해요.'}
       </div>
     </div>
     <div class="row" style="justify-content:center;margin-top:11px">
@@ -2596,9 +3439,13 @@ function renderDexTab(){
           </div>`).join('')}</div>`
       : ''}
     <div class="row" style="margin-top:${mixCount()?'8px':'0'}">
-      <button class="btn sm" onclick="mixA=null;mixB=null;openMixLab()">💞 짝꿍 만들기</button>
-      <button class="btn w sm" onclick="go('order')">🎁 특별 햄쮜 보기</button>
+      <button class="btn sm" style="width:100%" onclick="mixA=null;mixB=null;openMixLab()">💞 짝꿍 만들기</button>
     </div>
+  </div>
+  <div class="card" style="margin-top:9px">
+    <h3>🎁 특별 햄쮜 <small>${SP_KEYS.length-spLocked().length} / ${SP_KEYS.length}마리</small></h3>
+    <div class="muted" style="margin-bottom:7px">🔔주문 놀이에서 모은 <b>⭐${S.ord.star||0}개</b>로 찾아오는 친구들이에요. 눌러보면 알려줘요.</div>
+    <div class="dexgrid">${spCardsHTML()}</div>
   </div>
   <div class="card">
     <h3>🏅 스티커판 <small>${S.badge.length} / ${BADGES.length}장</small></h3>
@@ -2613,7 +3460,7 @@ function renderDexTab(){
     <h3>🧾 내 기록</h3>
     <div class="muted" style="line-height:1.9">
       🥄 뜬 횟수 ${fmt(S.stats.scoop)}번 · 🖐️ 쓰담쓰담 ${fmt(S.stats.pet)}번<br>
-      ✨ ⭐4 만난 횟수 ${fmt(S.stats.best4)}번 · 💗 하트 ${totalHearts()}개 · 🎀 꾸민 친구 ${dressedCount()}마리<br>
+      💫 ⭐5 만난 횟수 ${fmt(S.stats.best5||0)}번 · ✨ ⭐4 ${fmt(S.stats.best4)}번 · 💗 하트 ${totalHearts()}개 · 🎀 꾸민 친구 ${dressedCount()}마리<br>
       💞 믹스쮜 ${mixCount()}마리 · 🎁 특별 햄쮜 ${spCount()} / ${SP_KEYS.length}마리<br>
       🎵 춤춘 횟수 ${fmt(S.stats.dance||0)}번 · 🏆 대회 1등 ${fmt(S.cont.win||0)}번<br>
       🔔 대접한 손님 ${fmt(S.ord.done||0)}명 · ⭐ 모은 별 ${fmt(S.ord.star||0)}개
@@ -2625,7 +3472,7 @@ function openDex(k){
   openModal(`<h2>${d?nameOf(k):'???'}<span class="x" onclick="closeModal()">닫기</span></h2>
     <div class="big" style="${d?'':'filter:grayscale(1);opacity:.35'}">${hamSVG(d?hamOf(k):{shape:f.shape,color:f.color,pattern:'plain',grade:1,cone:f.c})}</div>
     <div style="text-align:center;font-size:13px">
-      ${d?`<b style="font-size:16px">${nameOf(k)}</b> <span style="font-size:14px">${'⭐'.repeat(d.g)}${'☆'.repeat(4-d.g)}</span>
+      ${d?`<b style="font-size:16px">${nameOf(k)}</b> <span style="font-size:14px">${'⭐'.repeat(d.g)}${'☆'.repeat(5-d.g)}</span>
           <div class="muted" style="margin-top:2px">${SHAPES[f.shape].name}모양 · ${COLORS[f.color].name}색 · ${PATTERNS[d.p]}${wearCount(k)?' · 꾸미기 '+wearCount(k)+'가지':''}</div>`
         :`<b>아직 만나지 못했어요</b>
           <div class="muted" style="margin-top:2px">${open?`<b>${f.n}</b> 통을 떠보세요`:`먼저 <b>${f.n}</b> 통을 상점에서 사야 해요`}</div>`}
@@ -2636,7 +3483,7 @@ function openDex(k){
       · 한 번 뜨는 값 <b>🪙${fmt(scoopCost(f))}</b><br>
       ${d?`💗 친한 정도 <b>${heartStr(k)}</b> — 놀아줄 때 코인 <b>+${hearts(k)*20}%</b><br>
            🥄 이 통을 <b>${d.n}</b>번 떠봤어요`
-        :`🎲 ⭐1 ${gradeW()[1].toFixed(0)}% · ⭐2 ${gradeW()[2].toFixed(0)}% · ⭐3 ${gradeW()[3].toFixed(0)}% · ⭐4 ${gradeW()[4].toFixed(1)}%`}
+        :`🎲 ⭐1 ${gradeW()[1].toFixed(0)}% · ⭐2 ${gradeW()[2].toFixed(0)}% · ⭐3 ${gradeW()[3].toFixed(0)}% · ⭐4 ${gradeW()[4].toFixed(1)}% · ⭐5 ${gradeW()[5].toFixed(2)}%`}
     </div>
     <div class="row" style="justify-content:center;margin-top:10px">
       ${d?`<button class="btn" onclick="openCloset('${k}')">👗 꾸미기</button>
@@ -2680,6 +3527,10 @@ function openCloset(k,slot){
       ${wearCount(k)?`${wearCount(k)}가지를 입었어요${isFullSet(k)?' — <b>풀코디!</b> 🎀':''}`:'무엇을 입혀볼까요?'}
     </div>
     <div class="wrow">${tabs}</div>
+    ${sl==='cone'?`<div class="muted" style="margin:-3px 0 7px;line-height:1.6">
+      🍨 <b>햄쮜가 아이스크림 한 스쿱이 되어 콘 위에 올라앉아요.</b>
+      모자·목걸이·손 소품도 같이 올라타요.
+    </div>`:''}
     <div class="wpick">${cards}</div>
     <div class="row" style="justify-content:center;margin-top:10px">
       ${ownAny?`<button class="btn w sm" onclick="randomWear('${k}')">🎲 마음대로 꾸미기</button>`:''}
@@ -2712,7 +3563,7 @@ function buyWear(slot,key,k){
 }
 function equipWear(k,slot,key){
   const d=S.dex[k]; if(!d) return;
-  if(!d.w) d.w={hat:null,neck:null,hand:null};
+  if(!d.w) d.w={hat:null,neck:null,hand:null,cone:null};
   d.w[slot]=(d.w[slot]===key)?null:key;                     /* 같은 걸 또 누르면 벗는다 */
   sfx(d.w[slot]?'heart':'tap');
   if(d.w[slot]) errBump('dress');
@@ -2720,12 +3571,12 @@ function equipWear(k,slot,key){
 }
 function stripWear(k){
   const d=S.dex[k]; if(!d) return;
-  d.w={hat:null,neck:null,hand:null};
+  d.w={hat:null,neck:null,hand:null,cone:null};
   sfx('tap'); save(); renderHUD(); renderView(); openCloset(k);
 }
 function randomWear(k){
   const d=S.dex[k]; if(!d) return;
-  d.w={hat:null,neck:null,hand:null};
+  d.w={hat:null,neck:null,hand:null,cone:null};
   WEAR_SLOTS.forEach(s=>{
     const own=Object.keys(WEAR[s].items).filter(key=>ownWear(s,key));
     if(own.length && Math.random()<0.85) d.w[s]=pick(own);
@@ -2806,7 +3657,7 @@ function renderStoreTab(){
     const it=WEAR[sl].items[key], own=ownWear(sl,key), ok=canAffordWear(it);
     return `<div class="scard ${own?'':(ok?'':'locked')}">
       <span class="ic">${it.em}</span><b>${it.name}</b>
-      <span class="fx">${WEAR[sl].name}에 달아요</span>
+      <span class="fx">${sl==='cone'?'이 콘 위에 올라앉아요':WEAR[sl].name+'에 달아요'}</span>
       <span class="pr">${own?'✅ 가지고 있어요':wearPriceHTML(it)}</span>
       <button class="btn ${own?'w':(ok?'g':'w')} sm" ${own||!ok?'disabled':''} onclick="buyWear('${sl}','${key}','')">${own?'옷장에 있음':'사기'}</button>
     </div>`;
@@ -2898,7 +3749,7 @@ function openLevel(){
 function openHelp(){
   const topics=[
     ['🍨','통 고르고 푹 뜨기',`🍨탭에서 <b>통을 하나 고르고</b> 「한 번 뜨기」를 누르면 그 통에 사는 햄쮜가 나와요. 통마다 사는 햄쮜가 달라서 <b>${NTUB}마리</b>랍니다.`],
-    ['🎲','뜰 때마다 달라요','통이 정하는 건 <b>모양과 색</b>. <b>무늬와 ⭐개수</b>는 뜰 때마다 달라요. ⭐4개가 나오면 왕관을 쓴 채 훨씬 예쁘게 나와요. 도감에는 <b>가장 많이 나온 것만</b> 남아요.'],
+    ['🎲','뜰 때마다 달라요','통이 정하는 건 <b>모양과 색</b>. <b>무늬와 ⭐개수</b>는 뜰 때마다 달라요. ⭐는 <b>1개부터 5개</b>까지 — ⭐4·⭐5는 온몸이 반짝반짝해요. 통 '+NTUB+'가지의 모양·색 조합은 <b>전부 서로 달라요.</b> 도감에는 <b>가장 좋은 것만</b> 남아요.'],
     ['🏠','나온 햄쮜와 놀기','🏠놀이방에 햄쮜를 앉히고 <b>쓰담쓰담·토핑·공놀이·비눗방울</b>로 놀아주세요. 놀아주면 <b>코인</b>이 모이고, 그 코인으로 또 아이스크림을 뜨면 됩니다.'],
     ['💗','친해지기','놀아줄수록 💗하트가 차요(최대 5개). 하트가 늘면 <b>코인을 더 많이</b> 물어오고, 저절로 모이는 코인도 늘어요.'],
     ['👗','예쁘게 꾸미기','🛒상점에서 <b>꾸미기 소품</b>을 사고, 🏠놀이방의 <b>「👗 햄쮜 꾸미기」</b> 를 누르면 <b>가진 햄쮜 전부</b>가 나와요 — 누구든 골라서 입힐 수 있어요. 리본·왕관·풍선 '+WEAR_SLOTS.reduce((a,s)=>a+Object.keys(WEAR[s].items).length,0)+'가지! 한 번 사면 <b>모두가 돌려 입어요</b>. 🏆꾸미기 대회에서도 쓰여요.'],
@@ -2909,12 +3760,15 @@ function openHelp(){
     ['🌟','오늘의 친구','매일 아침 친구 한 마리가 <b>오늘의 친구</b>가 돼요. 그 친구를 쓰담쓰담하면 코인과 하트를 <b>두 배</b>로 받아요!'],
     ['🙈','숨바꼭질','아이스크림 컵 세 개 중 하나에 햄쮜가 숨어요. 맞히면 🍒토핑을 줘요. 8분에 한 번 할 수 있어요.'],
     ['🔔','주문 놀이 (탭)','아래 <b>🔔주문</b> 탭이 가게 놀이예요. 한 판에 손님 <b>3명</b>이 차례로 와서 주문해요. <b>콘 → 맛 → 토핑</b> 순서로 골라 주문서대로 만들면 한 칸에 1점 — 세 명 모두 딱 맞히면 <b>9점 = ⭐3개</b>! 틀려도 ⭐를 하나는 받아요. 잘못 골랐으면 <b>↩다시 고르기</b>. <b>쉬는 시간이 없어서</b> 하고 싶은 만큼 할 수 있어요.'],
-    ['🎁','특별 햄쮜','주문 놀이로 모은 <b>⭐</b>가 쌓이면 <b>통에서는 안 나오는</b> 특별한 햄쮜가 하나씩 놀러 와요 — 🐰토끼쮜·🐱냥쮜·🧸곰돌쮜·🌸꽃쮜·🍮푸딩쮜·💎보석쮜 여섯 마리! 생긴 모습이 통에서 뜨는 아이들과 아주 달라요. 이름 지어주기·꾸미기·놀이방에 두기 다 할 수 있어요.'],
+    ['🎁','특별 햄쮜','주문 놀이로 모은 <b>⭐</b>가 쌓이면 <b>통에서는 안 나오는</b> 특별한 햄쮜가 하나씩 놀러 와요 — 🐰토끼쮜·🐤병아리쮜·🐱냥쮜·🧸곰돌쮜·🐼판다쮜·🌸꽃쮜·🦄유니콘쮜·🍮푸딩쮜·💎보석쮜·👼천사쮜 <b>열 마리</b>! 📖도감이나 🔔주문 탭에서 눌러보면 알려줘요. 특별 햄쮜는 또 뜰 수 없으니 <b>🍒토핑으로 ⭐를 올려줄 수 있어요.</b>'],
     ['🏆','꾸미기 대회','하루에 한 번 열려요. 매일 <b>오늘의 주제 소품</b>이 정해지는데, 그 소품을 입은 햄쮜를 내보내면 점수가 <b>확</b> 올라요. 머리·목·손을 다 채우고(풀코디) 💗하트가 많으면 더 유리해요. 1등은 🥇 상품이 아주 커요!'],
     ['📸','사진첩','🏠놀이방 오른쪽 위 <b>📸</b> 를 누르면 지금 함께 있는 햄쮜들 사진을 찍어요. 테두리를 고르고 제목을 지어 <b>사진첩</b>에 12장까지 모을 수 있어요.'],
     ['💞','짝꿍 만들기','햄쮜 둘을 짝지어주면 <b>새 햄쮜</b>가 태어나요. 딸기쮜＋바나나쮜＝<b>딸바쮜</b>! 색깔도 두 햄쮜를 섞은 <b>세상에 하나뿐인 색</b>이에요. 📖도감 탭에서 만들 수 있어요(🍒'+MIX_TOP+', 둘 다 💗하트 '+MIX_NEED_HEART+'개 이상).'],
     ['🎵','춤추기','🏠놀이방에서 <b>🎵춤추기</b>를 고르고 아무 곳이나 누르면 노래가 나오고 다 같이 춤을 춰요. ⚽공놀이를 하면 햄쮜들이 <b>공을 우르르 쫓아갑니다</b>.'],
-    ['🏠','놀이방 여러 개','🏠놀이방 탭 맨 위에서 <b>방을 골라</b> 옮겨다닐 수 있어요. 방은 가게 레벨이 오르면 하나씩 열려요 (Lv.1 · Lv.5 · Lv.10 · Lv.15, 모두 4개). 방마다 <b>이름과 배경을 따로</b> 정하고 <b>다른 햄쮜</b>를 둘 수 있어요. 한 마리는 한 방에만 있을 수 있고, ⏰저절로 모이는 코인은 <b>모든 방</b>의 햄쮜가 함께 벌어줘요!'],
+    ['🏠','놀이방 여러 개','🏠놀이방 탭 맨 위에서 <b>방을 골라</b> 옮겨다닐 수 있어요. 방은 가게 레벨이 오르면 하나씩 열려요 (Lv.1 · Lv.5 · <b>Lv.8 마당</b> · Lv.10 · Lv.15, 모두 5곳). 방마다 <b>이름과 배경을 따로</b> 정하고 <b>다른 햄쮜</b>를 둘 수 있어요. 한 마리는 한 방에만 있을 수 있고, ⏰저절로 모이는 코인은 <b>모든 방</b>의 햄쮜가 함께 벌어줘요!'],
+    ['🌳','마당과 오늘 날씨','Lv.8이 되면 <b>🌳마당</b>이 열려요. 마당 배경은 내가 고르는 게 아니라 <b>지금 그곳의 진짜 날씨</b>를 따라가요 — 맑으면 파란 하늘, 비가 오면 어둑어둑, 눈이 오면 온통 하얘져요. 날씨가 좋으면 마당 햄쮜가 <b>코인을 더 많이</b> 벌고, ☔비·눈이 오는 날엔 <b>우산을 든 햄쮜</b>가 제일 잘 벌어요! 위치는 🎨 → 📍위치 정하기 에서 <b>폰 위치</b>나 <b>도시</b>로 정해요.'],
+    ['🛝','마당 놀이기구','마당에는 가구 대신 <b>놀이기구</b>를 놓아요 — 🛝미끄럼틀 · 🎠회전목마 · 🪁연날리기 · 🏖️모래성 · 🎋그네. <b>누르면 햄쮜가 진짜로 타고 놀아요!</b> 탈 때마다 코인과 하트를 받고, 9초 쉬었다 또 탈 수 있어요. ⭐가 많고 💗하트가 많은 햄쮜가 탈수록 더 많이 받아요.'],
+    ['🕵️','햄쮜 탐정','🍨탭 아래 <b>🕵️햄쮜 탐정</b> — 아이스크림 한 통이 사라졌어요! 내가 가진 햄쮜들이 <b>용의자</b>로 나오고, 힌트를 하나씩 열어보며 범인을 찾아요. 고를 기회는 <b>두 번</b>. 힌트를 <b>덜 보고</b> 맞히면 상이 더 커져요. 하루 3판이고, 🕹️<b>게임기</b>를 사두면 <b>5판</b>이 돼요.'],
     ['🎨','방 꾸미기','방 그림의 <b>오른쪽 위 🎨</b> 를 누르면 방 <b>이름</b>을 지어주고(「공주방」처럼!) <b>배경</b>을 고를 수 있어요. ☀️낮 가게 · 🌙밤하늘 · 🏖️바닷가 · ❄️눈나라 — 가게 레벨이 오르면 열려요.'],
     ['⚙️','설정 · 저장 코드','오른쪽 위 <b>⚙️</b> 에서 소리·진동을 끄고 켜요. <b>저장 코드</b>를 복사해두면 폰을 바꿔도 모은 햄쮜를 되살릴 수 있어요!'],
     ['⏰','가만히 있어도','방에 앉힌 햄쮜는 <b>저절로 코인</b>을 모아줘요. 게임을 꺼둔 동안에도 절반 속도로 최대 12시간 쌓입니다.'],
@@ -2950,11 +3804,11 @@ function showTutorial(n){
   if(n===1){
     openModal(`<h2>🎲 뜰 때마다 다른 햄쮜<span class="x" onclick="closeModal()">건너뛰기</span></h2>
       <div class="row" style="justify-content:center;gap:8px;margin:4px 0 8px">
-        ${[1,2,3,4].map(g=>`<span class="hs" style="width:64px;height:64px">${hamSVG({shape:'heart',color:'berry',pattern:g===2?'spot':g===3?'stripe':'plain',grade:g,cone:'#ffa8c2'})}</span>`).join('')}
+        ${[1,2,3,4,5].map(g=>`<span class="hs" style="width:58px;height:58px">${hamSVG({shape:'heart',color:'berry',pattern:g===2?'spot':g===3?'stripe':'plain',grade:g,cone:'#ffa8c2'})}</span>`).join('')}
       </div>
       <div class="card" style="margin:0;font-size:13px;line-height:1.9">
         통이 정하는 건 <b>모양과 색</b>이에요. 🍓딸기 통에서는 하트 모양 딸기색 햄쮜가 나와요.<br>
-        <b>무늬와 ⭐개수는 뜰 때마다 달라요!</b> ⭐4가 나오면 반짝반짝 왕관을 쓴 채 나옵니다.<br>
+        <b>무늬와 ⭐개수는 뜰 때마다 달라요!</b> ⭐는 <b>1개부터 5개</b>까지 — ⭐4·⭐5는 온몸이 반짝반짝해요.<br>
         <span class="muted">도감에는 가장 좋은 등급만 남아요.</span>
       </div>
       ${foot(`<button class="btn w" onclick="showTutorial(0)">◂ 이전</button>
@@ -3108,7 +3962,11 @@ const ERR=[
    ok:()=>furnCount()>=3},
   {k:'seat',  em:'🪑', n:1,  s:'앉히기 1번',  d:'방에 햄쮜 앉히기',            go:()=>go('play'),
    ok:()=>Object.keys(S.dex).length>1},
-  {k:'cup',   em:'🙈', n:1,  s:'숨바꼭질 1',  d:'숨바꼭질 한 번 하기',         go:()=>openCup()}
+  {k:'cup',   em:'🙈', n:1,  s:'숨바꼭질 1',  d:'숨바꼭질 한 번 하기',         go:()=>openCup()},
+  {k:'ride',  em:'🛝', n:3,  s:'놀이기구 3번',d:'마당 놀이기구 3번 타기',      go:()=>{goRoom(YARD_I); go('play');},
+   ok:()=>roomOk(YARD_I) && YSPOT_KEYS.some(sk=>furnAt(sk,YARD_I)) && roomHams(YARD_I).length>0},
+  {k:'det',   em:'🕵️', n:1,  s:'탐정 1판',    d:'햄쮜 탐정 범인 맞히기',       go:()=>openDet(),
+   ok:()=>Object.keys(S.dex).length>=4 && detLeft()>0}
 ];
 const ERR_N=3;
 function errOf(k){ return ERR.find(e=>e.k===k); }
@@ -3266,7 +4124,23 @@ const TOPS={
   cookie:{em:'🍪', n:'쿠키'}
 };
 const CONE_KEYS=Object.keys(CONES), TOP_KEYS=Object.keys(TOPS);
-function coneHTML(k,sm){ return `<span class="cone ${CONES[k].cls}${sm?' sm':''}"></span>`; }
+/* 예쁜 컵 — 굽이 달린 유리 파르페 컵. 잔에 하트 무늬와 물결 굽을 넣었다 */
+const CUP_SVG=`<svg viewBox="0 0 48 58" aria-hidden="true">
+  <ellipse cx="24" cy="52.5" rx="13" ry="4.2" fill="#f6c2d8"/>
+  <ellipse cx="24" cy="51" rx="13" ry="4.2" fill="#fff0f6" stroke="#e98cba" stroke-width="1.8"/>
+  <path d="M21.4 36 q-.6 6 -3.4 11 h12 q-2.8 -5 -3.4 -11 z" fill="#ffe3ee" stroke="#e98cba" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M4 12 L44 12 L33.5 33 q-1.5 5 -9.5 5 q-8 0 -9.5 -5 Z"
+        fill="#fff7fb" stroke="#e98cba" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M13 14 L20 35 M24 14 L24 38 M35 14 L28 35" stroke="#ffd7e8" stroke-width="1.6" fill="none"/>
+  <path d="M24 22.5 q-2.6 -3.4 -4.4 -.8 q-1.5 2.2 4.4 6.3 q5.9 -4.1 4.4 -6.3 q-1.8 -2.6 -4.4 .8 z" fill="#f7a8c4"/>
+  <path d="M9.5 15 q1.5 8 5.5 15" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".85"/>
+  <ellipse cx="24" cy="11.5" rx="20.5" ry="4.6" fill="#fffdfe" stroke="#e98cba" stroke-width="2"/>
+  <ellipse cx="24" cy="11.5" rx="16" ry="2.6" fill="#ffeaf3"/>
+</svg>`;
+function coneHTML(k,sm){
+  const c=CONES[k]; if(!c) return '';
+  return `<span class="cone ${c.cls}${sm?' sm':''}">${k==='cup'?CUP_SVG:''}</span>`;
+}
 function icecHTML(g){
   const f=g.fl?FL[g.fl]:null;
   return `<div class="icec">
@@ -3276,16 +4150,186 @@ function icecHTML(g){
   </div>`;
 }
 
+/* ==================================================================
+   🕵️ 햄쮜 탐정 — 「누가 아이스크림을 몰래 먹었을까?」
+   아이가 가진 햄쮜가 그대로 용의자로 나온다. 힌트를 하나씩 열어보며
+   딱 한 마리만 남게 좁혀 간다. 방에 🕹️게임기를 놓으면 거기서도 열린다.
+================================================================== */
+const DET_BASE=3;                      /* 하루 세 판 */
+/* 🕹️게임기를 사두면 두 판 더 — 방에 놓지 않아도 가지고만 있으면 된다 */
+function detMax(){ return DET_BASE + (haveFurn('arcade')?2:0); }
+const DET_N=6;                         /* 용의자 수 (가진 햄쮜가 적으면 줄어든다) */
+/* 힌트 종류 — 한 마리를 보고 「맞다/아니다」를 딱 가를 수 있는 것만 쓴다 */
+const DET_Q=[
+  {k:'hat',   ask:h=>!!wearOf(h).hat,
+   yes:'머리에 무언가를 쓰고 있었어요', no:'머리에는 아무것도 안 썼어요'},
+  {k:'hand',  ask:h=>!!wearOf(h).hand,
+   yes:'손에 무언가를 들고 있었어요',   no:'손에는 아무것도 안 들었어요'},
+  {k:'neck',  ask:h=>!!wearOf(h).neck,
+   yes:'목에 무언가를 걸고 있었어요',   no:'목에는 아무것도 안 걸었어요'},
+  {k:'g3',    ask:h=>S.dex[h].g>=3,
+   yes:'⭐가 세 개 이상이었어요',       no:'⭐가 두 개 이하였어요'},
+  {k:'g4',    ask:h=>S.dex[h].g>=4,
+   yes:'⭐가 네 개 이상이었어요',       no:'⭐가 세 개 이하였어요'},
+  {k:'heart', ask:h=>hearts(h)>=2,
+   yes:'하트가 두 개 이상이었어요',     no:'하트가 한 개 이하였어요'},
+  {k:'sp',    ask:h=>isSp(h),
+   yes:'🎁특별 햄쮜였어요',            no:'특별 햄쮜는 아니었어요'},
+  {k:'mix',   ask:h=>isMix(h),
+   yes:'💞짝꿍에서 나온 햄쮜였어요',    no:'짝꿍에서 나온 햄쮜는 아니었어요'},
+  {k:'name3', ask:h=>nameOf(h).replace(/<[^>]*>/g,'').length>=4,
+   yes:'이름이 네 글자 이상이었어요',   no:'이름이 세 글자 이하였어요'},
+  {k:'tail',  ask:h=>!!SHAPES[hamOf(h).shape].tail,
+   yes:'꼬리가 보였어요',              no:'꼬리는 안 보였어요'},
+  {k:'ear',   ask:h=>{const e=SHAPES[hamOf(h).shape]; return !!(e.ears && e.ears(COLORS.cream)); },
+   yes:'귀가 쏙 나와 있었어요',        no:'귀는 안 보였어요'}
+];
+function detToday(){
+  const d=todayKey();
+  if(S.det.d!==d){ S.det.d=d; S.det.n=0; S.det.win=0; }
+  return S.det;
+}
+function detLeft(){ return Math.max(0, detMax()-detToday().n); }
+let dg=null;                           /* 진행 중인 판 (저장하지 않는다) */
+function detMake(){
+  const own=Object.keys(S.dex);
+  if(own.length<4) return null;
+  /* 용의자를 뽑는다 */
+  const pool=own.slice().sort(()=>Math.random()-0.5).slice(0, Math.min(DET_N, own.length));
+  const who=pick(pool);
+  /* 힌트를 하나씩 더해서 딱 한 마리만 남을 때까지 좁힌다 */
+  const qs=DET_Q.slice().sort(()=>Math.random()-0.5);
+  const clues=[]; let left=pool.slice();
+  for(let n=0;n<qs.length && left.length>1;n++){
+    const q=qs[n], v=q.ask(who);
+    const kept=left.filter(k=>q.ask(k)===v);
+    if(kept.length===left.length) continue;            /* 아무도 안 걸러지면 쓸모없는 힌트 */
+    left=kept; clues.push({t:v?q.yes:q.no, k:q.k});
+    if(clues.length>=4) break;
+  }
+  if(left.length!==1) return null;                     /* 못 좁혔으면 다시 뽑는다 */
+  /* 힌트 하나로 끝나면 너무 쉽다 — 범인에게 맞는 힌트를 하나 더 붙여준다 */
+  for(let n=0;n<qs.length && clues.length<2;n++){
+    const q=qs[n];
+    if(clues.some(c=>c.k===q.k)) continue;
+    clues.push({t:q.ask(who)?q.yes:q.no, k:q.k});
+  }
+  clues.sort(()=>Math.random()-0.5);                   /* 답이 마지막 힌트에만 있지 않게 섞는다 */
+  return {pool, who, clues, open:1, tries:0, done:false, win:false};
+}
+function openDet(){
+  if(Object.keys(S.dex).length<4){
+    sfx('boo'); toast('🕵️ 햄쮜가 <b>네 마리</b>는 있어야 탐정 놀이를 할 수 있어요 🍨'); return;
+  }
+  if(!detLeft() && !dg){
+    sfx('boo'); toast(`🕵️ 오늘 탐정 놀이는 다 했어요 — 내일 또 와요! (하루 ${detMax()}판)`); return;
+  }
+  if(!dg || dg.done){
+    let g=null;
+    for(let t=0;t<40 && !g;t++) g=detMake();
+    if(!g){ sfx('boo'); toast('🕵️ 지금은 서로 너무 비슷해서 문제를 못 만들었어요 — 꾸미기를 해주면 쉬워져요 👗'); return; }
+    dg=g; detToday().n++; S.det.all=S.det.all||0; save();
+  }
+  sfx('tap'); drawDet();
+}
+function detHint(){
+  if(!dg||dg.done) return;
+  if(dg.open>=dg.clues.length){ toast('🕵️ 힌트는 이게 다예요 — 잘 골라봐요!'); return; }
+  dg.open++; sfx('tap'); drawDet();
+}
+function detPick(k){
+  if(!dg||dg.done) return;
+  if(k===dg.who){
+    dg.done=true; dg.win=true;
+    const bonus=Math.max(0, dg.clues.length-dg.open) + (dg.tries?0:1);   /* 힌트를 덜 보고 한 번에 맞히면 더 준다 */
+    const coin=Math.ceil((300+S.lv*S.lv*18)*(1+bonus*0.4));
+    const top=1+bonus;
+    S.coin+=coin; S.top+=top; S.det.win++; S.det.all=(S.det.all||0)+1; errBump('det');
+    addExp(14); addBond(k,4);
+    sfx('star4'); vib([0,30,50,30,50,40]);
+    checkBadges(); save(); renderHUD();
+    drawDet({coin, top, bonus});
+    return;
+  }
+  dg.tries++;
+  sfx('boo'); vib(30);
+  if(dg.tries>=2){
+    dg.done=true; dg.win=false;
+    save(); renderHUD(); drawDet();
+    return;
+  }
+  toast(`🕵️ ${eun(nameOf(k))} 아니었어요 — 힌트를 다시 읽어봐요!`);
+  drawDet();
+}
+function drawDet(pay){
+  const done=dg.done;
+  const cards=dg.pool.map(k=>{
+    const out = done && k!==dg.who;
+    return `<div class="dcard ${done&&k===dg.who?'g5':''}" style="${out?'opacity:.35':''}"
+                 onclick="${done?'':`detPick('${k}')`}">
+      ${done&&k===dg.who?'<span class="chk">🕵️</span>':''}
+      <span class="st">${'★'.repeat(S.dex[k].g)}</span>
+      <span class="hs">${hamSVG(hamOf(k))}</span>
+      <div class="nm">${nameOf(k)}</div>
+    </div>`;
+  }).join('');
+  const clues=dg.clues.map((c,i)=>i<dg.open
+    ? `<div class="slot on" style="cursor:default"><span class="ph">🔍</span>
+         <div class="info"><b>힌트 ${i+1}</b><div class="muted">범인은 ${c.t}</div></div></div>`
+    : `<div class="slot" onclick="detHint()"><span class="ph">❔</span>
+         <div class="info"><b>힌트 ${i+1}</b><div class="muted">눌러서 열어보기</div></div>
+         <span class="muted">열기 ▸</span></div>`).join('');
+  openModal(`<h2>🕵️ 햄쮜 탐정<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="line-height:1.7;margin-bottom:8px">
+      🍨 <b>아이스크림 한 통이 사라졌어요!</b> 힌트를 읽고 범인 햄쮜를 찾아주세요.
+      <br>오늘 남은 판 <b>${detLeft()}</b> / ${detMax()} · 지금까지 맞힌 것 <b>${S.det.all||0}</b>번
+      ${done?'':`<br>고를 기회는 <b>두 번</b>이에요 ${dg.tries?'— 한 번 틀렸어요!':''}`}
+    </div>
+    <div class="card" style="margin:0">${clues}</div>
+    <div class="dexgrid" style="margin-top:9px">${cards}</div>
+    ${done
+      ? (dg.win
+        ? `<div class="card" style="margin:9px 0 0;text-align:center">
+             <h3>🎉 딩동댕! 범인은 ${nameOf(dg.who)}</h3>
+             <div class="muted" style="line-height:1.8">
+               🪙+${fmt(pay?pay.coin:0)} · 🍒+${pay?pay.top:0}
+               ${pay&&pay.bonus?`<br>✨ 힌트를 덜 보고 맞혀서 <b>보너스</b>까지!`:''}
+             </div>
+           </div>`
+        : `<div class="card" style="margin:9px 0 0;text-align:center">
+             <h3>🕵️ 범인은 ${nameOf(dg.who)} 였어요</h3>
+             <div class="muted">아쉬워요 — 다음엔 힌트를 하나 더 열어봐요!</div>
+           </div>`)
+      : ''}
+    <div class="row" style="justify-content:center;margin-top:11px">
+      ${done && detLeft()
+        ? `<button class="btn" onclick="dg=null;openDet()">🔍 한 판 더 (${detLeft()}판 남음)</button>`
+        : ''}
+      <button class="btn w" onclick="closeModal()">${done?'그만하기':'나중에'}</button>
+    </div>`);
+}
+
 /* ---- ⭐ 와 특별 햄쮜 ---- */
 function ordStars(sc){ return sc>=9?3:(sc>=7?2:1); }   /* 0점이어도 참가 ⭐1 — 아이가 빈손으로 끝나지 않게 */
 function spLocked(){ return SP_KEYS.filter(k=>!S.dex[spId(k)]).sort((a,b)=>SPECIAL[a].star-SPECIAL[b].star); }
 function spNext(){ const a=spLocked(); return a.length?a[0]:null; }
+/* 특별 햄쮜 카드판 — 🔔주문 대기실과 📖도감에서 같이 쓴다 */
+function spCardsHTML(){
+  return SP_KEYS.map(k=>{
+    const s=SPECIAL[k], have=!!S.dex[spId(k)];
+    return `<div class="dcard ${have?'g'+s.g:'lock'}" onclick="openSpInfo('${k}')">
+      ${have?`<span class="st">${'★'.repeat(s.g)}</span><span class="hs">${hamSVG(hamOf(spId(k)))}</span>
+              <div class="nm">${nameOf(spId(k))}</div>`
+            :`<div class="qm">${s.em}</div><div class="nm">⭐${s.star}</div>`}
+    </div>`;
+  }).join('');
+}
 function grantSpecials(){
   const got=[];
   SP_KEYS.forEach(k=>{
     const s=SPECIAL[k], id=spId(k);
     if(S.dex[id] || (S.ord.star||0)<s.star) return;
-    S.dex[id]={g:s.g, p:pick(['plain','plain','spot','stripe']), n:1, bond:0, w:{hat:null,neck:null,hand:null}};
+    S.dex[id]={g:s.g, p:pick(['plain','plain','spot','stripe']), n:1, bond:0, w:{hat:null,neck:null,hand:null,cone:null}};
     got.push(k);
   });
   return got;
@@ -3319,11 +4363,67 @@ function openSpInfo(k){
       ${have?`💗 친한 정도 <b>${heartStr(id)}</b> — 놀아줄 때 코인 <b>+${hearts(id)*20}%</b>`
             :`🔔 <b>주문 놀이</b>에서 손님을 잘 대접하면 ⭐가 모여요`}
     </div>
+    ${have?`<div class="card" style="margin:9px 0 0">
+      <h3>⭐ 별 올리기 <small>지금 ★${S.dex[id].g} / 5</small></h3>
+      ${S.dex[id].g>=5
+        ? '<div class="muted">✨ <b>별 다섯 개</b> — 더 올릴 수 없어요. 제일 반짝여요!</div>'
+        : (()=>{ const c=spUpCost(id), o=spUpOdds(id), hOK=hearts(id)>=5, topOK=S.top>=c, ok=hOK&&topOK;
+                 const tried=S.dex[id].sfail||0;
+                 return `<div class="muted" style="line-height:1.8">
+             🎁특별 햄쮜는 또 뜰 수 없어요. <b>같이 놀아주고 ⭐ 승급에 도전해요.</b><br>
+             ${hOK?'💗 <b>하트가 꽉 찼어요</b> — 도전할 수 있어요!'
+                  :`💗 하트가 <b>${heartStr(id)}</b> — <b>💗×5</b> 가 되도록 더 놀아줘야 도전할 수 있어요`}<br>
+             ★${S.dex[id].g} → <b>★${S.dex[id].g+1}</b> · 한 번 도전 🍒<b>${c}개</b> (지금 🍒${S.top}개)<br>
+             🎯 성공할 가능성 <b>${Math.round(o*100)}%</b>${tried?` <span style="color:var(--acc)">(응원 ${tried}번 쌓여서 +${tried*10}%p)</span>`:''}<br>
+             <span style="font-size:.94em">잘 안 되면 <b>응원이 쌓여서</b> 다음 도전이 더 잘 돼요 — 언젠가는 꼭 올라가요.</span>
+           </div>
+           <button class="btn ${ok?'g':'w'} sm" style="width:100%;margin-top:7px"
+                   ${ok?'':'disabled'} onclick="spUp('${id}')">
+             ${hOK?`⭐ ★${S.dex[id].g+1} 에 도전! (🍒${c} · ${Math.round(o*100)}%)`:'💗 더 놀아주고 오기'}</button>`; })()}
+    </div>`:''}
     <div class="row" style="justify-content:center;margin-top:10px">
       ${have?`<button class="btn" onclick="openCloset('${id}')">👗 꾸미기</button>
               <button class="btn g" onclick="closeModal();seatFirst('${id}')">🏠 방에 두기</button>`
             :`<button class="btn" onclick="closeModal();go('order')">🔔 주문 받으러 가기</button>`}
     </div>`);
+}
+/* ★를 한 칸 올리는 데 드는 🍒 — 올라갈수록 많이 든다 */
+/* ⭐ 특별 햄쮜 승급 — 토핑만 내면 되는 게 아니다.
+   ① 하트가 꽉 차야(💗×5) 도전할 수 있다 → 실제로 놀아줘야 한다.
+   ② 성공은 확률. 대신 실패하면 「응원」이 쌓여 다음 도전 확률이 +10%p 씩 올라간다
+      → 운이 나빠도 계속 도전하면 반드시 올라가니 아이가 억울해하지 않는다. */
+function spUpCost(id){ const g=S.dex[id]?S.dex[id].g:1; return [0,5,9,15,24,24][Math.min(5,g)]||24; }
+function spUpOdds(id){
+  const d=S.dex[id]; if(!d) return 0;
+  const base=[0,.70,.50,.32,.18,0][Math.min(5,d.g)]||0;
+  return Math.min(1, base + (d.sfail||0)*0.10);
+}
+function spUp(id){
+  const d=S.dex[id]; if(!d) return;
+  if(d.g>=5){ toast('이미 ★5 예요 ✨'); return; }
+  if(hearts(id)<5){ sfx('boo'); toast(`💗 ${eul(nameOf(id))} 더 놀아줘야 도전할 수 있어요`); return; }
+  const c=spUpCost(id);
+  if(S.top<c){ sfx('boo'); toast(`🍒 토핑이 ${c-S.top}개 더 필요해요`); return; }
+  S.top-=c;
+  S.stats.spTry=(S.stats.spTry||0)+1;
+  if(Math.random()<spUpOdds(id)){
+    d.g++; d.sfail=0;
+    S.stats.spUp=(S.stats.spUp||0)+1;
+    if(d.g>=5) S.stats.best5=(S.stats.best5||0)+1;
+    _svgCache.clear();
+    sfx('star4'); vib([0,30,50,30,50,40]); addExp(12);
+    checkBadges(); save(); renderHUD(); renderView();
+    toast(`✨ 해냈어요! ${ega(nameOf(id))} <b>★${d.g}</b> 이 됐어요!`);
+    const k=String(id).slice(3);
+    if(SPECIAL[k]) openSpInfo(k);
+  }else{
+    d.sfail=(d.sfail||0)+1;
+    const back=40+d.g*30;                     /* 아쉬운 마음에 코인이라도 조금 */
+    S.coin+=back;
+    sfx('boo'); vib([0,18,40,18]);
+    save(); renderHUD(); renderView();
+    toast(`💫 아쉬워요! 응원이 <b>${d.sfail}번</b> 쌓였어요 — 다음엔 <b>${Math.round(spUpOdds(id)*100)}%</b> 예요 (💰+${back})`);
+  }
 }
 
 /* ---- 한 판 ---- */
@@ -3341,7 +4441,7 @@ function newCustomer(prev){
 function startRound(){
   if(!Object.keys(S.dex).length){ sfx('boo'); toast('먼저 햄쮜를 만나야 손님이 와요 🍨'); return; }
   og={i:0, sc:0, log:[], cur:newCustomer(null), done:false, pay:null, newSp:[]};
-  sfx('tap'); go('order');
+  sfx('tap'); if(tab==='order') renderAll(); else go('order');
 }
 function quitRound(){ og=null; sfx('tap'); renderView(); }
 function ordPick(v){
@@ -3377,7 +4477,7 @@ function serveCustomer(){
 function finishRound(){
   og.done=true; og.cur=null;
   const st=ordStars(og.sc), m=1+S.lv*0.2;
-  const coin=Math.ceil((70+og.sc*34)*m);
+  const coin=Math.ceil((70+og.sc*34)*m*(1+upgLv('bell')*0.22));
   const tops = og.sc>=9 ? ri(2,4) : (og.sc>=7 ? ri(0,1) : 0);
   S.ord.star=(S.ord.star||0)+st;
   S.ord.rounds=(S.ord.rounds||0)+1;
@@ -3465,14 +4565,7 @@ function renderOrderTab(){
 
   /* --- 대기실 --- */
   const face=own.length?(starHam()||own[0]):null;
-  const spCards=SP_KEYS.map(k=>{
-    const s=SPECIAL[k], have=!!S.dex[spId(k)];
-    return `<div class="dcard ${have?'g'+s.g:'lock'}" onclick="openSpInfo('${k}')">
-      ${have?`<span class="st">${'★'.repeat(s.g)}</span><span class="hs">${hamSVG(hamOf(spId(k)))}</span>
-              <div class="nm">${nameOf(spId(k))}</div>`
-            :`<div class="qm">${s.em}</div><div class="nm">⭐${s.star}</div>`}
-    </div>`;
-  }).join('');
+  const spCards=spCardsHTML();
 
   $('#view').innerHTML=`
   <div class="card">
@@ -3867,9 +4960,11 @@ function makeMix(a,b){
 
   S.top-=MIX_TOP;
   const key=mixKeyOf(x,y);
-  const g=Math.min(4, Math.max(dx.g,dy.g) + (Math.random()<0.3?1:0));   /* 둘보다 좋아질 수도 */
+  let g=Math.max(dx.g,dy.g);
+  if(g<=3){ if(Math.random()<0.3) g++; }                      /* 둘보다 좋아질 수도 */
+  else if(g===4 && Math.random()<0.08) g=5;                   /* ⭐4 둘이면 아주 드물게 ⭐5 */
   S.dex[key]={
-    g, p:pick([dx.p,dy.p]), n:1, bond:0, w:{hat:null,neck:null,hand:null},
+    g, p:pick([dx.p,dy.p]), n:1, bond:0, w:{hat:null,neck:null,hand:null,cone:null},
     mix:{
       a:x, b:y, hn:mixNameOf(x,y),
       shape: Math.random()<0.5?fx.shape:fy.shape,
@@ -3898,7 +4993,7 @@ function showMixBorn(key){
     <div class="big burst">${hamSVG(hamOf(key))}</div>
     <div style="text-align:center;font-size:14px">
       <b style="font-size:19px">${m.hn}</b>
-      <div style="font-size:16px;letter-spacing:1px;margin-top:1px">${'⭐'.repeat(d.g)}${'☆'.repeat(4-d.g)}</div>
+      <div style="font-size:16px;letter-spacing:1px;margin-top:1px">${'⭐'.repeat(d.g)}${'☆'.repeat(5-d.g)}</div>
       <div class="muted" style="margin-top:3px">
         ${wagwa(nameOf(m.a))} ${nameOf(m.b)} 에게서 나온 새로운 햄쮜 · ${SHAPES[m.shape].name} 모양 · ${PATTERNS[d.p]}<br>
         <b>세상에 하나뿐인 색</b>이에요 🎨
@@ -3910,7 +5005,7 @@ function showMixBorn(key){
              onkeydown="if(event.key==='Enter'){saveName('${key}')}">
       <div class="row" style="margin-top:7px">
         <button class="btn" onclick="saveName('${key}')">💕 이 이름으로!</button>
-        <button class="btn w" onclick="closeModal();seatFirst('${key}')">그냥 ${m.hn} 로 할래요</button>
+        <button class="btn w" onclick="closeModal();seatQuiet('${key}')">그냥 ${m.hn} 로 할래요</button>
       </div>
     </div>`);
   setTimeout(()=>{ const i=$('#nm-in'); if(i) i.focus(); },120);
@@ -3970,7 +5065,7 @@ function openMixInfo(key){
     <div class="big">${hamSVG(hamOf(key))}</div>
     <div style="text-align:center;font-size:13px">
       <b style="font-size:16px">${nameOf(key)}</b>
-      <span style="font-size:14px">${'⭐'.repeat(d.g)}${'☆'.repeat(4-d.g)}</span>
+      <span style="font-size:14px">${'⭐'.repeat(d.g)}${'☆'.repeat(5-d.g)}</span>
       <div class="muted" style="margin-top:2px">${SHAPES[m.shape].name}모양 · 섞은 색 · ${PATTERNS[d.p]}${wearCount(key)?' · 꾸미기 '+wearCount(key)+'가지':''}</div>
     </div>
     <div class="card" style="margin:9px 0 0;font-size:12.5px;line-height:1.8">
@@ -3989,6 +5084,127 @@ function openMixInfo(key){
 }
 
 /* ---------- 🎨 방 배경 (테마) ---------- */
+/* ==================================================================
+   🌤️ 오늘의 날씨 — 마당(🌳) 배경과 벌이가 실제 날씨를 따라간다.
+   Open-Meteo(공짜·열쇠 없음·CORS 허용)에서 지금 날씨만 받아온다.
+   위치는 폰 GPS 를 쓰되, 권한을 안 주거나 file:// 로 열었으면 도시를 골라 쓴다.
+   좌표는 소수점 두 자리로 깎아서 보낸다 — 날씨엔 충분하고 집 위치는 안 나간다.
+================================================================== */
+const WX={
+  clear:{em:'☀️', n:'맑음',   mul:1.40,
+    v:{tsky:'#a8d8f8', tsky2:'#bfe6a0', tawn1:'#7fc47a', tawn2:'#e8f7d8', tawnb:'#5aa057',
+       tflo1:'#c9eca8', tflo2:'#b3e08e', tflob:'#8dc470', tline:'#8fcf8a'},
+    sp:[['☀️',80,12,24],['☁️',20,22,15],['🦋',44,36,13],['🌻',62,40,12]],
+    tip:'해가 쨍쨍해요! 마당에서 놀기 딱 좋은 날'},
+  cloud:{em:'☁️', n:'흐림',   mul:1.12,
+    v:{tsky:'#d7dee6', tsky2:'#c2d6ae', tawn1:'#93b98e', tawn2:'#eef3e8', tawnb:'#6f9a6c',
+       tflo1:'#cfe0b8', tflo2:'#bcd2a2', tflob:'#98b381', tline:'#a8b8a8'},
+    sp:[['☁️',22,18,20],['☁️',66,26,17],['🌥️',44,14,15]],
+    tip:'구름이 많아요 — 그래도 놀기 좋아요'},
+  rain :{em:'🌧️', n:'비',     mul:0.90, wet:1,
+    v:{tsky:'#9fb0c4', tsky2:'#8fae86', tawn1:'#6f93a8', tawn2:'#dfeaf2', tawnb:'#4f7590',
+       tflo1:'#a8c496', tflo2:'#93b382', tflob:'#748f66', tline:'#8fa4b8'},
+    sp:[['🌧️',26,16,20],['💧',48,34,12],['☔',72,26,17],['💧',16,40,11]],
+    tip:'비가 와요 — <b>우산을 든 햄쮜</b>가 오늘은 제일 신나요!'},
+  snow :{em:'❄️', n:'눈',     mul:1.18, wet:1,
+    v:{tsky:'#dceaf7', tsky2:'#f2f8fb', tawn1:'#9fc8e8', tawn2:'#ffffff', tawnb:'#7ba9cf',
+       tflo1:'#f7fbfe', tflo2:'#e4eef7', tflob:'#c6d8e6', tline:'#a8cbe6'},
+    sp:[['❄️',18,20,14],['⛄',62,30,22],['❄️',82,18,12],['❄️',42,36,11]],
+    tip:'눈이 와요! 눈밭에서 뒹굴뒹굴 — <b>우산 든 햄쮜</b>도 신나요'},
+  storm:{em:'⛈️', n:'천둥번개', mul:0.80, wet:1,
+    v:{tsky:'#7e8496', tsky2:'#6f8a68', tawn1:'#5c6478', tawn2:'#cdd4e2', tawnb:'#414859',
+       tflo1:'#8fa87e', tflo2:'#7b946b', tflob:'#5f7452', tline:'#6f778a'},
+    sp:[['⛈️',30,16,22],['⚡',58,30,16],['💧',76,38,12]],
+    tip:'천둥번개가 쳐요 — 오늘은 방 안이 더 잘 벌어요'},
+  fog  :{em:'🌫️', n:'안개',   mul:1.00,
+    v:{tsky:'#dcd8d2', tsky2:'#c4cdb6', tawn1:'#a8ac9c', tawn2:'#f0efe9', tawnb:'#828776',
+       tflo1:'#d2ddc2', tflo2:'#c0cdae', tflob:'#9daa8c', tline:'#b4b8ac'},
+    sp:[['🌫️',34,20,22],['🌫️',70,30,17]],
+    tip:'안개가 자욱해요 — 햄쮜가 살금살금 걸어요'}
+};
+/* WMO 날씨 코드 → 위 여섯 가지 */
+function wxKeyOf(c){
+  c=c|0;
+  if(c===0||c===1) return 'clear';
+  if(c===2||c===3) return 'cloud';
+  if(c===45||c===48) return 'fog';
+  if(c>=95) return 'storm';
+  if((c>=71&&c<=77)||c===85||c===86) return 'snow';
+  if((c>=51&&c<=67)||(c>=80&&c<=82)) return 'rain';
+  return 'cloud';
+}
+const CITIES=[
+  {k:'seoul',   n:'서울',   la:37.57, lo:126.98},
+  {k:'incheon', n:'인천',   la:37.46, lo:126.71},
+  {k:'daejeon', n:'대전',   la:36.35, lo:127.38},
+  {k:'daegu',   n:'대구',   la:35.87, lo:128.60},
+  {k:'gwangju', n:'광주',   la:35.16, lo:126.85},
+  {k:'busan',   n:'부산',   la:35.18, lo:129.08},
+  {k:'jeju',    n:'제주',   la:33.50, lo:126.53},
+  {k:'gangneung',n:'강릉',  la:37.75, lo:128.90}
+];
+const WX_TTL=1800000;                    /* 30분에 한 번만 물어본다 */
+function cityOf(k){ return CITIES.find(c=>c.k===k)||CITIES[0]; }
+function wxOK(){ return !!(S.wx && S.wx.key && WX[S.wx.key]); }
+function wxNow(){ return wxOK()?WX[S.wx.key]:WX.clear; }
+function wxFresh(){ return wxOK() && Date.now()-(S.wx.at||0) < WX_TTL; }
+function wxPlace(){ return (S.wx&&S.wx.place) || '우리 동네'; }
+/* 날씨를 받아오는 중인지 — 두 번 겹쳐 부르지 않게 */
+let wxBusy=false;
+function wxSet(key,temp,place){
+  S.wx=S.wx||{};
+  S.wx.key=key; S.wx.temp=temp; S.wx.at=Date.now();
+  if(!Array.isArray(S.wx.seen)) S.wx.seen=[];
+  if(S.wx.seen.indexOf(key)<0){ S.wx.seen.push(key); checkBadges(); }
+  S.wx.place = place || (S.wx.mode==='city' ? cityOf(S.wx.city).n : '우리 동네');
+  S.wx.err=0;
+  save();
+  applyTheme();
+  if(tab==='play') renderAll(); else renderHUD();
+}
+function wxFail(msg){
+  S.wx=S.wx||{}; S.wx.err=1; S.wx.at=Date.now()-WX_TTL+120000;   /* 2분 뒤 다시 해본다 */
+  if(msg) toast(msg);
+  if(tab==='play') renderAll();
+}
+function wxAsk(la,lo,place){
+  if(wxBusy) return;
+  wxBusy=true;
+  const u='https://api.open-meteo.com/v1/forecast?latitude='+la.toFixed(2)+'&longitude='+lo.toFixed(2)
+        + '&current=weather_code,temperature_2m';
+  fetch(u).then(r=>r.json()).then(j=>{
+    wxBusy=false;
+    const c=j&&j.current;
+    if(!c || c.weather_code===undefined) throw new Error('no data');
+    wxSet(wxKeyOf(c.weather_code), Math.round(c.temperature_2m), place);
+  }).catch(()=>{ wxBusy=false; wxFail('🌤️ 날씨를 못 받아왔어요 — 인터넷을 확인해 주세요'); });
+}
+function wxUseCity(k){
+  const c=cityOf(k);
+  S.wx=S.wx||{}; S.wx.mode='city'; S.wx.city=c.k; save();
+  wxAsk(c.la,c.lo,c.n);        /* 보여주는 지명은 실제로 받아온 뒤에 바꾼다 */
+}
+/* 폰 위치로 물어본다 — 안 되면 골라둔 도시로 넘어간다 */
+function wxUseGeo(loud){
+  if(!navigator.geolocation || !window.isSecureContext){
+    if(loud) toast('📍 이 방법으로 열면 위치를 못 써요 — 도시를 골라주세요');
+    wxUseCity((S.wx&&S.wx.city)||'seoul'); return;
+  }
+  S.wx=S.wx||{}; S.wx.mode='gps'; save();
+  if(loud) toast('📍 위치를 물어보고 있어요…');
+  navigator.geolocation.getCurrentPosition(
+    p=>wxAsk(p.coords.latitude, p.coords.longitude, ''),
+    ()=>{ if(loud) toast('📍 위치를 못 받았어요 — 골라둔 도시 날씨로 볼게요'); wxUseCity((S.wx&&S.wx.city)||'seoul'); },
+    {timeout:9000, maximumAge:600000}
+  );
+}
+/* 필요할 때만 부른다 (첫 실행 · 마당에 들어갈 때 · 30분 지났을 때) */
+function wxWake(loud){
+  if(wxFresh() && !loud) return;
+  if((S.wx&&S.wx.mode)==='city') wxUseCity(S.wx.city||'seoul');
+  else wxUseGeo(loud);
+}
+
 const THEMES={
   day  :{name:'낮 가게', em:'☀️', lv:1,
     v:{tsky:'#ffeef4', tsky2:'#f3e3cf', tawn1:'#ff9fba', tawn2:'#fff5f8', tawnb:'#ef8ba9',
@@ -4008,12 +5224,14 @@ const THEMES={
     sp:[['❄️',15,21,13],['❄️',42,30,10],['⛄',64,20,17],['❄️',84,28,12]]}
 };
 function themeOk(k){ return S.lv>=THEMES[k].lv; }
+/* 마당은 테마 대신 오늘 날씨의 색을 쓴다 */
+function roomLook(){ return isYard() ? wxNow() : (THEMES[room().theme]||THEMES.day); }
 function applyTheme(){
-  const t=THEMES[room().theme]||THEMES.day, r=document.documentElement.style;
+  const t=roomLook(), r=document.documentElement.style;
   Object.keys(t.v).forEach(k=>r.setProperty('--'+k, t.v[k]));
 }
 function themeSpHTML(){
-  const t=THEMES[room().theme]||THEMES.day;
+  const t=roomLook();
   return (t.sp||[]).map(([e,l,tp,sz],i)=>
     `<span class="tsp" style="left:${l}%;top:${tp}%;font-size:${sz}px;animation-delay:${(i*0.4).toFixed(1)}s">${e}</span>`).join('');
 }
@@ -4049,6 +5267,18 @@ function openSettings(){
           ${S.snd===false?'🔕 소리 꺼짐':'🔔 소리 켜짐'}</button>
         <button class="btn ${S.vib===false?'w':''} sm" onclick="toggleVib();openSettings()">
           ${S.vib===false?'📴 진동 꺼짐':'📳 진동 켜짐'}</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🌤️ 마당 날씨 위치</h3>
+      <div class="muted" style="line-height:1.7">
+        🌳마당 배경은 <b>지금 그곳의 진짜 날씨</b>를 따라가요.
+        지금은 <b>${(S.wx&&S.wx.mode)==='city'?'🏙️ '+cityOf(S.wx.city).n:'📱 폰 위치 자동'}</b> 로 보고 있어요
+        ${wxOK()?` — ${wxNow().em} ${wxNow().n}${(S.wx.temp!==undefined&&S.wx.temp!==null)?' '+S.wx.temp+'°':''}`:''}.
+      </div>
+      <div class="row" style="margin-top:7px">
+        <button class="btn w sm" onclick="openWxPlace()">📍 위치 정하기</button>
+        <button class="btn w sm" onclick="wxWake(1)">🔄 날씨 새로 보기</button>
       </div>
     </div>
     <div class="card">
@@ -4238,6 +5468,7 @@ initHUD();
 applyTheme();
 renderAll();
 startTick();
+if(roomOk(YARD_I)) setTimeout(()=>wxWake(),900);   /* 🌤️ 마당이 열렸으면 오늘 날씨를 받아둔다 */
 window.addEventListener('beforeunload',save);
 window.addEventListener('pagehide',save);
 
