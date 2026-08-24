@@ -1514,47 +1514,48 @@ const WEAR={
   /* 🍨 콘 타기 — 햄쮜가 아이스크림 한 스쿱이 되어 콘 위에 올라앉는다.
      art(c) 는 콘 그림(c = 그 햄쮜의 맛 색). hy·hs 는 몸을 얼마나 올리고 줄일지. */
   cone:{name:'콘 타기', em:'🍨', items:{
-    /* 🧇 격자무늬가 있는 기본 와플콘 */
+    /* 🧇 격자무늬가 있는 기본 와플콘.
+       테두리(rx)는 햄쮜 몸통보다 넓게 잡는다 — 몸에 완전히 가려지면 콘이 「턱 밑에 낀 삼각형」처럼 보인다. */
     cwaffle:{name:'와플콘', em:'🧇', coin:900, hy:33, hs:.74, art:c=>`
-      <path d="M26 62 L50 98 L74 62 Z" fill="#e6b678" stroke="#b3803f" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M20 61 L50 99 L80 61 Z" fill="#e6b678" stroke="#b3803f" stroke-width="2.4" stroke-linejoin="round"/>
       <g stroke="#c08c4c" stroke-width="1.5" opacity=".75" fill="none">
-        <path d="M33 62 L50 89 M41 62 L50 75 M59 62 L50 75 M67 62 L50 89"/>
-        <path d="M29 70 L71 70 M32 78 L68 78 M37 86 L63 86"/></g>
-      <ellipse cx="50" cy="62" rx="24" ry="5.6" fill="#f2cd97" stroke="#b3803f" stroke-width="2.2"/>
-      <ellipse cx="50" cy="60.8" rx="19" ry="3.4" fill="${c}" opacity=".5"/>`},
+        <path d="M29 61 L50 88 M39 61 L50 75 M61 61 L50 75 M71 61 L50 88"/>
+        <path d="M25 70 L75 70 M30 79 L70 79 M36 88 L64 88"/></g>
+      <ellipse cx="50" cy="61" rx="30" ry="6.4" fill="#f2cd97" stroke="#b3803f" stroke-width="2.2"/>
+      <ellipse cx="50" cy="59.6" rx="24" ry="4" fill="${c}" opacity=".5"/>`},
     /* 🍦 매끈한 나선 슈가콘 */
     csugar:{name:'슈가콘', em:'🍦', coin:1400, hy:33, hs:.74, art:c=>`
-      <path d="M26 61 L50 99 L74 61 Z" fill="#dda45f" stroke="#a9762f" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M20 60 L50 99 L80 60 Z" fill="#dda45f" stroke="#a9762f" stroke-width="2.4" stroke-linejoin="round"/>
       <g stroke="#bd8740" stroke-width="1.7" opacity=".8" fill="none">
-        <path d="M27 66 L69 61 M30 74 L64 66 M34 82 L59 71 M39 91 L54 77"/></g>
-      <ellipse cx="50" cy="61" rx="24" ry="5.6" fill="#eec084" stroke="#a9762f" stroke-width="2.2"/>
-      <path d="M31 59.8 q9.4 4.2 19 0" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round" opacity=".65"/>`},
+        <path d="M22 66 L75 60 M26 75 L69 66 M31 84 L62 72 M37 92 L56 78"/></g>
+      <ellipse cx="50" cy="60" rx="30" ry="6.4" fill="#eec084" stroke="#a9762f" stroke-width="2.2"/>
+      <path d="M27 58.6 q11.6 4.6 23 0" stroke="${c}" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".6"/>`},
     /* 🍫 초코를 두르고 뿌리기를 얹은 콘 */
     cchoco:{name:'초코콘', em:'🍫', coin:2600, hy:33, hs:.74, art:c=>`
-      <path d="M26 61 L50 99 L74 61 Z" fill="#8a5a34" stroke="#5f3a1e" stroke-width="2.4" stroke-linejoin="round"/>
-      <path d="M26 61 q5 8 3.6 14 q8 3.6 11 -3 q6.4 7.4 12 0 q6.4 5.6 11 -2 q2.6 -4.6 10.4 -9 Z"
+      <path d="M20 60 L50 99 L80 60 Z" fill="#8a5a34" stroke="#5f3a1e" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M20 60 q5 9 3.6 15 q9 3.8 12 -3 q7 7.6 13 0 q7 5.8 12 -2 q2.8 -4.8 11.4 -10 Z"
             fill="#6b4222" stroke="#5f3a1e" stroke-width="1.6" stroke-linejoin="round"/>
-      <ellipse cx="50" cy="61" rx="24" ry="5.6" fill="#a06c3e" stroke="#5f3a1e" stroke-width="2.2"/>
-      ${[['#ff8fae',-15,-.4,-28],['#ffd45e',-7,1.4,22],['#8fd89b',1,-.8,-14],['#8fc4f0',9,1.6,36],['#c9a4ee',16,-.2,-42]]
-        .map(([k,dx,dy,r])=>`<rect x="${49.1+dx}" y="${57.4+dy}" width="1.8" height="4.4" rx=".9" fill="${k}" transform="rotate(${r} ${50+dx} ${59.6+dy})"/>`).join('')}`},
+      <ellipse cx="50" cy="60" rx="30" ry="6.4" fill="#a06c3e" stroke="#5f3a1e" stroke-width="2.2"/>
+      ${[['#ff8fae',-20,-.4,-28],['#ffd45e',-10,1.4,22],['#8fd89b',1,-.8,-14],['#8fc4f0',12,1.6,36],['#c9a4ee',21,-.2,-42]]
+        .map(([k,dx,dy,r])=>`<rect x="${49.1+dx}" y="${56.2+dy}" width="1.8" height="4.6" rx=".9" fill="${k}" transform="rotate(${r} ${50+dx} ${58.5+dy})"/>`).join('')}`},
     /* 🌈 무지개 줄무늬 콘 */
     crain:{name:'무지개콘', em:'🌈', top:16, hy:33, hs:.74, art:c=>`
-      <defs><clipPath id="rc${++_uid}"><path d="M26 62 L50 98 L74 62 Z"/></clipPath></defs>
-      <path d="M26 62 L50 98 L74 62 Z" fill="#fff2f7"/>
+      <defs><clipPath id="rc${++_uid}"><path d="M20 61 L50 99 L80 61 Z"/></clipPath></defs>
+      <path d="M20 61 L50 99 L80 61 Z" fill="#fff2f7"/>
       <g clip-path="url(#rc${_uid})">
         ${['#ff9db4','#ffd074','#ffef94','#a3e0a8','#9ec9f2','#c9a8ee']
-          .map((k,i)=>`<rect x="24" y="${62+i*6.2}" width="52" height="6.4" fill="${k}"/>`).join('')}</g>
-      <path d="M26 62 L50 98 L74 62 Z" fill="none" stroke="#e58aae" stroke-width="2.4" stroke-linejoin="round"/>
-      <ellipse cx="50" cy="62" rx="24" ry="5.6" fill="#fff6fa" stroke="#e58aae" stroke-width="2.2"/>
-      <ellipse cx="50" cy="60.8" rx="19" ry="3.4" fill="${c}" opacity=".45"/>`},
+          .map((k,i)=>`<rect x="18" y="${61+i*6.6}" width="64" height="6.8" fill="${k}"/>`).join('')}</g>
+      <path d="M20 61 L50 99 L80 61 Z" fill="none" stroke="#e58aae" stroke-width="2.4" stroke-linejoin="round"/>
+      <ellipse cx="50" cy="61" rx="30" ry="6.4" fill="#fff6fa" stroke="#e58aae" stroke-width="2.2"/>
+      <ellipse cx="50" cy="59.6" rx="24" ry="4" fill="${c}" opacity=".45"/>`},
     /* 🍨 굽 달린 유리 파르페 컵 — 콘 대신 컵에 앉는다 */
-    ccup:{name:'예쁜 컵', em:'🍨', top:24, hy:31, hs:.68, art:c=>`
-      <ellipse cx="50" cy="96" rx="15" ry="4" fill="#f0b6d2"/>
-      <ellipse cx="50" cy="94.6" rx="15" ry="4" fill="#fff2f8" stroke="#e07fb0" stroke-width="2"/>
-      <path d="M46.8 80 q-.8 6.4 -3.8 11.6 h14 q-3 -5.2 -3.8 -11.6 z" fill="#ffe6f1" stroke="#e07fb0" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M27 58 L73 58 L60 80 q-1.8 5.4 -10 5.4 q-8.2 0 -10 -5.4 Z" fill="#fff8fc" opacity=".93" stroke="#e07fb0" stroke-width="2.2" stroke-linejoin="round"/>
-      <path d="M36 60 L44 78 M50 60 L50 84 M64 60 L56 78" stroke="#ffdcec" stroke-width="1.7" fill="none"/>
-      <ellipse cx="50" cy="58" rx="23" ry="5" fill="${c}" opacity=".4" stroke="#e07fb0" stroke-width="2.2"/>`},
+    ccup:{name:'예쁜 컵', em:'🍨', top:24, hy:32, hs:.7, art:c=>`
+      <ellipse cx="50" cy="96" rx="17" ry="4.4" fill="#f0b6d2"/>
+      <ellipse cx="50" cy="94.6" rx="17" ry="4.4" fill="#fff2f8" stroke="#e07fb0" stroke-width="2"/>
+      <path d="M46.4 78 q-1 7 -4.4 13 h16 q-3.4 -6 -4.4 -13 z" fill="#ffe6f1" stroke="#e07fb0" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M21 58 L79 58 L63 79 q-2 6 -13 6 q-11 0 -13 -6 Z" fill="#fff8fc" stroke="#e07fb0" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M31 60 L42 77 M50 60 L50 84 M69 60 L58 77" stroke="#ffdcec" stroke-width="1.7" fill="none"/>
+      <ellipse cx="50" cy="58" rx="29" ry="5.8" fill="${c}" opacity=".45" stroke="#e07fb0" stroke-width="2.2"/>`},
   }}
 };
 const WEAR_SLOTS=Object.keys(WEAR);
@@ -1662,12 +1663,13 @@ function buildHamSVG(h){
 
   /* 🍨 콘 타기 — 햄쮜가 아이스크림 한 스쿱이 되어 콘 위에 올라앉는다.
      몸(소품까지 전부)을 한 덩어리로 줄여서 위로 올리고, 그 아래에 큰 콘을 그린다.
-     콘 테두리를 몸보다 나중에 그려야 햄쮜가 콘 「안에」 들어앉은 것처럼 보인다. */
+     콘은 반드시 몸보다 **먼저**(뒤에) 그린다 — 나중에 그리면 콘 테두리가 햄쮜를 덮어서
+     「콘이 위에서 햄쮜를 누르는」 것처럼 보인다. 진짜 아이스크림도 스쿱이 테두리를 가린다. */
   const cw=h.wear&&h.wear.cone, ci=cw&&WEAR.cone.items[cw];
   if(ci){
     const hy=ci.hy||34, hs=ci.hs||0.68;
-    g=`<g transform="translate(50,${hy}) scale(${hs}) translate(-50,-50)">${g}</g>`
-      + ci.art(h.cone||'#ffe0ec');
+    g=ci.art(h.cone||'#ffe0ec')
+      + `<g transform="translate(50,${hy}) scale(${hs}) translate(-50,-50)">${g}</g>`;
   }
 
   return `<svg viewBox="0 0 100 100">${g}</svg>`;
