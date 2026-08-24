@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<style>*{margin:0}</style>
+</head>
+<body>
+<title>콘 타는 햄쮜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Jua&display=swap">
+
+<style>
+/* ─────────────────────────────────────────────
+   아이스크림 가게 메뉴판 — 밝은 테마가 기본값
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#FBF7EF;        /* 와플 포장지 크림 — 노란기가 도는 흰색 */
+  --card:#FFFFFF;
+  --ink:#3B3230;          /* 코코아 먹색 */
+  --ink-soft:#7A6B64;
+  --line:#E6DCCC;
+  --mint:#5FBEA3;         /* 피스타치오 */
+  --mint-soft:#DDF2EA;
+  --berry:#E0537F;        /* 딸기 — 제일 센 색, 한 군데만 */
+  --berry-soft:#FCE4EC;
+  --butter:#EFB94F;       /* 와플콘 */
+  --butter-soft:#FBEED1;
+  --grape:#A48CD8;
+  --grape-soft:#EDE6FA;
+  --shadow:rgba(94,72,60,.13);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#231C1A; --card:#2E2523; --ink:#F6EDE4; --ink-soft:#B9A79D;
+    --line:#453833; --mint:#79D3B8; --mint-soft:#22423A; --berry:#F2799C;
+    --berry-soft:#4A2331; --butter:#F5CD73; --butter-soft:#4A3A1D;
+    --grape:#BFAAEC; --grape-soft:#352A4C; --shadow:rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#231C1A; --card:#2E2523; --ink:#F6EDE4; --ink-soft:#B9A79D;
+  --line:#453833; --mint:#79D3B8; --mint-soft:#22423A; --berry:#F2799C;
+  --berry-soft:#4A2331; --butter:#F5CD73; --butter-soft:#4A3A1D;
+  --grape:#BFAAEC; --grape-soft:#352A4C; --shadow:rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Gowun Dodum','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:19px; line-height:1.85;
+  -webkit-text-size-adjust:100%;
+  /* 한글은 어절 단위로만 줄을 넘긴다 — 어린이가 읽는 글이라 「아이스크림처/럼」 같은 끊김을 막는다 */
+  word-break:keep-all; overflow-wrap:break-word;
+}
+.wrap{max-width:640px; margin:0 auto; padding:0 20px 72px; display:flex; flex-direction:column; gap:34px}
+
+/* ───── 게임으로 돌아가기 ─────
+   게임 안 📢 단추로 들어오니, 아이가 길을 잃지 않게 위아래 양쪽에 둔다 */
+.topbar{
+  position:sticky; top:0; z-index:5; margin:0 -20px; padding:11px 20px;
+  background:var(--paper); border-bottom:1.5px solid var(--line);
+  display:flex; align-items:center;
+}
+.topbar a{
+  display:inline-flex; align-items:center; gap:7px; text-decoration:none;
+  font-family:'Jua',sans-serif; font-size:17px; color:var(--berry);
+  background:var(--berry-soft); padding:7px 16px; border-radius:999px; line-height:1.4;
+}
+.topbar a:focus-visible, .backbtn:focus-visible{outline:3px solid var(--mint); outline-offset:3px}
+.backbtn{
+  display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;
+  font-family:'Jua',sans-serif; font-size:20px; color:#fff; background:var(--berry);
+  padding:15px 22px; border-radius:18px; box-shadow:0 4px 0 var(--shadow); line-height:1.4;
+}
+.backbtn:active{transform:translateY(2px); box-shadow:0 2px 0 var(--shadow)}
+
+/* ───── 머리말 ───── */
+.hero{display:flex; flex-direction:column; align-items:center; gap:6px; padding-top:14px; text-align:center}
+.hero svg{width:min(232px,58vw); height:auto; display:block}
+.eyebrow{
+  font-family:'Gowun Dodum',sans-serif; font-size:14px; letter-spacing:.16em;
+  color:var(--mint); background:var(--mint-soft);
+  padding:5px 15px; border-radius:999px; line-height:1.4;
+}
+h1{
+  font-family:'Gaegu','Apple SD Gothic Neo',cursive; font-weight:700;
+  font-size:clamp(38px,11vw,58px); line-height:1.12; margin:6px 0 0;
+  text-wrap:balance; letter-spacing:-.01em;
+}
+.hero .sub{margin:0; color:var(--ink-soft); font-size:17px; text-wrap:balance}
+.count{color:var(--berry); font-weight:700}
+
+/* ───── 쿠폰 ───── */
+.gifts{display:flex; flex-direction:column; gap:16px}
+.gifts h2, .changes h2{
+  font-family:'Jua',sans-serif; font-size:25px; margin:0;
+  display:flex; align-items:center; gap:9px; line-height:1.3;
+}
+.ticket{
+  position:relative; background:var(--card); border:2.5px dashed var(--berry);
+  border-radius:20px; padding:20px 22px; display:flex; flex-direction:column; gap:9px;
+  box-shadow:0 4px 0 var(--shadow);
+}
+.ticket .label{
+  font-size:13px; letter-spacing:.14em; color:var(--berry);
+  background:var(--berry-soft); align-self:flex-start; padding:3px 12px; border-radius:999px; line-height:1.5;
+}
+.code{
+  font-family:'Jua',sans-serif; font-size:clamp(24px,6.6vw,31px); line-height:1.25;
+  color:var(--ink); word-break:keep-all;
+}
+.ticket .gets{margin:0; color:var(--ink-soft); font-size:17px; line-height:1.75}
+.howto{
+  background:var(--butter-soft); border-radius:16px; padding:15px 20px;
+  font-size:17px; line-height:1.8; color:var(--ink);
+}
+.howto b{color:var(--ink)}
+
+/* ───── 새로 바뀐 것 ───── */
+.changes{display:flex; flex-direction:column; gap:18px}
+.scoops{display:flex; flex-direction:column; gap:16px; margin:0; padding:0; list-style:none; counter-reset:s}
+.scoop{
+  counter-increment:s;
+  background:var(--card); border:1.5px solid var(--line); border-radius:20px;
+  padding:20px 22px 21px; display:flex; flex-direction:column; gap:7px;
+  box-shadow:0 3px 0 var(--shadow);
+}
+.scoop .num{
+  display:flex; align-items:center; gap:10px;
+  font-family:'Jua',sans-serif; font-size:14px; letter-spacing:.05em; color:var(--ink-soft);
+}
+.scoop .num::before{
+  content:counter(s); flex:none;
+  width:32px; height:32px; border-radius:50% 50% 46% 46%;
+  display:grid; place-items:center; font-size:17px; color:#fff;
+}
+.scoop h3{
+  font-family:'Gaegu',cursive; font-weight:700; font-size:clamp(25px,6.6vw,31px);
+  margin:0; line-height:1.25; text-wrap:balance;
+}
+.scoop p{margin:0; color:var(--ink-soft); line-height:1.85}
+.scoop p em{font-style:normal; color:var(--ink); background:var(--butter-soft); padding:1px 5px; border-radius:6px}
+.scoop:nth-child(6n+1) .num::before{background:var(--berry)}
+.scoop:nth-child(6n+2) .num::before{background:var(--mint)}
+.scoop:nth-child(6n+3) .num::before{background:var(--butter)}
+.scoop:nth-child(6n+4) .num::before{background:var(--grape)}
+.scoop:nth-child(6n+5) .num::before{background:var(--berry)}
+.scoop:nth-child(6n)   .num::before{background:var(--mint)}
+
+/* ───── 맛보기 줄 ───── */
+.tastes{
+  display:flex; gap:9px; overflow-x:auto; padding:3px 0 5px; margin-top:3px;
+  scrollbar-width:thin;
+}
+.taste{
+  flex:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+  font-size:13px; color:var(--ink-soft); width:64px; text-align:center; line-height:1.4;
+}
+.taste svg{width:56px; height:56px; display:block}
+
+/* ───── 꼬리말 ───── */
+.foot{
+  text-align:center; color:var(--ink-soft); font-size:16px; line-height:1.8;
+  border-top:2px dashed var(--line); padding-top:24px; text-wrap:balance;
+}
+.sprinkles{display:flex; justify-content:center; gap:7px; margin-bottom:12px}
+.sprinkles i{display:block; width:6px; height:15px; border-radius:3px}
+
+@media (min-width:600px){
+  body{font-size:20px}
+  .wrap{padding-bottom:88px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .hero svg{animation:bob 3.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+}
+</style>
+
+<div class="wrap">
+
+  <nav class="topbar"><a href="index.html">◀ 게임으로 돌아가기</a></nav>
+
+  <header class="hero">
+    <!-- 오늘 제일 크게 바뀐 것 — 햄쮜가 콘 위에 올라앉았다 -->
+    <svg viewBox="0 0 200 224" role="img" aria-label="와플콘 위에 앉아 있는 크림색 햄쮜">
+      <!-- 귀 -->
+      <circle cx="58" cy="52" r="22" fill="#F4D9A8"/><circle cx="142" cy="52" r="22" fill="#F4D9A8"/>
+      <circle cx="58" cy="52" r="10.5" fill="#F7B7C6"/><circle cx="142" cy="52" r="10.5" fill="#F7B7C6"/>
+      <!-- 몸 -->
+      <circle cx="100" cy="90" r="57" fill="#F4D9A8" stroke="#D3A061" stroke-width="3" stroke-opacity=".45"/>
+      <!-- 볼 -->
+      <ellipse cx="64" cy="104" rx="13" ry="9" fill="#F7B7C6" opacity=".8"/>
+      <ellipse cx="136" cy="104" rx="13" ry="9" fill="#F7B7C6" opacity=".8"/>
+      <!-- 눈 -->
+      <circle cx="80" cy="88" r="8.5" fill="#463A33"/><circle cx="120" cy="88" r="8.5" fill="#463A33"/>
+      <circle cx="82.5" cy="85" r="3" fill="#fff"/><circle cx="122.5" cy="85" r="3" fill="#fff"/>
+      <!-- 코와 입 -->
+      <ellipse cx="100" cy="104" rx="5.5" ry="4.2" fill="#D98A9C"/>
+      <path d="M100 109 q-6 7 -12 2 M100 109 q6 7 12 2" stroke="#C08A5E" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- 와플콘 — 몸 아래에 그려 테두리가 몸을 살짝 덮게 -->
+      <path d="M54 152 L100 216 L146 152 Z" fill="#E6B678" stroke="#B3803F" stroke-width="3.5" stroke-linejoin="round"/>
+      <g stroke="#C08C4C" stroke-width="2.4" opacity=".7" fill="none">
+        <path d="M68 152 L100 197 M84 152 L100 174 M116 152 L100 174 M132 152 L100 197"/>
+        <path d="M60 164 L140 164 M66 178 L134 178 M76 192 L124 192"/>
+      </g>
+      <ellipse cx="100" cy="152" rx="47" ry="11" fill="#F2CD97" stroke="#B3803F" stroke-width="3.2"/>
+      <ellipse cx="100" cy="149" rx="36" ry="6.5" fill="#FFC2D4" opacity=".55"/>
+      <!-- 뿌리기 -->
+      <g opacity=".95">
+        <rect x="41" y="120" width="4.4" height="11" rx="2.2" fill="#E0537F" transform="rotate(-24 43 126)"/>
+        <rect x="156" y="112" width="4.4" height="11" rx="2.2" fill="#5FBEA3" transform="rotate(31 158 118)"/>
+        <rect x="168" y="146" width="4.4" height="11" rx="2.2" fill="#EFB94F" transform="rotate(-14 170 152)"/>
+        <rect x="28" y="152" width="4.4" height="11" rx="2.2" fill="#A48CD8" transform="rotate(40 30 158)"/>
+      </g>
+    </svg>
+    <span class="eyebrow">햄스킨라빈스</span>
+    <h1>햄쮜가<br>콘을 탔어요</h1>
+    <p class="sub">오늘 <span class="count">일곱 가지</span>가 새로 생겼어요.<br>선물 두 개도 있어요 🎁</p>
+  </header>
+
+  <section class="gifts">
+    <h2>🎫 먼저 선물부터!</h2>
+
+    <div class="ticket">
+      <span class="label">쿠폰 번호</span>
+      <div class="code">밥을 맛시게 먹은 찌돌이</div>
+      <p class="gets">🪙 코인 4,000개 · 🍒 토핑 25개<br>
+        🍓딸기 모자 · 🍭막대사탕 · 🧇와플콘<br>
+        🍮<b>단팥 통</b> — 찐빵처럼 생긴 햄쮜가 살아요<br>
+        🎂케이크 (방에 놓을 수 있어요)</p>
+    </div>
+
+    <div class="ticket">
+      <span class="label">쿠폰 번호</span>
+      <div class="code">퐁실 마음이 갈기갈기</div>
+      <p class="gets">🪙 코인 3,000개 · 🍒 토핑 22개<br>
+        🧣포근 목도리 · 🎈하트 풍선 · 🍨예쁜 컵<br>
+        ☁️<b>솜사탕 통</b> — 구름처럼 퐁실한 햄쮜가 살아요<br>
+        🛋️소파 · 🎀리본 줄</p>
+    </div>
+
+    <p class="howto">쿠폰은 <b>🍨 뜨기</b> 화면을 아래로 내려서 <b>🎫 쿠폰</b>을 누르면 적을 수 있어요.
+      띄어쓰기는 안 해도 괜찮아요. 한 번호는 <b>한 번만</b> 쓸 수 있어요!</p>
+    <a class="backbtn" href="index.html">🎫 쿠폰 쓰러 가기</a>
+  </section>
+
+  <section class="changes">
+    <h2>🍨 무엇이 바뀌었나요?</h2>
+
+    <ol class="scoops">
+      <li class="scoop">
+        <span class="num">가장 큰 변화</span>
+        <h3>햄쮜가 아이스크림처럼 콘 위에 앉아요</h3>
+        <p>햄쮜를 누르고 <em>👗 꾸미기 → 🍨 콘 타기</em>를 골라보세요.
+          🧇와플콘·🍦슈가콘·🍫초코콘·🌈무지개콘·🍨예쁜 컵 다섯 가지가 있어요.
+          모자랑 목걸이도 <b>같이 콘에 올라타요!</b></p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">햄쮜 모양</span>
+        <h3>50마리가 모두 다르게 생겼어요</h3>
+        <p>전에는 색만 다르고 얼굴이 똑같은 햄쮜가 많았어요.
+          이제는 <b>똑같이 생긴 햄쮜가 하나도 없어요.</b>
+          그리고 그 맛처럼 생겼어요 — 도감에서 찾아보세요!</p>
+        <div class="tastes" aria-label="새 모양 맛보기">
+          <div class="taste">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <ellipse cx="31" cy="29" rx="9" ry="8.6" fill="#F6DE7E" transform="rotate(-20 31 29)"/>
+              <ellipse cx="69" cy="29" rx="9" ry="8.6" fill="#F6DE7E" transform="rotate(20 69 29)"/>
+              <path d="M50 26 q28 4 32 30 q-4 26 -32 30 q-28 -4 -32 -30 q4 -26 32 -30 z" fill="#F6DE7E" stroke="#D9B93F" stroke-width="2" stroke-opacity=".5"/>
+              <circle cx="41" cy="55" r="4" fill="#463A33"/><circle cx="59" cy="55" r="4" fill="#463A33"/>
+              <ellipse cx="50" cy="66" rx="3.4" ry="2.6" fill="#D98A9C"/>
+            </svg>레몬쮜
+          </div>
+          <div class="taste">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <ellipse cx="26" cy="30" rx="10" ry="8.6" fill="#F58AA0"/><ellipse cx="74" cy="30" rx="10" ry="8.6" fill="#F58AA0"/>
+              <path d="M14 42 q36 -22 72 0 q-4 32 -36 48 q-32 -16 -36 -48 z" fill="#F58AA0" stroke="#D1566E" stroke-width="2" stroke-opacity=".45" stroke-linejoin="round"/>
+              <path d="M14 42 q36 -22 72 0 q-1 6 -2.6 12 q-33 -19 -66.8 0 q-1.6 -6 -2.6 -12 z" fill="#8AC888"/>
+              <circle cx="41" cy="56" r="4" fill="#463A33"/><circle cx="59" cy="56" r="4" fill="#463A33"/>
+              <ellipse cx="36" cy="70" rx="2.2" ry="3" fill="#3C3226"/><ellipse cx="63" cy="70" rx="2.2" ry="3" fill="#3C3226"/>
+            </svg>수박쮜
+          </div>
+          <div class="taste">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="25" cy="32" r="11" fill="#EBDFCC"/>
+              <path d="M74 39 a10 10 0 0 1 -9 -12 A32 32 0 1 0 82 51 a10 10 0 0 1 -8 -12 z" fill="#EBDFCC" stroke="#C3AE93" stroke-width="2" stroke-opacity=".5"/>
+              <g fill="#6B4526" opacity=".72"><circle cx="30" cy="50" r="3.4"/><circle cx="35" cy="74" r="3.2"/><circle cx="62" cy="76" r="2.8"/></g>
+              <circle cx="41" cy="55" r="4" fill="#463A33"/><circle cx="59" cy="55" r="4" fill="#463A33"/>
+              <ellipse cx="50" cy="66" rx="3.4" ry="2.6" fill="#D98A9C"/>
+            </svg>쿠키쮜
+          </div>
+          <div class="taste">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <rect x="18" y="17" width="19" height="17" rx="5" fill="#E8C486"/><rect x="63" y="17" width="19" height="17" rx="5" fill="#E8C486"/>
+              <rect x="15" y="31" width="70" height="58" rx="12" fill="#E8C486" stroke="#C09A56" stroke-width="2" stroke-opacity=".5"/>
+              <g stroke="#C09A56" stroke-width="2.6" opacity=".38" fill="none"><path d="M15 50 H85 M15 70 H85 M37 31 V89 M63 31 V89"/></g>
+              <circle cx="41" cy="56" r="4" fill="#463A33"/><circle cx="59" cy="56" r="4" fill="#463A33"/>
+              <ellipse cx="50" cy="67" rx="3.4" ry="2.6" fill="#D98A9C"/>
+            </svg>와플쮜
+          </div>
+          <div class="taste">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <ellipse cx="30" cy="22" rx="9" ry="8" fill="#D9C0A4"/><ellipse cx="70" cy="22" rx="9" ry="8" fill="#D9C0A4"/>
+              <path d="M27 28 h46 l-6 52 q-1 10 -17 10 q-16 0 -17 -10 z" fill="#D9C0A4" stroke="#AE8E6E" stroke-width="2" stroke-opacity=".5" stroke-linejoin="round"/>
+              <g fill="#4A3020" opacity=".85"><circle cx="41" cy="82" r="4"/><circle cx="52" cy="85" r="4.2"/><circle cx="61" cy="81" r="3.8"/></g>
+              <circle cx="42" cy="50" r="4" fill="#463A33"/><circle cx="58" cy="50" r="4" fill="#463A33"/>
+              <ellipse cx="50" cy="60" rx="3.2" ry="2.4" fill="#D98A9C"/>
+            </svg>밀크티쮜
+          </div>
+          <div class="taste">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <g fill="#F2CE5A"><circle cx="50" cy="57" r="27"/>
+                <circle cx="82" cy="57" r="6.2"/><circle cx="18" cy="57" r="6.2"/>
+                <circle cx="50" cy="25" r="6.2"/><circle cx="50" cy="89" r="6.2"/>
+                <circle cx="72.6" cy="34.4" r="6.2"/><circle cx="27.4" cy="79.6" r="6.2"/>
+                <circle cx="72.6" cy="79.6" r="6.2"/><circle cx="27.4" cy="34.4" r="6.2"/></g>
+              <circle cx="50" cy="57" r="19" fill="#FBEBB4" opacity=".5"/>
+              <circle cx="42" cy="54" r="4" fill="#463A33"/><circle cx="58" cy="54" r="4" fill="#463A33"/>
+              <ellipse cx="50" cy="65" rx="3.4" ry="2.6" fill="#D98A9C"/>
+            </svg>황금쮜
+          </div>
+        </div>
+      </li>
+
+      <li class="scoop">
+        <span class="num">마당</span>
+        <h3>미끄럼틀을 정말로 타요</h3>
+        <p>🌳마당에서 <em>🛝미끄럼틀</em>을 누르면 햄쮜가 <b>걸어가서 사다리를 올라가고,
+          쭈욱 미끄러져 내려온 다음 제자리로 돌아와요.</b>
+          🎠회전목마 · 🪁연날리기 · 🏖️모래성 · 🎋그네도 있어요.</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">방 꾸미기</span>
+        <h3>가구가 훨씬 커졌어요</h3>
+        <p>전에는 너무 작아서 놓아도 잘 안 보였어요.
+          이제 <b>두 배쯤 커져서</b> 멀리서도 잘 보여요.</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">특별 햄쮜</span>
+        <h3>별 올리기가 놀이가 됐어요</h3>
+        <p>이제 <em>💗하트를 꽉 채워야</em> 별 올리기에 도전할 수 있어요.
+          도전은 성공할 때도, 안 될 때도 있어요.
+          하지만 <b>안 될 때마다 「응원」이 쌓여서 다음엔 더 잘 돼요.</b>
+          계속 도전하면 꼭 올라가요!</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">햄쮜 몸</span>
+        <h3>몸에 붙어 있던 반짝이를 치웠어요</h3>
+        <p>별이 많은 햄쮜 몸에 붙어 있던 잎·꽃잎·왕관을 <b>모두 없앴어요.</b>
+          이제 예쁘게 꾸며도 <b>아무것도 안 가려요.</b>
+          별은 뒤에 은은하게 빛나는 것으로 알 수 있어요.</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">숫자 고침</span>
+        <h3>코인 300만이 「3만」으로 보였어요</h3>
+        <p>코인이 아주 많아지면 숫자가 잘못 보이는 문제가 있었어요. 이제 제대로 나와요.</p>
+      </li>
+    </ol>
+  </section>
+
+  <a class="backbtn" href="index.html">🍨 게임으로 돌아가서 놀기</a>
+
+  <footer class="foot">
+    <div class="sprinkles" aria-hidden="true">
+      <i style="background:var(--berry)"></i><i style="background:var(--butter)"></i>
+      <i style="background:var(--mint)"></i><i style="background:var(--grape)"></i>
+      <i style="background:var(--berry)"></i>
+    </div>
+    재미있게 놀다가 <b>이상한 게 보이면 꼭 알려주세요.</b><br>
+    다음에 더 고쳐서 올려줄게요 🍨
+  </footer>
+
+</div>
+
+</body>
+</html>

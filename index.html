@@ -686,6 +686,7 @@ nav .dot{position:absolute;top:5px;right:22%;width:8px;height:8px;border-radius:
       <span class="logo">🍨</span>
       <h1>햄스킨라빈스</h1>
       <span class="lv" id="h-lv" onclick="openLevel()">가게 Lv.1</span>
+      <span class="hbtn" id="h-news" onclick="openNews()" title="새 소식">📢<span class="bg" id="news-bg" style="display:none">새</span></span>
       <span class="hbtn" id="h-gift" onclick="openGift()" title="선물상자">🎁<span class="bg" id="gift-bg">!</span></span>
       <span class="hbtn" onclick="openSettings()" title="설정">⚙️</span>
     </div>
@@ -2006,7 +2007,7 @@ function freshState(){
     play:{toy:'pet', ballAt:0, bubbleAt:0, ride:{}},
     wx:{key:null, temp:null, at:0, mode:'gps', city:'seoul', place:'', err:0}, // 🌤️ 오늘 날씨
     det:{d:'', n:0, win:0, all:0},// 🕵️ 햄쮜 탐정 (마지막 날, 오늘 판 수, 오늘 맞힌 수, 전체 맞힌 수)
-    giftAt:0,
+    giftAt:0, newsSeen:'',
     stats:{scoop:0, pet:0, best4:0, best5:0},
     snd:true, vib:true, tut:0, t:Date.now()
   };
@@ -2264,6 +2265,7 @@ function load(){
     if(!Array.isArray(S.album)) S.album=[];
     if(S.vib==null) S.vib=true;
     if(S.giftAt==null) S.giftAt=0;
+    if(S.newsSeen==null) S.newsSeen='';   /* 마지막으로 본 새 소식 번호 — 안 봤으면 📢에 「새」 점이 붙는다 */
     if(!S.err || typeof S.err!=='object') S.err={d:'', t:[], got:0};
     if(!Array.isArray(S.err.t)) S.err.t=[];
     if(typeof S.errAll!=='number') S.errAll=0;
@@ -3745,6 +3747,18 @@ function openLevel(){
         <b>${f.n}</b> — 가게 Lv.${f.lv} <span class="muted">(${f.hn})</span></div>`).join('')
         :'<div class="muted">모든 통이 열렸어요!</div>'}
     </div>`);
+}
+/* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
+   소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
+   (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
+const NEWS_VER='2026-08-24';
+const NEWS_URL='news.html';
+function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
+function openNews(){
+  if(S){ S.newsSeen=NEWS_VER; save(); renderHUD(); }   /* 봤으니 「새」 점을 끈다 */
+  /* 뉴스 페이지로 이동. 되돌아오면 게임은 저장된 그대로 다시 열린다.
+     설치한 앱(standalone)에서는 같은 창에서 열려야 앱 밖으로 안 튕긴다. */
+  location.href=NEWS_URL;
 }
 function openHelp(){
   const topics=[
@@ -5405,7 +5419,7 @@ $$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
    값이 바뀐 것만 건드린다. (특히 innerHTML 을 계속 새로 쓰면 버튼이 안 눌린다) */
 const H={};
 function initHUD(){
-  ['h-coin','h-top','h-dex','h-stk','h-lv','s-dot','o-dot','h-gift','gift-bg'].forEach(id=>H[id]=document.getElementById(id));
+  ['h-coin','h-top','h-dex','h-stk','h-lv','s-dot','o-dot','h-gift','gift-bg','h-news','news-bg'].forEach(id=>H[id]=document.getElementById(id));
   H.last={};
 }
 function setTxt(id,v){ const e=H[id]; if(e && H.last[id]!==v){ H.last[id]=v; e.textContent=v; } }
@@ -5424,6 +5438,13 @@ function renderHUD(){
   const left=giftLeft(), lab=left>0?Math.ceil(left/60000)+'분':'!';
   setTxt('gift-bg', lab);
   if(H['h-gift'] && H.last.rdy!==(left<=0)){ H.last.rdy=(left<=0); H['h-gift'].classList.toggle('rdy',left<=0); }
+  /* 📢 아직 안 본 새 소식이 있으면 「새」 점을 띄우고 살랑거리게 한다 */
+  const nu=newsUnseen();
+  if(H.last.news!==nu){
+    H.last.news=nu;
+    if(H['news-bg']) H['news-bg'].style.display=nu?'block':'none';
+    if(H['h-news'])  H['h-news'].classList.toggle('rdy',nu);
+  }
 }
 function renderView(){
   ({scoop:renderScoopTab, play:renderPlayTab, order:renderOrderTab,
