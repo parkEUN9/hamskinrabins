@@ -2519,6 +2519,14 @@ const MAIL_ACT_TPL={
     k=>`오늘 축하해줘서 고마워요.<br>벌써 <b>${daysWith(k)}일</b>이라니, 믿기지 않아요 🎂`,
     k=>`케이크보다 더 좋은 건<br>같이 있어준 <b>${daysWith(k)}일</b>이에요 💗`,
     k=>`앞으로도 계속 함께 있어줄 거죠?<br>나는 그럴 거예요 👑`
+  ],
+  /* 🎫「찌돌의 편지」 쿠폰으로 한꺼번에 부쳐지는 편지들 */
+  gift:[
+    k=>`찌돌이가 우체통을 통째로 들고 왔어요!<br>나도 얼른 한 장 써서 넣었답니다 💌`,
+    k=>`오늘 우체부 아저씨가 아주 바빴대요.<br>편지가 이렇게 많은 건 처음이에요! 📮`,
+    k=>`무슨 말을 쓸까 한참 고민했어요.<br>… <b>그냥 고마워요!</b> 이게 제일 하고 싶은 말이에요 💗`,
+    k=>`찌돌이가 「같이 편지 쓰자」고 해서<br>다 같이 책상에 앉아 썼어요 ✏️`,
+    k=>`봉투에 <b>${nameOf(k)}</b> 라고 또박또박 적었어요.<br>잘 도착했나요? 🥰`
   ]
 };
 /* 편지가 왜 왔는지 한 줄로 — 아이가 「내가 한 일 때문에 왔구나」를 알아채게 */
@@ -2527,7 +2535,8 @@ const MAIL_WHY={
   fav  :'💕 좋아하는 놀이를 해줘서 신났대요',
   new  :'🍨 오늘 처음 만나서 인사하는 편지예요',
   cont :'🎀 꾸미기 대회에 나갔던 이야기래요',
-  anniv:'🎂 기념일을 축하해줘서 고맙대요'
+  anniv:'🎂 기념일을 축하해줘서 고맙대요',
+  gift :'🎫 찌돌이가 부쳐준 편지 꾸러미에 들어 있었어요'
 };
 function mailUnread(){ return S.mail.filter(m=>!m.got).length; }
 /* 날짜가 바뀌면 오늘 센 편지 수를 0으로 되돌린다 */
@@ -2672,7 +2681,11 @@ const COUPONS={
                       wear:['hat_berry','hand_lolly','cone_cwaffle'], tub:['redbean'], furn:['cake']},
   /* 「퐁실 마음이 갈기갈기」 — 퐁실퐁실한 것들과 갈래갈래 리본 */
   '퐁실마음이갈기갈기':{em:'🫧', name:'퐁실 마음이 갈기갈기', coin:3000, top:22,
-                      wear:['neck_scarf','hand_balloon','cone_ccup'], tub:['cotton'], furn:['sofa','ribbon']}
+                      wear:['neck_scarf','hand_balloon','cone_ccup'], tub:['cotton'], furn:['sofa','ribbon']},
+  /* 「찌돌의 편지」 — 💌편지가 자주 오게 바뀐 것을 기념하는 쿠폰.
+     편지 다섯 통이 한꺼번에 우체통에 꽂히고, 두 번째 진열장의 🧁컵케이크 통이 딸려 온다. */
+  '찌돌의편지':{em:'💌', name:'찌돌의 편지', coin:3600, top:26,
+                      mail:5, tub:['cupcake'], furn:['postbox']}
 };
 function openCoupon(){
   const used=(S.coupon||[]).filter(c=>COUPONS[c]);
@@ -2723,6 +2736,14 @@ function useCoupon(){
     if(haveFurn(k)){ S.coin+=800; got.push(`<span style="font-size:14px">${f.em} ${eun(f.n)} 이미 있어서 🪙+800</span>`); }
     else{ S.furn.push(k); got.push(`${f.em} ${f.n}`); }
   });
+  /* 💌 편지 꾸러미 — 하루 상한과 상관없이 그 자리에서 꽂아준다.
+     mailT 는 되돌려 놓는다 — 쿠폰 때문에 오늘 올 배달 편지가 8분 밀리면 안 된다. */
+  if(c.mail){
+    const wasT=S.mailT, sent=[];
+    for(let i=0;i<c.mail;i++){ const k=mailWho(); if(k && mailPush(k,'gift')) sent.push(nameOf(k)); }
+    S.mailT=wasT;
+    if(sent.length) got.push(`💌 편지 ${sent.length}통 <span style="font-size:13px">(${sent.join(' · ')})</span>`);
+  }
 
   sfx('gift'); checkBadges(); save(); renderHUD(); renderView();
   openModal(`<h2>🎫 쿠폰을 썼어요!<span class="x" onclick="closeModal()">닫기</span></h2>
@@ -2732,7 +2753,8 @@ function useCoupon(){
       <div style="font-size:18px;font-weight:800;margin-top:8px;line-height:1.6">${got.join('<br>')}</div>
     </div>
     <div class="row" style="justify-content:center;margin-top:12px">
-      <button class="btn" onclick="closeModal();go('scoop')">🍨 뜨러 가기</button>
+      ${c.mail?`<button class="btn" onclick="closeModal();openPost()">💌 편지 읽기</button>`
+              :`<button class="btn" onclick="closeModal();go('scoop')">🍨 뜨러 가기</button>`}
       <button class="btn w" onclick="openCoupon()">🎫 또 쓰기</button>
     </div>`);
 }
@@ -3301,6 +3323,8 @@ const FURN={
   fount  :{em:'⛲',  n:'분수',          kind:'floor', top:45},
   /* --- 벽에 붙이는 것 --- */
   balloon:{em:'🎈',  n:'풍선',          kind:'wall',  coin:0},
+  /* 💌 편지가 자주 오게 바뀌면서 생긴 가구 — 방에 놓아두면 편지가 오는 게 눈에 보인다 */
+  postbox:{em:'📮',  n:'우체통',        kind:'floor', coin:5200},
   frame  :{em:'🖼️',  n:'액자',          kind:'wall',  coin:500},
   clock  :{em:'🕰️',  n:'시계',          kind:'wall',  coin:1400},
   ribbon :{em:'🎀',  n:'리본 줄',       kind:'wall',  coin:2400},
@@ -4462,7 +4486,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-08-25c';
+const NEWS_VER='2026-08-25d';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
