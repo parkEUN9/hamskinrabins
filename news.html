@@ -3,11 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>햄스킨라빈스 · 8월 25일 소식</title>
 <link rel="manifest" href="manifest.webmanifest">
-<style>*{margin:0}</style>
-</head>
-<body>
-<title>햄스킨라빈스 새 소식</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Jua&display=swap">
@@ -144,6 +141,17 @@ h1{
 }
 .scoop p{margin:0; color:var(--ink-soft); line-height:1.85}
 .scoop p em{font-style:normal; color:var(--ink); background:var(--butter-soft); padding:1px 5px; border-radius:6px}
+/* 장비처럼 「이름 — 설명」이 여러 줄 이어질 때는 문단보다 목록이 읽기 쉽다 */
+.scoop ul.mini{margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px}
+.scoop ul.mini li{
+  color:var(--ink-soft); line-height:1.7; font-size:15px;
+  background:var(--butter-soft); border-radius:12px; padding:9px 13px;
+}
+.scoop ul.mini li em{
+  font-style:normal; font-size:13px; color:var(--grape);
+  background:var(--grape-soft); padding:2px 8px; border-radius:999px; margin:0 3px;
+}
+.scoop ul.mini + p{margin-top:10px}
 .scoop:nth-child(6n+1) .num::before{background:var(--berry)}
 .scoop:nth-child(6n+2) .num::before{background:var(--mint)}
 .scoop:nth-child(6n+3) .num::before{background:var(--butter)}
@@ -162,6 +170,28 @@ h1{
 }
 .taste svg{width:56px; height:56px; display:block}
 
+/* ───── 지난 소식 ─────
+   버전마다 페이지를 따로 두고, 아래에서 서로 오갈 수 있게 한다.
+   한 페이지에 다 쌓으면 「이번에 뭐가 바뀐 건지」가 묻힌다. */
+.past{display:flex; flex-direction:column; gap:12px}
+.past h2{
+  font-family:'Jua',sans-serif; font-size:22px; margin:0;
+  display:flex; align-items:center; gap:9px; line-height:1.3; color:var(--ink-soft);
+}
+.pastnote{margin:0; color:var(--ink-soft); font-size:16px; line-height:1.75}
+.pastlink{
+  display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit;
+  background:var(--card); border:1.5px solid var(--line); border-radius:18px;
+  padding:15px 18px; box-shadow:0 3px 0 var(--shadow); line-height:1.4;
+}
+.pastlink:active{transform:translateY(2px); box-shadow:0 1px 0 var(--shadow)}
+.pastlink .d{
+  flex:none; font-family:'Jua',sans-serif; font-size:14px; color:var(--grape);
+  background:var(--grape-soft); padding:5px 12px; border-radius:999px;
+}
+.pastlink .t{flex:1; font-family:'Gaegu',cursive; font-weight:700; font-size:24px; line-height:1.2}
+.pastlink .n{flex:none; font-size:14px; color:var(--ink-soft)}
+
 /* ───── 꼬리말 ───── */
 .foot{
   text-align:center; color:var(--ink-soft); font-size:16px; line-height:1.8;
@@ -179,13 +209,14 @@ h1{
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 }
 </style>
+</head>
+<body>
 
 <div class="wrap">
 
   <nav class="topbar"><a href="index.html">◀ 게임으로 돌아가기</a></nav>
 
   <header class="hero">
-    <!-- 오늘 제일 크게 바뀐 것 — 햄쮜가 콘 위에 올라앉았다 -->
     <svg viewBox="0 0 200 224" role="img" aria-label="와플콘 위에 앉아 있는 크림색 햄쮜">
       <!-- 귀 -->
       <circle cx="58" cy="52" r="22" fill="#F4D9A8"/><circle cx="142" cy="52" r="22" fill="#F4D9A8"/>
@@ -217,42 +248,83 @@ h1{
         <rect x="28" y="152" width="4.4" height="11" rx="2.2" fill="#A48CD8" transform="rotate(40 30 158)"/>
       </g>
     </svg>
-    <span class="eyebrow">햄스킨라빈스</span>
+    <span class="eyebrow">햄스킨라빈스 · 8월 25일</span>
     <h1>새 소식이<br>왔어요</h1>
-    <p class="sub">지금까지 <span class="count">열세 가지</span>가 새로 생겼어요.<br>
-      맨 위 <b>여섯 가지</b>가 오늘 것이에요 ✨ 선물 두 개도 있어요 🎁</p>
+    <p class="sub">이번에 <span class="count">열두 가지</span>가 바뀌었어요 ✨<br>지난 소식은 맨 아래에서 볼 수 있어요</p>
   </header>
 
-  <section class="gifts">
-    <h2>🎫 먼저 선물부터!</h2>
-
-    <div class="ticket">
-      <span class="label">쿠폰 번호</span>
-      <div class="code">밥을 맛시게 먹은 찌돌이</div>
-      <p class="gets">🪙 코인 4,000개 · 🍒 토핑 25개<br>
-        🍓딸기 모자 · 🍭막대사탕 · 🧇와플콘<br>
-        🍮<b>단팥 통</b> — 찐빵처럼 생긴 햄쮜가 살아요<br>
-        🎂케이크 (방에 놓을 수 있어요)</p>
-    </div>
-
-    <div class="ticket">
-      <span class="label">쿠폰 번호</span>
-      <div class="code">퐁실 마음이 갈기갈기</div>
-      <p class="gets">🪙 코인 3,000개 · 🍒 토핑 22개<br>
-        🧣포근 목도리 · 🎈하트 풍선 · 🍨예쁜 컵<br>
-        ☁️<b>솜사탕 통</b> — 구름처럼 퐁실한 햄쮜가 살아요<br>
-        🛋️소파 · 🎀리본 줄</p>
-    </div>
-
-    <p class="howto">쿠폰은 <b>🍨 뜨기</b> 화면을 아래로 내려서 <b>🎫 쿠폰</b>을 누르면 적을 수 있어요.
-      띄어쓰기는 안 해도 괜찮아요. 한 번호는 <b>한 번만</b> 쓸 수 있어요!</p>
-    <a class="backbtn" href="index.html">🎫 쿠폰 쓰러 가기</a>
-  </section>
-
   <section class="changes">
-    <h2>🍨 무엇이 바뀌었나요?</h2>
+    <h2>🍨 이번에 바뀐 것</h2>
 
     <ol class="scoops">
+      <li class="scoop">
+        <span class="num">오늘 새로!</span>
+        <h3>🍩 두 번째 진열장이 열렸어요 — 햄쮜 14마리 추가!</h3>
+        <p>통을 <b>50가지 다 모은 친구</b>를 위해, 가게 안쪽에 <b>두 번째 진열장</b>이 생겼어요.
+          <b>도넛 · 프레첼 · 경단 · 마카롱 · 컵케이크 · 벌꿀 · 팝콘 ·
+          파르페 · 붕어빵 · 송편 · 판초콜릿 · 아이스바 · 빙수 · 마들렌</b> —
+          <b>14가지</b>가 새로 생겨서 이제 통이 <b>64가지</b>예요!<br>
+          모두 <b>지금까지 없던 모양</b>이에요. 가운데가 뻥 뚫린 도넛쮜, 매듭이 묶인 프레첼쮜,
+          꼬치에 꿴 경단쮜, 층층이 쌓인 파르페쮜처럼 실루엣부터 달라요 🍰<br>
+          <b>가게 Lv.21</b>부터 하나씩 열려요. 마지막 <b>마들렌쮜는 Lv.40</b>이랍니다!</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">오늘 새로!</span>
+        <h3>🏦 큰 장비 네 가지가 생겼어요</h3>
+        <p>코인이 남아돌던 친구들을 위해, <b>아주 커다란 장비</b>가 상점에 들어왔어요.</p>
+        <ul class="mini">
+          <li><b>🏦 큰 금고</b> <em>Lv.21</em> — 저절로 모이는 코인이 훨씬 많아져요 (8칸)</li>
+          <li><b>🌟 별가루 스쿱</b> <em>Lv.24</em> — ⭐4·⭐5가 나올 확률이 더 올라가요 (6칸)</li>
+          <li><b>💗 사랑 가득</b> <em>Lv.26</em> — 놀아줄 때 하트가 훨씬 빨리 차요 (6칸)</li>
+          <li><b>🏡 넓은 가게</b> <em>Lv.30</em> — <b>모든 방</b>의 자리가 하나씩 늘어요 (4칸)</li>
+        </ul>
+        <p>아직 레벨이 안 되면 상점에 <b>🔒 잠긴 카드</b>로 보여요 —
+          무엇이 기다리고 있는지 미리 볼 수 있답니다!</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">오늘 새로!</span>
+        <h3>🏙️ 놀이방이 여섯 개로 늘었어요</h3>
+        <p><b>다섯째 방(Lv.25)</b>과 <b>여섯째 방(Lv.35)</b>이 새로 열려요.
+          마당까지 하면 방이 <b>일곱 개</b>!<br>
+          🏡넓은 가게를 끝까지 올리면 방마다 자리가 <b>12개</b>가 돼서,
+          햄쮜 <b>84마리</b>를 한꺼번에 앉힐 수 있어요 🎡</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">오늘 새로!</span>
+        <h3>💌 햄쮜 편지가 훨씬 자주 와요</h3>
+        <p>친한 햄쮜가 나에게 편지를 써요. 전에는 <b>하루에 한 통</b>뿐이라
+          우체통을 열어볼 일이 거의 없었죠. 이제 <b>하루에 대여섯 통</b>이 두 가지 방법으로 와요!</p>
+        <ul class="mini">
+          <li><b>📮 배달 편지</b> <em>하루 3통</em> — 게임을 켜면 한 통이 와 있고,
+            노는 동안 <b>8분마다</b> 한 통씩 더 와요</li>
+          <li><b>💗 마음 편지</b> <em>하루 4통</em> — 무슨 일이 있으면 그 햄쮜가 <b>바로</b> 편지를 써요</li>
+        </ul>
+        <p><b>마음 편지</b>는 이럴 때 와요 —
+          <em>💗 하트가 한 칸 올랐을 때</em> · <em>💕 좋아하는 놀이를 해줬을 때</em> ·
+          <em>🍨 처음 만난 날</em> · <em>🎀 꾸미기 대회에 나갔을 때</em> ·
+          <em>🎂 기념일을 축하해줬을 때</em>.<br>
+          「아까 놀아줄 때 정말 행복했어요!」처럼 <b>방금 있었던 일</b>이 편지에 담겨 있어요.
+          왜 편지가 왔는지도 한 줄로 적혀 있답니다 ✏️<br>
+          편지 문구도 <b>12가지 → 28가지</b>로 늘었어요.<br>
+          <b>처음 열어보면 선물</b>도 들어 있어요 🪙🍒💗 —
+          두 번째부터는 선물이 없지만 언제든 다시 읽을 수 있답니다.
+          안 읽은 편지가 있으면 위쪽 <em>💌 우체통</em>이 흔들리고 🏠놀이방에도 점이 붙어요.
+          우체통에는 <b>30통</b>까지 남아요 💌</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">오늘 새로!</span>
+        <h3>🏅 스티커가 11장 더 생겼어요</h3>
+        <p>스티커판이 <b>52장 → 63장</b>이 됐어요.
+          🍩새 진열장 · 🥨진열장 절반 · 🎡진열장 가득 · 🌠햄쮜 예순넷 ·
+          🏬가게 서른 · 🏰가게 마흔 · 🏙️방이 여섯 · 🏦금고 가득 ·
+          🌟새 장비 완성 · 🎂백 일 잔치 · 💗하트 스무 친구 예요.<br>
+          이미 받은 🏆·👑 스티커는 <b>그대로 있어요</b> — 새 목표만 더해졌답니다!</p>
+      </li>
+
       <li class="scoop">
         <span class="num">오늘 새로!</span>
         <h3>한 번에 50번 뜨기가 생겼어요</h3>
@@ -294,6 +366,16 @@ h1{
       </li>
 
       <li class="scoop">
+        <span class="num">오늘 새로!</span>
+        <h3>🎂 햄쮜와 함께한 날을 세어요</h3>
+        <p>이제 햄쮜를 <b>처음 만난 날</b>을 기억해요.
+          📖도감에서 햄쮜를 누르면 <em>「8월 25일에 처음 만나 12일째 함께예요」</em> 라고 나와요.<br>
+          그리고 <b>기념일</b>이 오면 🏠놀이방에서 축하해줄 수 있어요 —
+          🌱<b>일주일</b> · 🌸<b>한 달</b> · 🎂<b>백 일</b> · 👑<b>일 년</b>.
+          축하할 때마다 코인과 토핑, 하트를 받아요!</p>
+      </li>
+
+      <li class="scoop">
         <span class="num">오늘 고침</span>
         <h3>🕵️ 탐정 카드에 하트가 보여요</h3>
         <p>힌트가 <em>「하트가 세 개 이상이었어요」</em> 라고 알려주는데,
@@ -310,123 +392,22 @@ h1{
           이제는 <b>30분마다 저절로</b> 새 날씨를 보고 와요.
           앱을 껐다가 다시 켜도 바로 확인해요 — 비가 오기 시작하면 마당도 같이 어둑해져요 🌧️</p>
       </li>
-
-      <li class="scoop">
-        <span class="num">가장 큰 변화</span>
-        <h3>햄쮜가 아이스크림처럼 콘 위에 앉아요</h3>
-        <p>햄쮜를 누르고 <em>👗 꾸미기 → 🍨 콘 타기</em>를 골라보세요.
-          🧇와플콘·🍦슈가콘·🍫초코콘·🌈무지개콘·🍨예쁜 컵 다섯 가지가 있어요.
-          모자랑 목걸이도 <b>같이 콘에 올라타요!</b></p>
-      </li>
-
-      <li class="scoop">
-        <span class="num">햄쮜 모양</span>
-        <h3>50마리가 모두 다르게 생겼어요</h3>
-        <p>전에는 색만 다르고 얼굴이 똑같은 햄쮜가 많았어요.
-          이제는 <b>똑같이 생긴 햄쮜가 하나도 없어요.</b>
-          그리고 그 맛처럼 생겼어요 — 도감에서 찾아보세요!</p>
-        <div class="tastes" aria-label="새 모양 맛보기">
-          <div class="taste">
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-              <ellipse cx="31" cy="29" rx="9" ry="8.6" fill="#F6DE7E" transform="rotate(-20 31 29)"/>
-              <ellipse cx="69" cy="29" rx="9" ry="8.6" fill="#F6DE7E" transform="rotate(20 69 29)"/>
-              <path d="M50 26 q28 4 32 30 q-4 26 -32 30 q-28 -4 -32 -30 q4 -26 32 -30 z" fill="#F6DE7E" stroke="#D9B93F" stroke-width="2" stroke-opacity=".5"/>
-              <circle cx="41" cy="55" r="4" fill="#463A33"/><circle cx="59" cy="55" r="4" fill="#463A33"/>
-              <ellipse cx="50" cy="66" rx="3.4" ry="2.6" fill="#D98A9C"/>
-            </svg>레몬쮜
-          </div>
-          <div class="taste">
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-              <ellipse cx="26" cy="30" rx="10" ry="8.6" fill="#F58AA0"/><ellipse cx="74" cy="30" rx="10" ry="8.6" fill="#F58AA0"/>
-              <path d="M14 42 q36 -22 72 0 q-4 32 -36 48 q-32 -16 -36 -48 z" fill="#F58AA0" stroke="#D1566E" stroke-width="2" stroke-opacity=".45" stroke-linejoin="round"/>
-              <path d="M14 42 q36 -22 72 0 q-1 6 -2.6 12 q-33 -19 -66.8 0 q-1.6 -6 -2.6 -12 z" fill="#8AC888"/>
-              <circle cx="41" cy="56" r="4" fill="#463A33"/><circle cx="59" cy="56" r="4" fill="#463A33"/>
-              <ellipse cx="36" cy="70" rx="2.2" ry="3" fill="#3C3226"/><ellipse cx="63" cy="70" rx="2.2" ry="3" fill="#3C3226"/>
-            </svg>수박쮜
-          </div>
-          <div class="taste">
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-              <circle cx="25" cy="32" r="11" fill="#EBDFCC"/>
-              <path d="M74 39 a10 10 0 0 1 -9 -12 A32 32 0 1 0 82 51 a10 10 0 0 1 -8 -12 z" fill="#EBDFCC" stroke="#C3AE93" stroke-width="2" stroke-opacity=".5"/>
-              <g fill="#6B4526" opacity=".72"><circle cx="30" cy="50" r="3.4"/><circle cx="35" cy="74" r="3.2"/><circle cx="62" cy="76" r="2.8"/></g>
-              <circle cx="41" cy="55" r="4" fill="#463A33"/><circle cx="59" cy="55" r="4" fill="#463A33"/>
-              <ellipse cx="50" cy="66" rx="3.4" ry="2.6" fill="#D98A9C"/>
-            </svg>쿠키쮜
-          </div>
-          <div class="taste">
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-              <rect x="18" y="17" width="19" height="17" rx="5" fill="#E8C486"/><rect x="63" y="17" width="19" height="17" rx="5" fill="#E8C486"/>
-              <rect x="15" y="31" width="70" height="58" rx="12" fill="#E8C486" stroke="#C09A56" stroke-width="2" stroke-opacity=".5"/>
-              <g stroke="#C09A56" stroke-width="2.6" opacity=".38" fill="none"><path d="M15 50 H85 M15 70 H85 M37 31 V89 M63 31 V89"/></g>
-              <circle cx="41" cy="56" r="4" fill="#463A33"/><circle cx="59" cy="56" r="4" fill="#463A33"/>
-              <ellipse cx="50" cy="67" rx="3.4" ry="2.6" fill="#D98A9C"/>
-            </svg>와플쮜
-          </div>
-          <div class="taste">
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-              <ellipse cx="30" cy="22" rx="9" ry="8" fill="#D9C0A4"/><ellipse cx="70" cy="22" rx="9" ry="8" fill="#D9C0A4"/>
-              <path d="M27 28 h46 l-6 52 q-1 10 -17 10 q-16 0 -17 -10 z" fill="#D9C0A4" stroke="#AE8E6E" stroke-width="2" stroke-opacity=".5" stroke-linejoin="round"/>
-              <g fill="#4A3020" opacity=".85"><circle cx="41" cy="82" r="4"/><circle cx="52" cy="85" r="4.2"/><circle cx="61" cy="81" r="3.8"/></g>
-              <circle cx="42" cy="50" r="4" fill="#463A33"/><circle cx="58" cy="50" r="4" fill="#463A33"/>
-              <ellipse cx="50" cy="60" rx="3.2" ry="2.4" fill="#D98A9C"/>
-            </svg>밀크티쮜
-          </div>
-          <div class="taste">
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-              <g fill="#F2CE5A"><circle cx="50" cy="57" r="27"/>
-                <circle cx="82" cy="57" r="6.2"/><circle cx="18" cy="57" r="6.2"/>
-                <circle cx="50" cy="25" r="6.2"/><circle cx="50" cy="89" r="6.2"/>
-                <circle cx="72.6" cy="34.4" r="6.2"/><circle cx="27.4" cy="79.6" r="6.2"/>
-                <circle cx="72.6" cy="79.6" r="6.2"/><circle cx="27.4" cy="34.4" r="6.2"/></g>
-              <circle cx="50" cy="57" r="19" fill="#FBEBB4" opacity=".5"/>
-              <circle cx="42" cy="54" r="4" fill="#463A33"/><circle cx="58" cy="54" r="4" fill="#463A33"/>
-              <ellipse cx="50" cy="65" rx="3.4" ry="2.6" fill="#D98A9C"/>
-            </svg>황금쮜
-          </div>
-        </div>
-      </li>
-
-      <li class="scoop">
-        <span class="num">마당</span>
-        <h3>미끄럼틀을 정말로 타요</h3>
-        <p>🌳마당에서 <em>🛝미끄럼틀</em>을 누르면 햄쮜가 <b>걸어가서 사다리를 올라가고,
-          쭈욱 미끄러져 내려온 다음 제자리로 돌아와요.</b>
-          🎠회전목마 · 🪁연날리기 · 🏖️모래성 · 🎋그네도 있어요.</p>
-      </li>
-
-      <li class="scoop">
-        <span class="num">방 꾸미기</span>
-        <h3>가구가 훨씬 커졌어요</h3>
-        <p>전에는 너무 작아서 놓아도 잘 안 보였어요.
-          이제 <b>두 배쯤 커져서</b> 멀리서도 잘 보여요.</p>
-      </li>
-
-      <li class="scoop">
-        <span class="num">특별 햄쮜</span>
-        <h3>별 올리기가 놀이가 됐어요</h3>
-        <p>이제 <em>💗하트를 꽉 채워야</em> 별 올리기에 도전할 수 있어요.
-          도전은 성공할 때도, 안 될 때도 있어요.
-          하지만 <b>안 될 때마다 「응원」이 쌓여서 다음엔 더 잘 돼요.</b>
-          계속 도전하면 꼭 올라가요!</p>
-      </li>
-
-      <li class="scoop">
-        <span class="num">햄쮜 몸</span>
-        <h3>몸에 붙어 있던 반짝이를 치웠어요</h3>
-        <p>별이 많은 햄쮜 몸에 붙어 있던 잎·꽃잎·왕관을 <b>모두 없앴어요.</b>
-          이제 예쁘게 꾸며도 <b>아무것도 안 가려요.</b>
-          별은 뒤에 은은하게 빛나는 것으로 알 수 있어요.</p>
-      </li>
-
-      <li class="scoop">
-        <span class="num">숫자 고침</span>
-        <h3>코인 300만이 「3만」으로 보였어요</h3>
-        <p>코인이 아주 많아지면 숫자가 잘못 보이는 문제가 있었어요. 이제 제대로 나와요.</p>
-      </li>
     </ol>
   </section>
 
+
   <a class="backbtn" href="index.html">🍨 게임으로 돌아가서 놀기</a>
+
+  <section class="past">
+    <h2>📚 지난 소식</h2>
+    <p class="pastnote">전에 바뀐 것들은 여기에 따로 모아뒀어요. 쿠폰도 여기 있어요!</p>
+    <a class="pastlink" href="news-20260824.html">
+      <span class="d">8월 24일</span>
+      <span class="t">햄쮜가 콘을 탔어요</span>
+      <span class="n">7가지 · 🎫쿠폰 2장</span>
+    </a>
+  </section>
+
 
   <footer class="foot">
     <div class="sprinkles" aria-hidden="true">

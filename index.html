@@ -364,6 +364,32 @@ header{margin-bottom:8px}
 @keyframes bubup{0%{transform:translateY(0) scale(.5);opacity:0}18%{opacity:.95}100%{transform:translateY(-190px) scale(1.2);opacity:0}}
 @keyframes heartup{0%{transform:translate(-50%,0) scale(.4);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-56px) scale(1.15);opacity:0}}
 
+/* 💌 햄쮜 편지 — 진짜 편지지처럼 줄이 그어진 종이 위에 손글씨 느낌으로 */
+.letter{
+  background:
+    repeating-linear-gradient(#fffdf7 0 27px, #f6e3ea 27px 28px);
+  border:2.5px solid var(--line); border-radius:16px; padding:12px 14px 14px;
+  box-shadow:var(--sh); text-align:center
+}
+.letter .hs{width:76px;height:76px;margin:0 auto 4px;display:block}
+.letter .body{font-size:14px;font-weight:700;line-height:28px;color:var(--ink);word-break:keep-all}
+.letter .sign{margin-top:10px;font-size:11.5px;color:var(--ink2);text-align:right;line-height:28px}
+.mailrow{
+  display:flex;align-items:center;gap:9px;padding:7px 9px;margin-bottom:6px;cursor:pointer;
+  background:var(--card);border:2px solid var(--line);border-radius:14px;box-shadow:var(--sh)
+}
+.mailrow.new{border-color:var(--acc);background:linear-gradient(#fff6f9,var(--card))}
+.mailrow .hs{width:42px;height:42px;flex:0 0 42px;display:block}
+.mailrow .info{flex:1;min-width:0;font-size:12.5px;line-height:1.5;text-align:left}
+.mailrow .info .pv{font-size:11px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mailrow .em{font-size:19px}
+/* 🎂 기념일 알림 줄 */
+.annivrow{
+  display:flex;align-items:center;gap:9px;padding:7px 9px;margin-top:6px;
+  background:linear-gradient(#fff7e6,var(--card));border:2px solid #f0c65a;border-radius:14px;box-shadow:var(--sh)
+}
+.annivrow .hs{width:42px;height:42px;flex:0 0 42px;display:block}
+.annivrow .info{flex:1;min-width:0;font-size:12.5px;line-height:1.5;text-align:left}
 .toys{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .toy{background:var(--card);border:2px solid var(--line);border-radius:13px;padding:6px 2px;text-align:center;cursor:pointer;box-shadow:var(--sh)}
 .toy.on{border-color:var(--acc);box-shadow:0 0 0 3px #ffd9e4}
@@ -721,6 +747,7 @@ nav .dot{position:absolute;top:5px;right:22%;width:8px;height:8px;border-radius:
       <span class="logo">🍨</span>
       <h1>햄스킨라빈스</h1>
       <span class="lv" id="h-lv" onclick="openLevel()">가게 Lv.1</span>
+      <span class="hbtn" id="h-mail" onclick="openPost()" title="우체통">💌<span class="bg" id="mail-bg" style="display:none">!</span></span>
       <span class="hbtn" id="h-news" onclick="openNews()" title="새 소식">📢<span class="bg" id="news-bg" style="display:none">새</span></span>
       <span class="hbtn" id="h-gift" onclick="openGift()" title="선물상자">🎁<span class="bg" id="gift-bg">!</span></span>
       <span class="hbtn" onclick="openSettings()" title="설정">⚙️</span>
@@ -737,7 +764,7 @@ nav .dot{position:absolute;top:5px;right:22%;width:8px;height:8px;border-radius:
 
 <nav>
   <button data-t="scoop" class="on"><i>🍨</i>뜨기</button>
-  <button data-t="play"><i>🏠</i>놀이방</button>
+  <button data-t="play"><i>🏠</i>놀이방<span class="dot" id="p-dot" style="display:none"></span></button>
   <button data-t="order"><i>🔔</i>주문<span class="dot" id="o-dot" style="display:none"></span></button>
   <button data-t="dex"><i>📖</i>도감</button>
   <button data-t="store"><i>🛒</i>상점<span class="dot" id="s-dot" style="display:none"></span></button>
@@ -1256,6 +1283,173 @@ const SHAPES={
     deco:c=>`<path d="M19 74 q31 8 62 0 q.6 4 1 8 q-32 8 -64 0 q.4 -4 1 -8 z" fill="#d9a86a" opacity=".8"/>`,
     face:{x:50,y:54,s:.94}, feet:0, tail:1},
 
+
+  /* ---- 🍰 두 번째 진열장 (Lv.21~40) ----
+     통 50가지를 다 모은 뒤에도 만날 친구들. 실루엣이 앞의 50가지와 겹치지 않게
+     「구멍·매듭·꼬치·층·막대」처럼 형태부터 다른 것들로 골랐다. */
+  donut:{name:'도넛', w:32, top:20,
+    /* 가운데가 뻥 뚫린 링 — 구멍이 있는 실루엣은 이 아이뿐이다 */
+    body:f=>`<path d="M50 27 a30 30 0 1 1 -.1 0 z M50 45 a12 12 0 1 0 .1 0 z" ${f} fill-rule="evenodd"/>`,
+    ears:c=>`<ellipse cx="27" cy="33" rx="9" ry="8.5" fill="${c.base}" transform="rotate(-22 27 33)"/>
+             <ellipse cx="73" cy="33" rx="9" ry="8.5" fill="${c.base}" transform="rotate(22 73 33)"/>
+             <circle cx="27" cy="33" r="4.1" fill="${c.cheek}"/><circle cx="73" cy="33" r="4.1" fill="${c.cheek}"/>`,
+    /* 위에 아이싱이 흘러내리고 스프링클이 뿌려져 있다 */
+    deco:c=>`<path d="M22 45 q6 -12 16 -9 q7 -11 15 -5 q10 -7 17 3 q9 3 8 12 q-28 -9 -56 -1 z" fill="${c.light}" opacity=".85"/>
+             <g opacity=".9"><rect x="33" y="38" width="4.6" height="2.2" rx="1.1" fill="#f0688f" transform="rotate(-24 33 38)"/>
+             <rect x="55" y="35" width="4.6" height="2.2" rx="1.1" fill="#5fc0a8" transform="rotate(18 55 35)"/>
+             <rect x="66" y="44" width="4.6" height="2.2" rx="1.1" fill="#f2c14e" transform="rotate(-8 66 44)"/></g>`,
+    face:{x:50,y:70,s:.86}, feet:1, tail:1},
+
+  pretzel:{name:'프레첼', w:33, top:18, grp:1,
+    /* 꼬아 묶은 매듭 — 굵은 선 두 겹으로 그린다 */
+    body:f=>`<g ${f}><path d="M50 84 C24 84 16 62 26 48 C34 37 48 44 50 58 C52 44 66 37 74 48 C84 62 76 84 50 84 z"/>
+             <ellipse cx="50" cy="72" rx="27" ry="16"/></g>`,
+    ears:c=>`<circle cx="26" cy="40" r="8.6" fill="${c.base}"/><circle cx="74" cy="40" r="8.6" fill="${c.base}"/>
+             <circle cx="26" cy="40" r="4" fill="${c.cheek}"/><circle cx="74" cy="40" r="4" fill="${c.cheek}"/>`,
+    /* 굵은 소금 알갱이 */
+    deco:c=>`<g fill="#fffdf6" opacity=".85"><circle cx="36" cy="60" r="2.3"/><circle cx="64" cy="58" r="2"/>
+             <circle cx="50" cy="80" r="2.2"/><circle cx="30" cy="74" r="1.9"/><circle cx="70" cy="76" r="2.1"/></g>`,
+    face:{x:50,y:72,s:.9}, feet:1, tail:0},
+
+  dango:{name:'경단', w:30, top:14, grp:1,
+    /* 꼬치에 세 알 — 세로로 길게 쌓인 실루엣 */
+    body:f=>`<g ${f}><circle cx="50" cy="34" r="17"/><circle cx="50" cy="60" r="19"/><circle cx="50" cy="84" r="15"/></g>`,
+    ears:c=>`<circle cx="33" cy="22" r="7.4" fill="${c.base}"/><circle cx="67" cy="22" r="7.4" fill="${c.base}"/>
+             <circle cx="33" cy="22" r="3.4" fill="${c.cheek}"/><circle cx="67" cy="22" r="3.4" fill="${c.cheek}"/>`,
+    deco:c=>`<rect x="48.4" y="6" width="3.2" height="16" rx="1.6" fill="#c9a06a"/>`,
+    face:{x:50,y:60,s:.9}, feet:0, tail:0},
+
+  macaron:{name:'마카롱', w:33, top:26,
+    /* 위아래 껍질 사이에 크림 — 가로로 세 층 */
+    body:f=>`<g ${f}><path d="M16 55 a34 22 0 0 1 68 0 q0 5 -34 5 q-34 0 -34 -5 z"/>
+             <path d="M16 68 a34 22 0 0 0 68 0 q0 -5 -34 -5 q-34 0 -34 5 z"/></g>`,
+    ears:c=>`<ellipse cx="26" cy="36" rx="8.6" ry="8" fill="${c.base}" transform="rotate(-20 26 36)"/>
+             <ellipse cx="74" cy="36" rx="8.6" ry="8" fill="${c.base}" transform="rotate(20 74 36)"/>
+             <circle cx="26" cy="36" r="3.9" fill="${c.cheek}"/><circle cx="74" cy="36" r="3.9" fill="${c.cheek}"/>`,
+    /* 가운데 크림, 껍질 아래 오돌토돌한 「피에」 */
+    deco:c=>`<rect x="17" y="58.5" width="66" height="7" rx="3.5" fill="${c.light}"/>
+             <g fill="${c.dark}" opacity=".3"><circle cx="24" cy="57" r="2.1"/><circle cx="34" cy="57.6" r="2.1"/>
+             <circle cx="66" cy="57.6" r="2.1"/><circle cx="76" cy="57" r="2.1"/></g>`,
+    face:{x:50,y:48,s:.86}, feet:1, tail:0},
+
+  cupcake:{name:'컵케이크', w:32, top:14,
+    /* 아래는 주름진 컵, 위는 소용돌이 크림 */
+    body:f=>`<g ${f}><path d="M28 56 q22 -30 44 0 q-22 7 -44 0 z"/>
+             <circle cx="38" cy="44" r="11"/><circle cx="62" cy="44" r="11"/><circle cx="50" cy="34" r="11"/>
+             <path d="M27 58 h46 l-6 32 q-17 5 -34 0 z"/></g>`,
+    ears:c=>`<circle cx="30" cy="30" r="7.6" fill="${c.base}"/><circle cx="70" cy="30" r="7.6" fill="${c.base}"/>
+             <circle cx="30" cy="30" r="3.5" fill="${c.cheek}"/><circle cx="70" cy="30" r="3.5" fill="${c.cheek}"/>`,
+    /* 컵의 세로 주름 */
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2.2" opacity=".32" fill="none">
+             <path d="M38 59 L35.5 89 M50 59 V90 M62 59 L64.5 89"/></g>
+             <circle cx="50" cy="26" r="4.4" fill="#e8607f"/>`,
+    face:{x:50,y:72,s:.82}, feet:0, tail:1},
+
+  honeyc:{name:'벌집', w:32, top:20,
+    /* 육각형 — 각진 실루엣은 이 아이뿐 */
+    body:f=>`<path d="M50 22 L80 40 L80 76 L50 94 L20 76 L20 40 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<path d="M28 30 L24 14 L40 22 z" fill="${c.base}"/><path d="M72 30 L76 14 L60 22 z" fill="${c.base}"/>`,
+    /* 안쪽에 작은 육각 벌집 무늬 */
+    deco:c=>{const hx=(x,y,r)=>{let p='';for(let i=0;i<6;i++){const a=Math.PI/6+i*Math.PI/3;
+             p+=(i?'L':'M')+(x+Math.cos(a)*r).toFixed(1)+' '+(y+Math.sin(a)*r).toFixed(1);}return p+'z';};
+             return `<g stroke="${c.dark}" stroke-width="1.8" opacity=".3" fill="none">
+             <path d="${hx(36,44,8)}"/><path d="${hx(64,44,8)}"/><path d="${hx(50,58,8)}"/>
+             <path d="${hx(36,72,8)}"/><path d="${hx(64,72,8)}"/></g>`;},
+    face:{x:50,y:60,s:.92}, feet:1, tail:1},
+
+  popcorn:{name:'팝콘', w:33, top:16, grp:1,
+    /* 톡톡 터진 팝콘 — 구름과 달리 뾰족뾰족하게 */
+    body:f=>`<g ${f}><path d="M50 20 l9 9 12 -4 -1 13 12 7 -8 11 6 12 -13 3 -4 13 -13 -6 -13 6 -4 -13 -13 -3 6 -12 -8 -11 12 -7 -1 -13 12 4 z"/>
+             <circle cx="50" cy="62" r="24"/></g>`,
+    ears:c=>`<circle cx="27" cy="36" r="8" fill="${c.base}"/><circle cx="73" cy="36" r="8" fill="${c.base}"/>
+             <circle cx="27" cy="36" r="3.7" fill="${c.cheek}"/><circle cx="73" cy="36" r="3.7" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="${c.light}" opacity=".55"><circle cx="36" cy="46" r="6"/><circle cx="64" cy="44" r="5"/>
+             <circle cx="50" cy="38" r="4.4"/></g>`,
+    face:{x:50,y:64,s:.9}, feet:1, tail:1},
+
+  parfait:{name:'파르페', w:30, top:12,
+    /* 위가 나팔처럼 벌어진 긴 잔 — 우유병과 확실히 다르다 */
+    body:f=>`<path d="M28 30 h44 l-7 40 q-15 5 -30 0 z" ${f}/>
+             <rect x="46" y="70" width="8" height="12" rx="2" ${f}/>
+             <ellipse cx="50" cy="86" rx="19" ry="6" ${f}/>`,
+    ears:c=>`<circle cx="33" cy="20" r="8" fill="${c.base}"/><circle cx="67" cy="20" r="8" fill="${c.base}"/>
+             <circle cx="33" cy="20" r="3.7" fill="${c.cheek}"/><circle cx="67" cy="20" r="3.7" fill="${c.cheek}"/>`,
+    /* 층층이 쌓인 내용물과 잔의 반짝임 */
+    deco:c=>`<path d="M30 40 h40 l-1.6 9 h-36.8 z" fill="${c.light}" opacity=".7"/>
+             <path d="M33.6 56 h32.8 l-1.6 9 h-29.6 z" fill="${c.dark}" opacity=".25"/>
+             <path d="M35 32 l-3 34" stroke="#fff" stroke-width="3" opacity=".5" stroke-linecap="round"/>`,
+    face:{x:50,y:48,s:.8}, feet:0, tail:0},
+
+  taiyaki:{name:'붕어빵', w:34, top:24,
+    /* 물고기 — 꼬리가 오른쪽으로 뻗은 실루엣 */
+    body:f=>`<path d="M18 60 q4 -26 30 -26 q22 0 30 18 q6 -8 14 -12 q-4 12 -3 20 q-1 8 3 20 q-8 -4 -14 -12
+             q-8 18 -30 18 q-26 0 -30 -26 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="32" cy="36" rx="8.4" ry="7.6" fill="${c.base}" transform="rotate(-24 32 36)"/>
+             <ellipse cx="56" cy="32" rx="8.4" ry="7.6" fill="${c.base}" transform="rotate(12 56 32)"/>
+             <circle cx="32" cy="36" r="3.8" fill="${c.cheek}"/><circle cx="56" cy="32" r="3.8" fill="${c.cheek}"/>`,
+    /* 지느러미 결과 빵 무늬 */
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2" opacity=".3" fill="none">
+             <path d="M26 60 q10 -8 20 0 q-10 8 -20 0"/><path d="M78 50 v20"/></g>`,
+    face:{x:40,y:60,s:.86}, feet:1, tail:0},
+
+  songpyeon:{name:'송편', w:33, top:26,
+    /* 반달 — 위는 둥글고 아래는 곧게, 양 끝이 살짝 뾰족하다 */
+    body:f=>`<path d="M14 76 q4 -44 36 -44 q32 0 36 44 q-36 8 -72 0 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="38" rx="8.4" ry="7.8" fill="${c.base}" transform="rotate(-20 30 38)"/>
+             <ellipse cx="70" cy="38" rx="8.4" ry="7.8" fill="${c.base}" transform="rotate(20 70 38)"/>
+             <circle cx="30" cy="38" r="3.8" fill="${c.cheek}"/><circle cx="70" cy="38" r="3.8" fill="${c.cheek}"/>`,
+    /* 빚은 자국과 솔잎 */
+    deco:c=>`<path d="M14 76 q36 8 72 0" stroke="${c.dark}" stroke-width="2.2" opacity=".3" fill="none"/>
+             <g stroke="#7aa860" stroke-width="1.8" opacity=".75" stroke-linecap="round">
+             <path d="M64 30 l7 -8 M68 33 l9 -5"/></g>`,
+    face:{x:50,y:62,s:.9}, feet:1, tail:1},
+
+  chocobar:{name:'초콜릿바', w:34, top:28,
+    /* 네모난 판초콜릿 — 오른쪽 위 한 칸이 떼어져 있다 */
+    body:f=>`<path d="M16 34 h68 v34 h-17 v20 h-51 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<rect x="20" y="20" width="18" height="16" rx="4" fill="${c.base}"/>
+             <rect x="62" y="20" width="18" height="16" rx="4" fill="${c.base}"/>
+             <rect x="25" y="24" width="8" height="7" rx="2.6" fill="${c.cheek}"/>
+             <rect x="67" y="24" width="8" height="7" rx="2.6" fill="${c.cheek}"/>`,
+    /* 칸을 나누는 홈 */
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2.4" opacity=".34" fill="none">
+             <path d="M39 34 V88 M62 34 V88 M16 51 H84 M16 68 H67"/></g>`,
+    face:{x:41,y:60,s:.9}, feet:1, tail:0},
+
+  icebar:{name:'아이스바', w:30, top:12,
+    /* 막대가 아래로 튀어나온 네모 아이스크림 */
+    body:f=>`<rect x="22" y="20" width="56" height="60" rx="14" ${f}/>
+             <rect x="44" y="78" width="12" height="20" rx="4" fill="#d9b183"/>`,
+    ears:c=>`<circle cx="30" cy="17" r="7.6" fill="${c.base}"/><circle cx="70" cy="17" r="7.6" fill="${c.base}"/>
+             <circle cx="30" cy="17" r="3.5" fill="${c.cheek}"/><circle cx="70" cy="17" r="3.5" fill="${c.cheek}"/>`,
+    /* 위쪽에 한 입 베어 먹은 자리와 흐르는 물방울 */
+    deco:c=>`<path d="M22 34 q9 7 18 0 q9 -7 18 0 q9 7 18 0 v-8 q-27 -6 -54 0 z" fill="${c.light}" opacity=".6"/>
+             <ellipse cx="72" cy="66" rx="4" ry="6" fill="${c.light}" opacity=".55"/>`,
+    face:{x:50,y:56,s:.9}, feet:0, tail:0},
+
+  bingsu:{name:'빙수', w:33, top:14, grp:1,
+    /* 그릇 위에 눈이 소복하게 — 위가 봉긋하고 아래가 넓다 */
+    body:f=>`<g ${f}><circle cx="50" cy="42" r="20"/><circle cx="32" cy="52" r="15"/><circle cx="68" cy="52" r="15"/>
+             <path d="M18 60 h64 q-5 28 -32 28 q-27 0 -32 -28 z"/></g>`,
+    ears:c=>`<circle cx="34" cy="26" r="7.8" fill="${c.base}"/><circle cx="66" cy="26" r="7.8" fill="${c.base}"/>
+             <circle cx="34" cy="26" r="3.6" fill="${c.cheek}"/><circle cx="66" cy="26" r="3.6" fill="${c.cheek}"/>`,
+    /* 팥과 그릇의 테두리 */
+    deco:c=>`<g fill="#a4645f" opacity=".8"><circle cx="42" cy="36" r="3.4"/><circle cx="57" cy="33" r="3"/>
+             <circle cx="50" cy="43" r="2.8"/></g>
+             <path d="M18 60 h64" stroke="${c.dark}" stroke-width="2.6" opacity=".35" fill="none"/>`,
+    face:{x:50,y:70,s:.86}, feet:0, tail:1},
+
+  madeleine:{name:'마들렌', w:33, top:24,
+    /* 조개 — 부챗살 무늬가 퍼지는 통통한 반원 */
+    body:f=>`<path d="M50 28 q34 6 34 34 q0 26 -34 26 q-34 0 -34 -26 q0 -28 34 -34 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="32" cy="34" rx="8.4" ry="7.8" fill="${c.base}" transform="rotate(-22 32 34)"/>
+             <ellipse cx="68" cy="34" rx="8.4" ry="7.8" fill="${c.base}" transform="rotate(22 68 34)"/>
+             <circle cx="32" cy="34" r="3.8" fill="${c.cheek}"/><circle cx="68" cy="34" r="3.8" fill="${c.cheek}"/>`,
+    /* 조개껍데기 부챗살 */
+    deco:c=>`<g stroke="${c.dark}" stroke-width="2" opacity=".28" fill="none" stroke-linecap="round">
+             <path d="M50 32 V86 M34 38 L26 82 M66 38 L74 82 M22 52 L18 74 M78 52 L82 74"/></g>`,
+    face:{x:50,y:62,s:.92}, feet:1, tail:1},
+
   /* ---- 🎁 특별 햄쮜만 쓰는 모양 여섯 가지 ----
      deco 는 몸통·무늬 위, 얼굴 아래에 그려진다 (수염·카라멜·보석 면을 얼굴이 가리지 않게) */
   bunny:{name:'토끼', w:32, top:34,
@@ -1364,6 +1558,20 @@ const PAT_W={plain:34, spot:20, stripe:16, patch:14, tux:12, socks:10};
 
 /* 모양마다 모자·손 소품이 놓이는 자리 */
 const ANCHOR={
+  donut :{hat:{x:50,y:24,s:.82}, hand:{x:82,y:72}},
+  pretzel:{hat:{x:50,y:28,s:.85}, hand:{x:80,y:76}},
+  dango :{hat:{x:50,y:14,s:.8},  hand:{x:74,y:80}},
+  macaron:{hat:{x:50,y:28,s:.82}, hand:{x:83,y:66}},
+  cupcake:{hat:{x:50,y:20,s:.78}, hand:{x:78,y:80}},
+  honeyc:{hat:{x:50,y:22,s:.86}, hand:{x:82,y:74}},
+  popcorn:{hat:{x:50,y:22,s:.8},  hand:{x:80,y:74}},
+  parfait:{hat:{x:50,y:18,s:.78}, hand:{x:76,y:56}},
+  taiyaki:{hat:{x:42,y:30,s:.82}, hand:{x:78,y:74}},
+  songpyeon:{hat:{x:50,y:30,s:.86}, hand:{x:82,y:70}},
+  chocobar:{hat:{x:41,y:22,s:.86}, hand:{x:80,y:80}},
+  icebar:{hat:{x:50,y:16,s:.8},  hand:{x:80,y:64}},
+  bingsu:{hat:{x:50,y:20,s:.8},  hand:{x:80,y:74}},
+  madeleine:{hat:{x:50,y:26,s:.86}, hand:{x:82,y:72}},
   round :{hat:{x:50,y:23},         hand:{x:81,y:74}},
   long  :{hat:{x:50,y:16},         hand:{x:78,y:70}},
   square:{hat:{x:50,y:19},         hand:{x:85,y:70}},
@@ -1766,9 +1974,28 @@ const FLAVORS=[
  {k:'waffle',  n:'와플',       c:'#e6b06a', c2:'#f7d9ab', lv:17,shape:'waffle', color:'honey',  hn:'와플쮜'},
  {k:'cheese',  n:'치즈케이크', c:'#f7dd9e', c2:'#fff4d6', lv:17,shape:'wedge',  color:'cream',  hn:'치즈케이크쮜'},
  {k:'golden',  n:'황금',       c:'#ffd14e', c2:'#fff0b8', lv:18,shape:'sun',   color:'gold',   hn:'황금쮜',   top:220},
- {k:'galaxy',  n:'은하',       c:'#7a6ab8', c2:'#cbaaf2', lv:20,shape:'comet',   color:'lav',    hn:'은하쮜',   top:340}
+ {k:'galaxy',  n:'은하',       c:'#7a6ab8', c2:'#cbaaf2', lv:20,shape:'comet',   color:'lav',    hn:'은하쮜',   top:340},
+ /* ---- 🍰 두 번째 진열장 (Lv.21~40) — 통 50가지를 다 모은 뒤에 열린다.
+    값이 훨씬 비싸다. 여기서부터는 코인이 「남아도는 것」이 아니라 「모아서 쓰는 것」이 된다. ---- */
+ {k:'donut',   n:'도넛',       c:'#e8a86a', c2:'#f7d5ae', lv:21,shape:'donut',    color:'honey',  hn:'도넛쮜'},
+ {k:'pretzel', n:'프레첼',     c:'#c08a52', c2:'#e0b98c', lv:22,shape:'pretzel',  color:'sand',   hn:'프레첼쮜', top:350},
+ {k:'dango',   n:'경단',       c:'#f2e2cf', c2:'#fff6ea', lv:23,shape:'dango',    color:'cream',  hn:'경단쮜'},
+ {k:'macaron', n:'마카롱',     c:'#f7b8d4', c2:'#ffdcea', lv:24,shape:'macaron',  color:'rose',   hn:'마카롱쮜', top:520},
+ {k:'cupcake', n:'컵케이크',   c:'#f6a6b8', c2:'#ffd8e0', lv:26,shape:'cupcake',  color:'berry',  hn:'컵케이크쮜'},
+ {k:'honeyc',  n:'벌꿀',       c:'#f0c14e', c2:'#fbe6a8', lv:28,shape:'honeyc',   color:'gold',   hn:'벌꿀쮜',   top:780},
+ {k:'popcorn', n:'팝콘',       c:'#fbeeca', c2:'#fffaee', lv:30,shape:'popcorn',  color:'cream',  hn:'팝콘쮜'},
+ {k:'parfait', n:'파르페',     c:'#c9e2f2', c2:'#eaf6ff', lv:32,shape:'parfait',  color:'sky',    hn:'파르페쮜', top:1100},
+ {k:'taiyaki', n:'붕어빵',     c:'#d9a267', c2:'#f0cb9c', lv:33,shape:'taiyaki',  color:'sand',   hn:'붕어빵쮜'},
+ {k:'songpyeon',n:'송편',      c:'#a8d190', c2:'#d8eec8', lv:34,shape:'songpyeon',color:'grass',  hn:'송편쮜',   top:1500},
+ {k:'chocobar',n:'판초콜릿',   c:'#7a5236', c2:'#a87b56', lv:36,shape:'chocobar', color:'cocoa',  hn:'판초코쮜'},
+ {k:'icebar',  n:'아이스바',   c:'#8fd8dd', c2:'#cdf0f2', lv:37,shape:'icebar',   color:'aqua',   hn:'아이스바쮜', top:2200},
+ {k:'bingsu',  n:'빙수',       c:'#eef6fa', c2:'#ffffff', lv:38,shape:'bingsu',   color:'snow',   hn:'빙수쮜'},
+ {k:'madeleine',n:'마들렌',    c:'#f3d79a', c2:'#fdf0cf', lv:40,shape:'madeleine',color:'honey',  hn:'마들렌쮜', top:3200}
 ];
 const FL={}; const FKEYS=[]; const NTUB=FLAVORS.length;
+/* 🍰 첫 진열장(Lv.20까지)이 몇 가지인지 — 「두 번째 진열장」 스티커의 기준이 된다.
+   숫자 50을 그냥 적어두면 나중에 통을 더 넣을 때 어긋난다. */
+const NTUB1=FLAVORS.filter(f=>f.lv<=20).length;
 {
   /* 통 값은 순서(index) 대신 「열리는 레벨 + 그 레벨에서 몇 번째인지」로 정한다.
      이러면 통을 새로 끼워 넣어도 이미 있던 통의 값이 흔들리지 않는다.
@@ -1781,6 +2008,10 @@ const FL={}; const FKEYS=[]; const NTUB=FLAVORS.length;
     const n=(nth[f.lv]=(nth[f.lv]||0)+1)-1;
     if(f.lv>1 && !f.top) f.coin=Math.round(baseAt[f.lv]*Math.pow(stepAt[f.lv],n/3)/10)*10;
     f.scoop=14+Math.round(Math.pow(f.lv,1.42)*5.4)+(f.lv>1?n*6:0);   /* 처음 주는 통 넷은 값이 같다 */
+    /* 🍰 두 번째 진열장(Lv.21~40)은 뜨는 값이 자릿수부터 다르다.
+       Lv.20 까지 다 모으고 나면 시간당 수백만이 들어오는데 뜨는 값이 수백 원이라
+       코인이 쓸 데 없이 쌓이기만 했다. 여기서부터는 「모아서 쓰는 것」이 된다. */
+    if(f.lv>20) f.scoop=Math.round(f.scoop*Math.pow(1.32, f.lv-20));
   });
 }
 function scoopCost(f){ return Math.max(6, Math.round(f.scoop*(1-upgLv('spoon')*0.08))); }
@@ -1796,12 +2027,24 @@ const UPG={
   regul:{name:'단골 손님',  em:'⏰', max:8,  base:1500,  mul:2.55, desc:'저절로 모이는 코인이 늘어요'},
   bell :{name:'주문 종',    em:'🔔', max:6,  base:2400,  mul:2.50, desc:'주문 놀이에서 코인을 더 받아요'},
   cozy :{name:'푹신 쿠션',  em:'🛏️', max:6,  base:3200,  mul:2.60, desc:'놀아줄 때 하트가 더 빨리 차요'},
-  tray :{name:'큰 쟁반',    em:'🍽️', max:5,  base:12000, mul:3.00, desc:'뜰 때 덤으로 한 마리 더 나올 수 있어요'}
+  tray :{name:'큰 쟁반',    em:'🍽️', max:5,  base:12000, mul:3.00, desc:'뜰 때 덤으로 한 마리 더 나올 수 있어요'},
+  /* 🏆 두 번째 진열장과 함께 열리는 큰 것들 — 여기부터는 만 원이 아니라 백만 원 단위다.
+     앞의 여덟 가지를 다 올려도 600만이라 금방 끝났다. 이것들은 다 올리는 데 수억이 든다. */
+  vault:{name:'큰 금고',    em:'🏦', max:8, base:2000000, mul:2.00, lv:21,
+         desc:'저절로 모이는 코인이 훨씬 많아져요'},
+  glit :{name:'별가루 스쿱',em:'🌟', max:6, base:4000000, mul:2.20, lv:24,
+         desc:'⭐4·⭐5 가 나올 확률이 더 올라가요'},
+  love :{name:'사랑 가득',  em:'💗', max:6, base:3000000, mul:2.10, lv:26,
+         desc:'놀아줄 때 하트가 훨씬 빨리 차요'},
+  hall :{name:'넓은 가게',  em:'🏡', max:4, base:9000000, mul:2.60, lv:30,
+         desc:'모든 방의 자리가 하나 더 늘어요'}
 };
+/* 그 업그레이드를 아직 못 여는 레벨이면 상점에 「Lv.N 부터」로 보인다 */
+function upgOpen(k){ const u=UPG[k]; return !u.lv || S.lv>=u.lv; }
 const UPG_KEYS=Object.keys(UPG);
 function upgLv(k){ return (S&&S.upg&&S.upg[k])||0; }
 function upgCost(k){ const u=UPG[k]; return Math.round(u.base*Math.pow(u.mul,upgLv(k))); }
-function seats(){ return 2+upgLv('seat'); }
+function seats(){ return Math.min(12, 2+upgLv('seat')+upgLv('hall')); }
 
 /* ==================================================================
    🏠 놀이방 — 방을 여러 개 만들어 각 방마다 다른 햄쮜를 두고 따로 꾸민다.
@@ -1813,8 +2056,11 @@ const ROOMS=[
   {dn:'둘째 방', lv:5},
   {dn:'셋째 방', lv:10},
   {dn:'넷째 방', lv:15},
-  /* 🌳 마당 — 배경은 테마가 아니라 「오늘 날씨」가 정한다. 반드시 맨 뒤에 둔다 */
-  {dn:'마당', lv:8, yard:1}
+  /* 🌳 마당 — 배경은 테마가 아니라 「오늘 날씨」가 정한다 */
+  {dn:'마당', lv:8, yard:1},
+  /* 🍰 두 번째 진열장과 함께 열리는 방 둘. YARD_I 는 yard 표시로 찾으므로 뒤에 붙여도 안전하다 */
+  {dn:'다섯째 방', lv:25},
+  {dn:'여섯째 방', lv:35}
 ];
 function isYard(i){ if(i===undefined) i=S.room|0; return !!(ROOMS[i]&&ROOMS[i].yard); }
 const YARD_I=ROOMS.findIndex(r=>r.yard);
@@ -1917,8 +2163,10 @@ function openWxPlace(){
 }
 function playMul(){ return (1+upgLv('charm')*0.15)*(1+S.lv*0.05); }
 function gradeW(){
-  const bonus=upgLv('luck')*2;                 /* ★3 이상 확률 +2%p 씩 */
-  return {1:58.4-bonus, 2:28, 3:11+bonus*0.72, 4:2.2+bonus*0.24, 5:0.4+bonus*0.04};
+  /* 🍀요정 스쿱은 ★3 이상을, 🌟별가루 스쿱은 그중에서도 ★4·★5 를 끌어올린다 */
+  const bonus=upgLv('luck')*2, glit=upgLv('glit')*1.5;
+  return {1:Math.max(20,58.4-bonus-glit), 2:28,
+          3:11+bonus*0.72, 4:2.2+bonus*0.24+glit*0.72, 5:0.4+bonus*0.04+glit*0.28};
 }
 function expNeed(lv){ return Math.floor(60*Math.pow(lv,1.3)); }
 function dexCount(){ return Object.keys(S.dex).filter(isTub).length; }
@@ -1946,7 +2194,7 @@ function autoIncome(noBuff){
     roomHams(i).forEach(k=>{ c+=S.dex[k].g*(1+0.3*hearts(k))*0.3*(yard?yardOne(k):1); });
   });
   const buff=(!noBuff && napLeft())?NAP_MUL:1;
-  return c*(1+upgLv('regul')*0.25)*(1+S.lv*0.08)*buff;
+  return c*(1+upgLv('regul')*0.25+upgLv('vault')*0.45)*(1+S.lv*0.08)*buff;
 }
 /* ==================================================================
    🎁 특별 햄쮜 — 통에서 뜨는 아이들과 아주 다르게 생긴 친구들.
@@ -2045,6 +2293,8 @@ function freshState(){
     wx:{key:null, temp:null, at:0, mode:'gps', city:'seoul', place:'', err:0}, // 🌤️ 오늘 날씨
     det:{d:'', n:0, win:0, all:0},// 🕵️ 햄쮜 탐정 (마지막 날, 오늘 판 수, 오늘 맞힌 수, 전체 맞힌 수)
     giftAt:0, newsSeen:'',
+    mail:[], mailD:'', mailN:0, mailA:0, mailT:0,
+                                  // 💌 받은 편지 · 마지막으로 센 날 · 오늘 온 배달 편지 수 · 마음 편지 수 · 마지막 편지 시각
     stats:{scoop:0, pet:0, best4:0, best5:0},
     snd:true, vib:true, tut:0, t:Date.now()
   };
@@ -2105,7 +2355,23 @@ const BADGES=[
   {k:'wx3',   em:'🌈', n:'날씨 박사',     d:'마당에서 날씨 3가지를 봤어요', ok:()=>((S.wx&&S.wx.seen)||[]).length>=3, top:12},
   {k:'det1',  em:'🕵️', n:'꼬마 탐정',     d:'햄쮜 탐정 범인을 처음 맞혔어요', ok:()=>(S.det&&S.det.all||0)>=1,  top:8},
   {k:'det10', em:'🔍', n:'명탐정',        d:'햄쮜 탐정 범인을 10번 맞혔어요', ok:()=>(S.det&&S.det.all||0)>=10, top:24},
-  {k:'spup',  em:'💫', n:'별 올려주기',   d:'특별 햄쮜의 ⭐를 올려줬어요',  ok:()=>(S.stats.spUp||0)>=1,  top:10}
+  {k:'spup',  em:'💫', n:'별 올려주기',   d:'특별 햄쮜의 ⭐를 올려줬어요',  ok:()=>(S.stats.spUp||0)>=1,  top:10},
+  /* ---- 🍰 두 번째 진열장 스티커 ----
+     통 50가지·소품·특별 햄쮜까지 다 모은 뒤에 새로 생기는 목표들.
+     🏆·👑 처럼 이미 받은 스티커는 그대로 두고 열쇠를 새로 만든다 —
+     기준만 64로 바꾸면 다 모은 아이는 새로 받을 게 없어진다. */
+  {k:'t2nd',  em:'🍩', n:'새 진열장',     d:'두 번째 진열장 통을 처음 샀어요',   ok:()=>unlocked().length>=NTUB1+1, top:15},
+  {k:'t2half',em:'🥨', n:'진열장 절반',    d:'새로 생긴 통을 7가지 모았어요',     ok:()=>unlocked().length>=NTUB1+7, top:35},
+  {k:'t2all', em:'🎡', n:'진열장 가득',    d:`통 ${NTUB}가지를 모두 모았어요!`,   ok:()=>unlocked().length>=NTUB, top:90},
+  {k:'d2all', em:'🌠', n:'햄쮜 예순넷',    d:`통 햄쮜 ${NTUB}마리를 다 만났어요!`, ok:()=>dexCount()>=NTUB, top:90},
+  {k:'lv30',  em:'🏬', n:'가게 서른',      d:'가게가 Lv.30이 됐어요',            ok:()=>S.lv>=30, top:25},
+  {k:'lv40',  em:'🏰', n:'가게 마흔',      d:'가게가 Lv.40이 됐어요',            ok:()=>S.lv>=40, top:60},
+  {k:'rm6',   em:'🏙️', n:'방이 여섯',      d:'놀이방 6개가 다 열렸어요',          ok:()=>openRooms()>=6, top:30},
+  {k:'vaultm',em:'🏦', n:'금고 가득',      d:'큰 금고를 끝까지 올렸어요',         ok:()=>upgLv('vault')>=UPG.vault.max, top:40},
+  {k:'upg2',  em:'🌟', n:'새 장비 완성',    d:'새로 생긴 장비를 다 올렸어요!',
+     ok:()=>['vault','glit','love','hall'].every(k=>UPG[k]&&upgLv(k)>=UPG[k].max), top:80},
+  {k:'an100', em:'🎂', n:'백 일 잔치',     d:'백 일을 함께한 친구가 생겼어요',    ok:()=>Object.keys(S.dex).some(k=>(S.dex[k].anniv||0)>=100), top:35},
+  {k:'h20',   em:'💗', n:'하트 스무 친구',  d:'하트를 꽉 채운 친구가 20마리예요',  ok:()=>Object.keys(S.dex).filter(k=>hearts(k)>=5).length>=20, top:30}
 ];
 function checkBadges(){
   BADGES.forEach(b=>{
@@ -2139,6 +2405,242 @@ function openGift(){
     </div>
     <div class="row" style="justify-content:center;margin-top:12px">
       <button class="btn" onclick="closeModal()">고마워요 💕</button></div>`);
+}
+
+/* ==================================================================
+   🎂 함께한 날 — 햄쮜를 처음 만난 날부터 며칠째인지 세어 기념일을 챙겨준다.
+   모으고 끝나는 게 아니라 「오래 함께 지낸 친구」가 생기게 하는 장치다.
+================================================================== */
+const ANNIV=[
+  {d:7,   em:'🌱', n:'일주일',  coin:400,   top:2},
+  {d:30,  em:'🌸', n:'한 달',   coin:1500,  top:5},
+  {d:100, em:'🎂', n:'백 일',   coin:6000,  top:12},
+  {d:365, em:'👑', n:'일 년',   coin:25000, top:30}
+];
+/* 만난 날이 1일째 — 아이가 세는 방식대로. 시각이 아니라 날짜로만 센다 */
+function dayNo(t){ const d=new Date(t); return Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000; }
+function daysWith(k){
+  const d=S.dex[k];
+  if(!d || typeof d.since!=='number') return 0;
+  return Math.max(1, dayNo(Date.now())-dayNo(d.since)+1);
+}
+/* 아직 안 챙긴 기념일 중 가장 큰 것 */
+function annivDue(k){
+  const d=S.dex[k]; if(!d) return null;
+  const n=daysWith(k), got=d.anniv||0;
+  for(let i=ANNIV.length-1;i>=0;i--) if(n>=ANNIV[i].d && got<ANNIV[i].d) return ANNIV[i];
+  return null;
+}
+function annivKeys(){ return Object.keys(S.dex).filter(k=>annivDue(k)); }
+/* 다음 기념일까지 며칠 남았는지 */
+function annivNext(k){
+  const n=daysWith(k);
+  for(let i=0;i<ANNIV.length;i++) if(ANNIV[i].d>n) return {a:ANNIV[i], left:ANNIV[i].d-n};
+  return null;
+}
+function claimAnniv(k){
+  const a=annivDue(k); if(!a) return;
+  const d=S.dex[k];
+  d.anniv=a.d;
+  S.coin+=a.coin; S.top+=a.top;
+  addBond(k,10);
+  mailAct(k,'anniv',0.60);             /* 💌 축하 받은 이야기를 편지로 */
+  sfx('gift'); vib([0,30,50,30,50,40]); checkBadges(); save(); renderAll();
+  openModal(`<h2>${a.em} ${a.n} 기념일!<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="big burst">${hamSVG(hamOf(k))}</div>
+    <div style="text-align:center;font-size:14px;line-height:1.9">
+      ${wagwa(`<b style="font-size:17px">${nameOf(k)}</b>`)} 함께한 지<br>
+      <b style="font-size:22px;color:var(--acc)">${a.d}일</b> 이 됐어요!
+      <div class="muted" style="margin-top:5px">${dateLabel(S.dex[k].since)}에 처음 만났어요</div>
+      <div style="font-size:19px;font-weight:800;margin-top:8px">🪙+${fmt(a.coin)}　🍒+${a.top}　💗+10</div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="btn" onclick="closeModal()">고마워 💕</button></div>`);
+}
+
+/* ==================================================================
+   💌 햄쮜 편지 — 친한 햄쮜가 아이에게 편지를 보낸다.
+   하루에 한 통만 오던 때는 우체통을 열어볼 일이 거의 없었다. 이제 두 갈래로 온다.
+
+     ① 📮 배달 편지 — 게임을 켤 때 한 통, 그 뒤로 노는 동안 8분마다 한 통 (하루 3통까지)
+     ② 💗 마음 편지 — 무슨 일이 있어서 그 아이가 **바로** 쓴다 (하루 4통까지)
+          · 하트가 한 칸 오를 때        35%
+          · 좋아하는 놀이를 해줬을 때    15%
+          · 처음 만난 날                30%
+          · 🏆꾸미기 대회에 나갔을 때    40%
+          · 🎂기념일을 축하해줬을 때     60%
+
+   내용은 그 햄쮜의 이름·맛·좋아하는 놀이·함께한 날로 그때그때 만든다.
+   마음 편지는 무슨 일이 있었는지에 맞는 문구를 따로 쓴다 — 「아까 놀아줄 때…」처럼
+   방금 있었던 일이 편지에 담겨야 아이가 편지와 놀이를 이어서 느낀다.
+================================================================== */
+const MAIL_MAX=30;        /* 우체통에 남는 편지 수 */
+const MAIL_DAY=3;         /* 하루 배달 편지 상한 */
+const MAIL_ACT=4;         /* 하루 마음 편지 상한 */
+const MAIL_GAP=8*60*1000; /* 배달 편지 사이 간격 */
+const MAIL_TPL=[
+  k=>`오늘도 놀아줘서 고마워요.<br><b>${nameOf(k)}</b>${jong(nameOf(k))?'이라는':'라는'} 이름, 정말 마음에 들어요 💕`,
+  k=>`${favToyLabel(k)} 하고 싶어요!<br>내가 제일 좋아하는 거 알고 있죠? 헤헤`,
+  k=>`우리가 만난 지 <b>${daysWith(k)}일</b>이 됐어요.<br>그동안 정말 즐거웠어요 ✨`,
+  k=>`${FL[k]?'<b>'+FL[k].n+'</b> 통에서 나온 날이 아직도 생각나요.':'처음 만난 날이 아직도 생각나요.'}<br>그날 정말 반가웠어요 🍨`,
+  k=>`오늘 <b>${roomName(S.room|0)}</b>이 참 아늑했어요.<br>내일도 여기 있을게요 🏠`,
+  k=>`아이스크림 한 입만… 안 될까요? 😋<br>농담이에요! 같이 있는 게 더 좋아요`,
+  k=>`꾸며줘서 고마워요.<br>거울 볼 때마다 기분이 좋아요 🎀`,
+  k=>`오늘은 뭐 하고 놀까요?<br>${eul(favToyLabel(k))} 하면 제일 신나요!`,
+  k=>`친구들이 다 좋지만<br>나는 그중에 제일 행복한 것 같아요 💗`,
+  k=>`잘 자요. 좋은 꿈 꿔요 🌙<br>내일 또 놀아줄 거죠?`,
+  k=>`오늘 하늘이 예뻤어요.<br>같이 마당에 나가고 싶어요 🌳`,
+  k=>`고마운 마음을 어떻게 전할지 몰라서<br>편지를 썼어요. 읽어줘서 고마워요 💌`
+];
+/* 💗 마음 편지 — 방금 있었던 일이 그대로 담긴다 */
+const MAIL_ACT_TPL={
+  heart:[
+    k=>`아까 놀아줄 때 정말 행복했어요!<br>우리 이제 하트가 <b>${hearts(k)}개</b>예요 💗`,
+    k=>`가슴이 콩닥콩닥해요.<br>우리 더 친해진 거… 맞죠? 헤헤 💕`,
+    k=>`오늘 하트가 하나 더 늘었어요!<br>고마워서 바로 편지를 썼어요 ✏️`,
+    k=>`나 요즘 제일 좋아하는 게 뭔지 알아요?<br>바로 <b>같이 노는 시간</b>이에요 💗`
+  ],
+  fav:[
+    k=>`${eul(favToyLabel(k))} 해줘서 너무 좋았어요!<br>내가 제일 좋아하는 거 어떻게 알았어요? 😆`,
+    k=>`오늘은 최고의 날이에요.<br><b>${favToyLabel(k)}</b>… 또 하고 싶어요 🎉`,
+    k=>`아직도 신이 나서 잠이 안 와요.<br>내일도 ${eul(favToyLabel(k))} 해줄 거죠? ✨`
+  ],
+  new:[
+    k=>`안녕하세요! 오늘 처음 만난 <b>${nameOf(k)}</b>예요.<br>잘 부탁해요 🍨`,
+    k=>`통에서 나오자마자 편지부터 썼어요.<br>우리 앞으로 친하게 지내요! 💌`,
+    k=>`처음 뵙겠습니다… 라고 쓰려다가<br>그냥 <b>반가워요!</b> 라고 쓸래요 😊`
+  ],
+  cont:[
+    k=>`대회 나갔던 거 봤어요?<br>다들 나를 쳐다봐서 조금 부끄러웠어요 🎀`,
+    k=>`꾸며줘서 고마워요.<br>무대에 서니까 정말 신났어요! ✨`,
+    k=>`오늘 내가 제일 예뻤던 것 같아요.<br>… 아, 이건 비밀이에요 🤫`
+  ],
+  anniv:[
+    k=>`오늘 축하해줘서 고마워요.<br>벌써 <b>${daysWith(k)}일</b>이라니, 믿기지 않아요 🎂`,
+    k=>`케이크보다 더 좋은 건<br>같이 있어준 <b>${daysWith(k)}일</b>이에요 💗`,
+    k=>`앞으로도 계속 함께 있어줄 거죠?<br>나는 그럴 거예요 👑`
+  ]
+};
+/* 편지가 왜 왔는지 한 줄로 — 아이가 「내가 한 일 때문에 왔구나」를 알아채게 */
+const MAIL_WHY={
+  heart:'💗 더 친해져서 기뻐서 썼대요',
+  fav  :'💕 좋아하는 놀이를 해줘서 신났대요',
+  new  :'🍨 오늘 처음 만나서 인사하는 편지예요',
+  cont :'🎀 꾸미기 대회에 나갔던 이야기래요',
+  anniv:'🎂 기념일을 축하해줘서 고맙대요'
+};
+function mailUnread(){ return S.mail.filter(m=>!m.got).length; }
+/* 날짜가 바뀌면 오늘 센 편지 수를 0으로 되돌린다 */
+function mailDay(){
+  const today=todayKey();
+  if(S.mailD!==today){ S.mailD=today; S.mailN=0; S.mailA=0; }
+}
+/* 편지를 보낼 아이 고르기 — 하트가 두 개 이상인 아이가 우선.
+   방금 보낸 아이는 빼둔다 — 같은 아이가 연달아 쓰면 편지가 늘어난 티가 안 난다. */
+function mailWho(){
+  const own=Object.keys(S.dex);
+  if(!own.length) return null;                  /* 아직 햄쮜가 없으면 편지도 없다 */
+  const last=S.mail[0]&&S.mail[0].k;
+  let pool=own.filter(k=>hearts(k)>=2);
+  if(!pool.length) pool=own;
+  const fresh=pool.filter(k=>k!==last);
+  return pick(fresh.length?fresh:pool);
+}
+/* 편지 한 통을 우체통에 넣는다. r 이 있으면 「마음 편지」 */
+function mailPush(k,r){
+  if(!k||!S.dex[k]) return false;
+  const pool=(r&&MAIL_ACT_TPL[r])||MAIL_TPL;
+  S.mail.unshift({k, t:Date.now(), i:ri(0,pool.length-1), r:r||'', got:0});
+  S.mail=S.mail.slice(0,MAIL_MAX);
+  S.mailT=Date.now();
+  return true;
+}
+/* ① 📮 배달 편지 — 켤 때(force) 한 통, 그 뒤로는 MAIL_GAP 이 지나야 한 통 */
+function mailCheck(force){
+  mailDay();
+  if((S.mailN|0)>=MAIL_DAY) return false;
+  if(!force && Date.now()-(S.mailT||0)<MAIL_GAP) return false;
+  const k=mailWho(); if(!k) return false;
+  if(!mailPush(k)) return false;
+  S.mailN=(S.mailN|0)+1;
+  save();
+  return true;
+}
+/* ② 💗 마음 편지 — 무슨 일이 있어서 그 아이가 바로 쓴다.
+   편지를 열면 addBond 가 불리므로, 그 안에서 또 편지가 나가지 않게 자물쇠를 건다. */
+let _mailing=false;
+function mailAct(k,r,chance){
+  if(_mailing) return false;
+  if(!k||!S.dex[k]) return false;
+  mailDay();
+  if((S.mailA|0)>=MAIL_ACT) return false;
+  if(Math.random()>=chance) return false;
+  _mailing=true;
+  try{
+    if(!mailPush(k,r)) return false;
+    S.mailA=(S.mailA|0)+1;
+    sfx('gift'); vib([0,20,40,20]);
+    toast(`💌 ${ega('<b>'+nameOf(k)+'</b>')} 편지를 보냈어요! — 💌우체통에서 읽어보세요`);
+    save(); renderHUD();
+    return true;
+  } finally { _mailing=false; }
+}
+function mailText(m){
+  const pool=(m.r&&MAIL_ACT_TPL[m.r])||MAIL_TPL;
+  const f=pool[m.i]||pool[0];
+  try{ return f(m.k); }catch(e){ return '오늘도 고마워요 💗'; }
+}
+function openMail(i){
+  const m=S.mail[i]; if(!m) return;
+  const first=!m.got;
+  if(first){
+    /* 처음 열어보는 편지에는 작은 선물이 같이 들어 있다 */
+    m.got=1;
+    m.coin=Math.ceil((120+S.lv*30)*(1+hearts(m.k)*0.25));
+    m.top=Math.random()<0.45?ri(1,2):0;
+    S.coin+=m.coin; S.top+=m.top;
+    /* 선물로 오르는 하트까지 편지를 부르면 「편지가 편지를 낳는」 꼴이 된다 — 여기서만 막는다 */
+    _mailing=true;
+    try{ addBond(m.k,4); } finally{ _mailing=false; }
+    sfx('gift'); vib([0,25,45,25]); save(); renderHUD();
+  }else sfx('tap');
+  openModal(`<h2>💌 ${nameOf(m.k)}의 편지<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="letter">
+      <div class="hs">${hamSVG(hamOf(m.k))}</div>
+      <div class="body">${mailText(m)}</div>
+      <div class="sign">— ${nameOf(m.k)} 올림 · ${dateLabel(m.t)}</div>
+    </div>
+    ${m.r&&MAIL_WHY[m.r]?`<div class="muted" style="text-align:center;margin-top:7px">${MAIL_WHY[m.r]}</div>`:''}
+    ${m.coin?`<div class="muted" style="text-align:center;margin-top:8px">
+      편지 안에 선물이 들어 있었어요 — <b>🪙+${fmt(m.coin)}${m.top?` · 🍒+${m.top}`:''}</b>${first?' · 💗+4':''}</div>`:''}
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn" onclick="closeModal();openPost()">💌 우체통 보기</button>
+      <button class="btn w" onclick="closeModal()">고마워 💕</button>
+    </div>`);
+  if(first) renderView();
+}
+function openPost(){
+  const un=mailUnread();
+  openModal(`<h2>💌 우체통 <span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="margin-bottom:8px">
+      ${S.mail.length
+        ? `편지 <b>${S.mail.length}통</b>${un?` · 아직 안 읽은 편지 <b style="color:var(--acc)">${un}통</b>`:''}
+           <div style="margin-top:4px">📮 놀다 보면 <b>하루 ${MAIL_DAY}통</b>이 배달되고,
+             💗 <b>더 친해지거나 좋아하는 놀이를 해주면</b> 그 아이가 바로 편지를 써요
+             (오늘 ${(S.mailN|0)+(S.mailA|0)}통)</div>`
+        : '아직 편지가 없어요 — 햄쮜와 친해지면 편지를 보내줘요 💗'}
+    </div>
+    ${S.mail.map((m,i)=>`
+      <div class="mailrow ${m.got?'':'new'}" onclick="closeModal();openMail(${i})">
+        <span class="hs">${hamSVG(hamOf(m.k))}</span>
+        <div class="info">
+          <b>${nameOf(m.k)}</b> <span class="muted">${dateLabel(m.t)}${m.r?' · '+(MAIL_WHY[m.r]||'').slice(0,2):''}</span>
+          <div class="pv">${mailText(m).replace(/<[^>]*>/g,' ').slice(0,26)}…</div>
+        </div>
+        <span class="em">${m.got?'📖':'💌'}</span>
+      </div>`).join('')}
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn w" onclick="closeModal()">닫기</button></div>`);
 }
 
 /* ---------- 쿠폰 ----------
@@ -2253,7 +2755,12 @@ function openPity(){
 }
 /* 저장이 막힌 환경(앱 설정에서 저장이 꺼진 경우 등)이면 한 번만 알려준다 */
 let _saveWarned=false;
+/* 되살리는 중에는 어떤 저장도 하지 않는다 —
+   되살린 내용을 써 넣은 뒤 화면이 새로 뜨기 전에 save() 가 한 번이라도 돌면
+   메모리에 남아 있는 「옛 가게」가 그대로 덮어써서, 되살리기가 안 된 것처럼 보인다. */
+let _restoring=false;
 function save(){
+  if(_restoring) return;
   S.t=Date.now();
   try{ localStorage.setItem(SAVE,JSON.stringify(S)); }
   catch(e){
@@ -2303,6 +2810,15 @@ function load(){
     if(S.vib==null) S.vib=true;
     if(S.giftAt==null) S.giftAt=0;
     if(S.newsSeen==null) S.newsSeen='';   /* 마지막으로 본 새 소식 번호 — 안 봤으면 📢에 「새」 점이 붙는다 */
+    if(!Array.isArray(S.mail)) S.mail=[];  /* 💌 받은 편지 */
+    if(typeof S.mailD!=='string') S.mailD='';
+    /* 💌 하루 한 통이던 옛 저장본에는 셈이 없다 — 0 으로 두면 오늘부터 새로 센다.
+       mailT 를 0 으로 두면 켜자마자 한 통이 오는데, 그게 오히려 반갑다. */
+    if(typeof S.mailN!=='number') S.mailN=0;
+    if(typeof S.mailA!=='number') S.mailA=0;
+    if(typeof S.mailT!=='number') S.mailT=0;
+    S.mail=S.mail.filter(m=>m && S.dex[m.k]).slice(0,MAIL_MAX);   /* 없어진 햄쮜의 편지는 지운다 */
+    S.mail.forEach(m=>{ if(typeof m.r!=='string') m.r=''; });      /* 옛 편지는 「배달 편지」로 본다 */
     if(!S.err || typeof S.err!=='object') S.err={d:'', t:[], got:0};
     if(!Array.isArray(S.err.t)) S.err.t=[];
     if(typeof S.errAll!=='number') S.errAll=0;
@@ -2342,6 +2858,10 @@ function load(){
       const e=S.dex[k];
       if(e.bond==null) e.bond=0;
       if(typeof e.over!=='number') e.over=0;    /* 하트가 넘친 만큼 모아두는 곳 */
+      /* 🎂 처음 만난 날. 예전 저장에는 없으니 오늘부터 세기 시작한다 —
+         실제보다 늦게 잡히지만, 없던 날짜를 지어내는 것보다는 낫다. */
+      if(typeof e.since!=='number') e.since=Date.now();
+      if(typeof e.anniv!=='number') e.anniv=0;  /* 여기까지 받은 기념일 */
       if(!e.p) e.p='plain';
       if(!e.g) e.g=1;
       if(e.n==null) e.n=1;
@@ -2457,7 +2977,7 @@ function rollOne(k,forceHigh,force4){
   const d=S.dex[k];
   const res={k, g, p, isNew:!d, up:false};
   if(!d){
-    S.dex[k]={g, p, n:1, bond:0, w:{hat:null,neck:null,hand:null,cone:null}};
+    S.dex[k]={g, p, n:1, bond:0, over:0, since:Date.now(), anniv:0, w:{hat:null,neck:null,hand:null,cone:null}};
     S.top+=2; addExp(26);
   }else{
     d.n++;
@@ -2490,6 +3010,8 @@ function finishScoop(k,n,forceHigh){
   sfx(anyNew?'nw':best>=4?'star4':best>=3?'heart':'tap');   /* 뜨는 소리는 dig() 가 이미 냈다 */
   if(anyNew||best>=4) vib([0,35,55,35]); else if(best>=3) vib(28);
   checkBadges();
+  /* 💌 처음 만난 아이가 인사 편지를 쓴다 — 50번을 뜨면 새 친구가 여럿이므로 한 마리만 */
+  if(anyNew) mailAct(pick(out.filter(o=>o.isNew).map(o=>o.k)),'new',0.30);
   save(); renderHUD(); renderScoopTab();
   showResult(FL[k], out, forceHigh, tray, info);
 }
@@ -2895,7 +3417,7 @@ function addBond(k,v,kind){
   const fav = !!kind && favToy(k)===kind;
   if(fav) v*=2;
   const b0=hearts(k);
-  const add=v*(1+upgLv('cozy')*0.2);                          /* 🛏️푹신 쿠션 */
+  const add=v*(1+upgLv('cozy')*0.2+upgLv('love')*0.35);       /* 🛏️푹신 쿠션 · 💗사랑 가득 */
   const room=Math.max(0,100-(d.bond||0));
   d.bond=clamp((d.bond||0)+add,0,100);
   /* 💗 하트가 꽉 찬 아이 — 넘치는 사랑은 🍒토핑이 된다.
@@ -2910,6 +3432,7 @@ function addBond(k,v,kind){
   if(up){
     addExp(8); sfx('star4'); checkBadges();
     toast(`💗 ${wagwa(nameOf(k))} 더 친해졌어요! 하트 ${hearts(k)}개 — 코인을 더 많이 물어와요`);
+    mailAct(k,'heart',0.35);       /* 💌 기뻐서 편지를 쓴다 */
   }
   return {up, top:got, fav};
 }
@@ -3090,8 +3613,10 @@ function playAll(kind){
   S.play[key]=now;
   errBump(kind);
   /* 좋아하는 놀이였던 아이와, 하트가 넘쳐서 🍒가 생긴 만큼을 모아서 한 번만 알려준다 */
-  let favN=0, overTop=0;
-  list.forEach(k=>{ const b=addBond(k,t.bond,kind); if(b.fav) favN++; overTop+=b.top; });
+  let favN=0, overTop=0; const favList=[];
+  list.forEach(k=>{ const b=addBond(k,t.bond,kind); if(b.fav){ favN++; favList.push(k); } overTop+=b.top; });
+  /* 💌 제일 좋아하는 놀이를 해줬으면 그중 한 마리가 신나서 편지를 쓴다 */
+  if(favList.length) mailAct(pick(favList),'fav',0.15);
   let got='';
   if(kind==='ball'){
     const g=Math.ceil(list.reduce((a,k)=>a+(6+S.dex[k].g*5),0)*playMul());
@@ -3324,7 +3849,7 @@ function renderPlayTab(){
       <span class="hs" onclick="openCloset('${k}')">${hamSVG(hamOf(k))}</span>
       <div class="info" onclick="openCloset('${k}')"><b>${nameOf(k)}</b> <span class="stars">${'★'.repeat(S.dex[k].g)}</span>
         <div class="muted" style="white-space:nowrap">${heartStr(k)} 🪙${(S.dex[k].g*(1+0.3*hearts(k))*0.3*(1+upgLv('regul')*0.25)*(1+S.lv*0.08)).toFixed(1)}/초</div>
-        <div class="muted" style="white-space:nowrap">💕 ${eul(favToyLabel(k))} 제일 좋아해요</div></div>
+        <div class="muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">💕 ${eul(favToyLabel(k))} 좋아해요</div></div>
       <div style="display:flex;flex-direction:column;gap:4px">
         <button class="btn sm" onclick="event.stopPropagation();openCloset('${k}')">👗 꾸미기</button>
         <button class="btn w sm" onclick="event.stopPropagation();openSeatPick(${i})">🔄 바꾸기</button>
@@ -3369,6 +3894,35 @@ function renderPlayTab(){
       <button class="btn w sm" onclick="openRoomDeco()">🛝 놀이기구 놓기</button>
     </div>
   </div>`:''}
+  ${(mailUnread()||annivKeys().length)?(()=>{
+    /* 낡은 저장은 모든 햄쮜의 「처음 만난 날」이 같은 날로 잡혀서 기념일이 한꺼번에 몰릴 수 있다.
+       한 번에 세 마리까지만 보여주고 나머지는 숫자로 알려준다 — 축하 줄로 화면을 덮지 않게. */
+    const all=annivKeys(), show=all.slice(0,3), rest=all.length-show.length;
+    return `<div class="card">
+    <h3>💌 오늘 온 소식</h3>
+    ${show.map(k=>{ const a=annivDue(k); return `
+      <div class="annivrow">
+        <span class="hs">${hamSVG(hamOf(k))}</span>
+        <div class="info">${a.em} ${wagwa('<b>'+nameOf(k)+'</b>')} 함께한 지 <b>${a.d}일</b>이 됐어요!
+          <div class="muted">${dateLabel(S.dex[k].since)}에 처음 만났어요</div></div>
+        <button class="btn g sm" onclick="claimAnniv('${k}')">🎁 축하하기</button>
+      </div>`; }).join('')}
+    ${(()=>{
+      /* 💌 편지가 하루 여러 통 오므로 안 읽은 게 쌓일 수 있다 — 여기서는 세 통까지만 보여주고
+         나머지는 우체통으로 보낸다. 놀이방 카드가 편지 목록이 되면 안 된다. */
+      const un=S.mail.filter(m=>!m.got), show=un.slice(0,3), more=un.length-show.length;
+      return show.map(m=>{ const i=S.mail.indexOf(m); return `
+      <div class="mailrow new" onclick="openMail(${i})">
+        <span class="hs">${hamSVG(hamOf(m.k))}</span>
+        <div class="info">${ega('<b>'+nameOf(m.k)+'</b>')} 편지를 보냈어요
+          <div class="pv">${MAIL_WHY[m.r]||'아직 안 읽은 편지예요 — 눌러서 읽어보세요'}</div></div>
+        <span class="em">💌</span>
+      </div>`; }).join('')
+      +(more?`<div class="muted" style="margin-top:6px">💌 안 읽은 편지가 <b>${more}통</b> 더 있어요 —
+         <b onclick="openPost()" style="color:var(--acc);cursor:pointer">우체통 열기</b></div>`:'');
+    })()}
+    ${rest?`<div class="muted" style="margin-top:6px">🎂 기념일인 친구가 <b>${rest}마리</b> 더 있어요 — 한 마리씩 축하해 주세요!</div>`:''}
+  </div>`;})():''}
   <div class="card">
     <h3>🧸 장난감 <small>고르고 나서 햄쮜를 눌러요</small></h3>
     <div class="toys" id="toybar">${TOY_KEYS.map(k=>{
@@ -3390,6 +3944,7 @@ function renderPlayTab(){
       <button class="btn sm" onclick="openDressPick()">👗 햄쮜 꾸미기</button>
       <button class="btn w sm" onclick="openRoomDeco()">🎨 방 꾸미기</button>
       <button class="btn w sm" onclick="openAlbum()">📖 사진첩 (${S.album.length})</button>
+      <button class="btn w sm" onclick="openPost()">💌 우체통 (${S.mail.length})${mailUnread()?' 🔴':''}</button>
     </div>
     <div class="muted" style="margin-top:7px;line-height:1.6">
       ⏰ 가만히 있어도 <b id="autoinc">${autoIncome()>0?fmt(autoIncome()*60)+' /분':'없음'}</b> 모여요
@@ -3627,6 +4182,10 @@ function openDex(k){
       · 한 번 뜨는 값 <b>🪙${fmt(scoopCost(f))}</b><br>
       ${d?`💗 친한 정도 <b>${heartStr(k)}</b> — 놀아줄 때 코인 <b>+${hearts(k)*20}%</b><br>
            💕 제일 좋아하는 놀이 <b>${favToyLabel(k)}</b> — 이걸 해주면 하트가 <b>두 배</b><br>
+           🎂 <b>${dateLabel(d.since)}</b>에 처음 만나 <b>${daysWith(k)}일째</b> 함께예요${(()=>{
+             const nx=annivNext(k);
+             return nx?` <span class="muted">(${nx.a.em}${nx.a.n} 기념일까지 ${nx.left}일)</span>`:'';
+           })()}<br>
            🥄 이 통을 <b>${d.n}</b>번 떠봤어요`
         :`🎲 ⭐1 ${gradeW()[1].toFixed(0)}% · ⭐2 ${gradeW()[2].toFixed(0)}% · ⭐3 ${gradeW()[3].toFixed(0)}% · ⭐4 ${gradeW()[4].toFixed(1)}% · ⭐5 ${gradeW()[5].toFixed(2)}%`}
     </div>
@@ -3790,7 +4349,14 @@ function renderStoreTab(){
     </div>`;
   }).join('');
   const ups=UPG_KEYS.map(k=>{
-    const u=UPG[k], lv=upgLv(k), max=lv>=u.max, c=upgCost(k);
+    const u=UPG[k], lv=upgLv(k), max=lv>=u.max, c=upgCost(k), open=upgOpen(k);
+    /* 아직 레벨이 안 되면 무엇이 기다리는지만 보여준다 — 목표가 보여야 레벨을 올릴 마음이 생긴다 */
+    if(!open) return `<div class="scard locked">
+      <span class="ic">🔒</span><b>${u.name}</b>
+      <span class="fx">${u.desc}<br><b>가게 Lv.${u.lv}</b> 부터 열려요</span>
+      <span class="pr">🪙 ${fmt(u.base)} 부터</span>
+      <button class="btn w sm" disabled>Lv.${u.lv} 필요</button>
+    </div>`;
     return `<div class="scard">
       <span class="ic">${u.em}</span><b>${u.name}</b>
       <span class="fx">${u.desc}<br>지금 <b>Lv.${lv}</b> / ${u.max}</span>
@@ -3861,9 +4427,11 @@ function buyTub(k){
 function buyUpg(k){
   const u=UPG[k], c=upgCost(k);
   if(upgLv(k)>=u.max){ toast('이미 최대예요'); return; }
+  if(!upgOpen(k)){ sfx('boo'); toast(`🔒 가게 <b>Lv.${u.lv}</b> 부터 올릴 수 있어요`); return; }
   if(S.coin<c){ sfx('boo'); toast(`🪙 코인이 ${fmt(c-S.coin)} 더 필요해요`); return; }
   S.coin-=c; S.upg[k]=upgLv(k)+1; sfx('coin');
-  if(k==='seat') for(let i=0;i<ROOMS.length;i++) if(S.rooms[i]) S.rooms[i].seat.push(null);
+  /* 🪑자리 늘리기와 🏡넓은 가게는 둘 다 자리를 늘린다 */
+  if(k==='seat'||k==='hall') for(let i=0;i<ROOMS.length;i++) if(S.rooms[i]) S.rooms[i].seat.push(null);
   addExp(14); save(); renderAll();
   toast(`${u.em} ${u.name} Lv.${upgLv(k)} 로 올렸어요!`);
 }
@@ -3894,7 +4462,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-08-25';
+const NEWS_VER='2026-08-25c';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
@@ -4490,7 +5058,7 @@ function grantSpecials(){
   SP_KEYS.forEach(k=>{
     const s=SPECIAL[k], id=spId(k);
     if(S.dex[id] || (S.ord.star||0)<s.star) return;
-    S.dex[id]={g:s.g, p:pick(['plain','plain','spot','stripe']), n:1, bond:0, w:{hat:null,neck:null,hand:null,cone:null}};
+    S.dex[id]={g:s.g, p:pick(['plain','plain','spot','stripe']), n:1, bond:0, over:0, since:Date.now(), anniv:0, w:{hat:null,neck:null,hand:null,cone:null}};
     got.push(k);
   });
   return got;
@@ -4903,6 +5471,7 @@ function joinContest(k,ok){
   if(rank===1) S.cont.win=(S.cont.win||0)+1;
   S.top+=pay.t; S.coin+=pay.c;
   addBond(k,pay.b); addExp(pay.e);
+  mailAct(k,'cont',0.40);              /* 💌 무대에 섰던 이야기를 편지로 */
   contRes={k,rows,tot,rank,pay};
   sfx(rank===1?'star4':'nw'); vib(rank===1?[0,30,50,30,50,30]:[0,30,50,30]);
   checkBadges(); save(); renderHUD(); renderContResult();
@@ -5178,7 +5747,7 @@ function makeMix(a,b){
   if(g<=3){ if(Math.random()<0.3) g++; }                      /* 둘보다 좋아질 수도 */
   else if(g===4 && Math.random()<0.08) g=5;                   /* ⭐4 둘이면 아주 드물게 ⭐5 */
   S.dex[key]={
-    g, p:pick([dx.p,dy.p]), n:1, bond:0, w:{hat:null,neck:null,hand:null,cone:null},
+    g, p:pick([dx.p,dy.p]), n:1, bond:0, over:0, since:Date.now(), anniv:0, w:{hat:null,neck:null,hand:null,cone:null},
     mix:{
       a:x, b:y, hn:mixNameOf(x,y),
       shape: Math.random()<0.5?fx.shape:fy.shape,
@@ -5466,11 +6035,44 @@ function b64enc(str){
   for(let i=0;i<b.length;i+=0x4000) out+=String.fromCharCode.apply(null,b.subarray(i,i+0x4000));
   return btoa(out);
 }
-function b64dec(code){
-  const bin=atob(String(code).replace(/\s/g,''));
+/* 저장 코드는 메신저·메모장·주소창을 거쳐서 돌아온다. 그 사이에 흔히 이렇게 망가진다 —
+   ① 「+」가 공백으로 바뀐다(주소창·일부 메신저).
+   ② 「+ /」가 「- _」로 바뀐다(base64url).
+   ③ 끝의 「=」가 잘려 나간다.
+   여기서 전부 되돌려주지 않으면 아이가 「코드를 알아볼 수 없어요」만 보게 된다.
+   ①은 까다롭다 — 붙여넣을 때 앞뒤에 붙은 공백까지 「+」로 바꾸면 오히려 코드가 깨진다.
+   그래서 「공백을 지운 것」과 「공백을 +로 되돌린 것」 두 가지를 다 만들어 보고,
+   JSON 이 열리는 쪽을 정답으로 고른다(decodeSave). */
+function b64fix(code, spaceIsPlus){
+  let s=String(code).trim();
+  s = spaceIsPlus ? s.replace(/ /g,'+') : s;
+  s=s.replace(/\s/g,'');                     /*    줄바꿈·탭은 언제나 지운다 */
+  s=s.replace(/-/g,'+').replace(/_/g,'/');   /* ② base64url 되돌리기 */
+  s=s.replace(/[^A-Za-z0-9+/=]/g,'');        /*    그 밖의 이물질 제거 */
+  s=s.replace(/=+$/,'');
+  while(s.length%4) s+='=';                  /* ③ 패딩 다시 채우기 */
+  return s;
+}
+function b64dec(code, spaceIsPlus){
+  const bin=atob(b64fix(code, spaceIsPlus));
   const b=new Uint8Array(bin.length);
   for(let i=0;i<bin.length;i++) b[i]=bin.charCodeAt(i);
   return new TextDecoder().decode(b);
+}
+/* 저장 코드를 읽어낸다. 두 가지 해석을 다 시도하고, 안 되면 왜 안 되는지 알려준다.
+   why — 'char'(글자가 깨짐) · 'cut'(중간이 잘림) · 'other'(우리 코드가 아님) */
+function decodeSave(code){
+  let why='other';
+  for(const plus of [false,true]){
+    let txt;
+    try{ txt=b64dec(code, plus); }
+    catch(e){ if(why==='other') why='char'; continue; }
+    try{
+      const d=JSON.parse(txt);
+      if(d && typeof d.coin==='number') return {ok:true, d};
+    }catch(e){ why='cut'; }
+  }
+  return {ok:false, why};
 }
 function saveCode(){ try{ return b64enc(JSON.stringify(S)); }catch(e){ return ''; } }
 function openSettings(){
@@ -5507,12 +6109,22 @@ function openSettings(){
         style="height:58px;font-size:9.5px;line-height:1.35;text-align:left;font-weight:400;resize:none">${code}</textarea>
       <div class="row" style="margin-top:7px">
         <button class="btn sm" onclick="copySaveCode()">📋 복사하기</button>
+        <button class="btn g sm" onclick="downloadSave()">💾 파일로 저장</button>
       </div>
-      <h3 style="margin-top:12px">📥 코드로 되살리기</h3>
-      <textarea id="sv-in" class="tin" placeholder="복사해둔 저장 코드를 여기에 붙여넣어요"
+      <div class="muted" style="margin-top:6px;font-size:11.5px">
+        💡 코드가 <b>${(code.length/1024).toFixed(1)}KB</b>로 길어서 메신저로 보내면 <b>중간이 잘릴 수 있어요.</b>
+        <b>💾 파일로 저장</b>이 가장 안전합니다.
+      </div>
+      <h3 style="margin-top:12px">📥 되살리기</h3>
+      <div class="row" style="margin-bottom:7px">
+        <button class="btn sm" onclick="pickSaveFile()">📁 파일에서 되살리기</button>
+      </div>
+      <input type="file" id="sv-file" accept=".txt,text/plain" style="display:none"
+             onchange="loadSaveFile(this)">
+      <textarea id="sv-in" class="tin" placeholder="또는 복사해둔 저장 코드를 여기에 붙여넣어요"
         style="height:52px;font-size:9.5px;line-height:1.35;text-align:left;font-weight:400;resize:none"></textarea>
       <div class="row" style="margin-top:7px">
-        <button class="btn w sm" onclick="applySaveCode()">📥 되살리기</button>
+        <button class="btn w sm" onclick="applySaveCode()">📥 붙여넣은 코드로 되살리기</button>
       </div>
     </div>
     <div class="card">
@@ -5538,18 +6150,79 @@ function copySaveCode(){
     ok?done():toast('📋 길게 눌러 복사해주세요');
   }
 }
+/* 💾 파일로 저장 — 18KB 가 넘는 코드를 메신저로 주고받다 보면 잘리기 쉽다.
+   파일로 내려받아 두면 한 글자도 잃지 않는다. */
+function downloadSave(){
+  const code=saveCode();
+  if(!code){ sfx('boo'); toast('💾 저장 코드를 만들지 못했어요'); return; }
+  const d=new Date();
+  const p=n=>String(n).padStart(2,'0');
+  const name=`hamskin-save-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.txt`;
+  try{
+    const url=URL.createObjectURL(new Blob([code],{type:'text/plain'}));
+    const a=document.createElement('a');
+    a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    sfx('coin'); vib(20);
+    toast(`💾 <b>${name}</b> 로 저장했어요 — 안전한 곳에 두세요`);
+  }catch(e){ sfx('boo'); toast('💾 파일로 저장할 수 없는 환경이에요 — 코드를 복사해 주세요'); }
+}
+/* 📁 파일에서 되살리기 */
+function pickSaveFile(){ const el=$('#sv-file'); if(el) el.click(); }
+function loadSaveFile(input){
+  const f=input && input.files && input.files[0];
+  input.value='';
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>restoreFrom(String(r.result||''), '📁 '+f.name);
+  r.onerror=()=>{ sfx('boo'); toast('📁 파일을 읽지 못했어요'); };
+  r.readAsText(f);
+}
 function applySaveCode(){
   const el=$('#sv-in'); const code=el?String(el.value||'').trim():'';
   if(!code){ sfx('boo'); toast('📥 저장 코드를 붙여넣어 주세요'); return; }
-  let d=null;
-  try{ d=JSON.parse(b64dec(code)); }catch(e){ d=null; }
-  if(!d || typeof d.coin!=='number'){ sfx('boo'); toast('📥 코드를 알아볼 수 없어요 — 다시 붙여넣어 주세요'); return; }
-  askConfirm('📥 코드로 되살리기',
-    '지금 가게는 사라지고 <b>코드에 담긴 가게</b>로 바뀌어요.<br>계속할까요?','되살리기',()=>{
-      try{ localStorage.setItem(SAVE,JSON.stringify(d)); }catch(e){}
+  restoreFrom(code, '📥 붙여넣은 코드');
+}
+function restoreFrom(code, from){
+  code=String(code||'').trim();
+  if(!code){ sfx('boo'); toast('📥 되살릴 내용이 비어 있어요'); return; }
+  /* 왜 안 되는지 알려줘야 아이도 어른도 고칠 수 있다 — 「알아볼 수 없어요」만 뜨면 손쓸 방법이 없다 */
+  const r=decodeSave(code);
+  if(!r.ok){
+    sfx('boo');
+    toast(r.why==='cut'
+      ? `📥 코드가 <b>중간에 잘린 것 같아요</b> — 처음부터 끝까지 전부 복사했는지 봐주세요
+         <span style="font-size:.9em">(받은 길이 ${fmt(code.length)}글자)</span>`
+      : r.why==='char'
+      ? '📥 코드에 이상한 글자가 섞였어요 — 메모장에 붙여넣었다가 <b>전부 다시 복사</b>해 주세요'
+      : '📥 햄스킨라빈스 저장 코드가 아닌 것 같아요');
+    return;
+  }
+  const d=r.d;
+  /* 무엇으로 바뀌는지 먼저 보여준다 — 엉뚱한 코드를 넣고 지금 가게를 날리는 일이 없게 */
+  const nDex=d.dex&&typeof d.dex==='object'?Object.keys(d.dex).length:0;
+  askConfirm('📥 되살리기',
+    `${from} 안에 이런 가게가 들어 있어요 —<br>
+     <b>가게 Lv.${d.lv||1}</b> · 햄쮜 <b>${nDex}마리</b> · 🪙${fmt(d.coin||0)} · 🍒${fmt(d.top||0)}<br><br>
+     지금 가게는 사라지고 <b>이 가게</b>로 바뀌어요. 계속할까요?`,'되살리기',()=>{
+      /* ① 먼저 모든 저장을 잠근다 — 이 순간부터 옛 가게는 어디에도 써지지 않는다 */
+      _restoring=true;
+      stopTick();
       window.removeEventListener('beforeunload',save);
       window.removeEventListener('pagehide',save);
-      location.reload();
+      /* ② 되살릴 내용을 써 넣는다 */
+      try{ localStorage.setItem(SAVE,JSON.stringify(d)); }
+      catch(e){
+        _restoring=false; startTick();
+        sfx('boo'); toast('📥 저장 공간이 가득 찼어요 — 사진첩을 좀 지우고 다시 해보세요');
+        return;
+      }
+      /* ③ 화면을 새로 연다. 창을 닫을 때 부른 뒤로가기와 부딪혀 새로고침이 씹히는 일이 있어서
+         조금 뒤에 한 번 더 확실하게 밀어준다(폰에서 실제로 겪던 증상). */
+      toast('📥 되살리는 중이에요…');
+      try{ location.reload(); }catch(e){}
+      setTimeout(()=>{ try{ location.replace(location.pathname+location.search); }catch(e){} }, 600);
     });
 }
 
@@ -5621,7 +6294,8 @@ $$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
    값이 바뀐 것만 건드린다. (특히 innerHTML 을 계속 새로 쓰면 버튼이 안 눌린다) */
 const H={};
 function initHUD(){
-  ['h-coin','h-top','h-dex','h-stk','h-lv','s-dot','o-dot','h-gift','gift-bg','h-news','news-bg'].forEach(id=>H[id]=document.getElementById(id));
+  ['h-coin','h-top','h-dex','h-stk','h-lv','s-dot','o-dot','p-dot','h-gift','gift-bg',
+   'h-news','news-bg','h-mail','mail-bg'].forEach(id=>H[id]=document.getElementById(id));
   H.last={};
 }
 function setTxt(id,v){ const e=H[id]; if(e && H.last[id]!==v){ H.last[id]=v; e.textContent=v; } }
@@ -5640,6 +6314,16 @@ function renderHUD(){
   const left=giftLeft(), lab=left>0?Math.ceil(left/60000)+'분':'!';
   setTxt('gift-bg', lab);
   if(H['h-gift'] && H.last.rdy!==(left<=0)){ H.last.rdy=(left<=0); H['h-gift'].classList.toggle('rdy',left<=0); }
+  /* 💌 우체통 — 안 읽은 편지가 있으면 머리에서 흔들린다. 편지는 아이가 제일 좋아하는 것이라 맨 위에 둔다 */
+  const un=mailUnread();
+  if(H.last.mail!==un){
+    H.last.mail=un;
+    if(H['mail-bg']){ H['mail-bg'].style.display=un?'block':'none'; H['mail-bg'].textContent=un>1?String(un):'!'; }
+    if(H['h-mail'])  H['h-mail'].classList.toggle('rdy',un>0);
+  }
+  /* 🏠 놀이방 — 챙길 🎂기념일이나 안 읽은 편지가 있으면 점을 띄운다 */
+  const pDot=(un>0 || annivKeys().length>0);
+  if(H['p-dot'] && H.last.pdot!==pDot){ H.last.pdot=pDot; H['p-dot'].style.display=pDot?'block':'none'; }
   /* 📢 아직 안 본 새 소식이 있으면 「새」 점을 띄우고 살랑거리게 한다 */
   const nu=newsUnseen();
   if(H.last.news!==nu){
@@ -5655,7 +6339,7 @@ function renderView(){
 function renderAll(){ renderHUD(); renderView(); }
 
 /* 코인이 저절로 쌓이는 것뿐이라 60fps 가 필요 없다 — 0.25초 타이머로 돌려 배터리를 아낀다 */
-let lastT=Date.now(), saveAcc=0, wxAcc=0, _timer=null;
+let lastT=Date.now(), saveAcc=0, wxAcc=0, mailAcc=0, _timer=null;
 function tick(){
   const now=Date.now(), dt=clamp((now-lastT)/1000,0,5); lastT=now;
   const inc=autoIncome();
@@ -5666,6 +6350,16 @@ function tick(){
      1분에 한 번 두드리기만 하고, 진짜로 물어볼지는 wxFresh() 가 정한다(30분). */
   wxAcc+=dt;
   if(wxAcc>=60){ wxAcc=0; if(roomOk(YARD_I)) wxWake(); }
+  /* 💌 노는 동안에도 편지가 배달된다 — 30초에 한 번 두드리고,
+     진짜로 보낼지는 mailCheck() 가 정한다(8분 간격 · 하루 3통). */
+  mailAcc+=dt;
+  if(mailAcc>=30){
+    mailAcc=0;
+    if(mailCheck()){
+      sfx('gift'); toast('💌 <b>편지가 왔어요!</b> — 💌우체통에서 읽어보세요');
+      renderHUD(); if(tab==='play') renderView();
+    }
+  }
 }
 function startTick(){ if(!_timer){ lastT=Date.now(); _timer=setInterval(tick,250); } }
 function stopTick(){ if(_timer){ clearInterval(_timer); _timer=null; } }
@@ -5685,6 +6379,7 @@ document.addEventListener('visibilitychange',()=>{
       }
       hidAt=0; save();
     }
+    if(mailCheck()) toast('💌 <b>편지가 왔어요!</b> 🏠놀이방이나 💌우체통에서 읽어보세요');
     startTick(); renderAll();
     if(roomOk(YARD_I)) wxWake();     /* 🌤️ 접어뒀다 펴면 그새 날씨가 바뀌었을 수 있다 */
   }
@@ -5692,6 +6387,7 @@ document.addEventListener('visibilitychange',()=>{
 
 /* ---------- 시작 ---------- */
 if(!load()) S=freshState();
+mailCheck(true);        /* 💌 게임을 켜면 편지 한 통이 와 있다 (그 뒤로는 8분마다) */
 initHUD();
 applyTheme();
 renderAll();
