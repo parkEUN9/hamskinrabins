@@ -1029,11 +1029,16 @@ const SHAPES={
     ears:c=>`<ellipse cx="20" cy="40" rx="8" ry="7" fill="${c.base}" transform="rotate(-30 20 40)"/>
              <ellipse cx="80" cy="40" rx="8" ry="7" fill="${c.base}" transform="rotate(30 80 40)"/>
              <circle cx="20" cy="40" r="3.6" fill="${c.cheek}"/><circle cx="80" cy="40" r="3.6" fill="${c.cheek}"/>`,
-    /* 키위 단면 — 가운데 흰 심에 씨가 둘러 있다 */
-    deco:c=>`<ellipse cx="50" cy="60" rx="29" ry="20" fill="${c.light}" opacity=".45"/>
-             <ellipse cx="50" cy="60" rx="6" ry="6" fill="#fff" opacity=".8"/>
-             <g fill="#4a3a22" opacity=".72">${[0,1,2,3,4,5,6,7,8,9].map(i=>{const a=i*Math.PI/5;
-               return `<ellipse cx="${(50+Math.cos(a)*20).toFixed(1)}" cy="${(60+Math.sin(a)*14).toFixed(1)}" rx="1.6" ry="2.4"/>`;}).join('')}</g>`,
+    /* 키위 단면 — 까만 씨를 촘촘히 둘러 박아 뒀더니 아이가 「징그럽다」고 했다.
+       씨는 빼고, 가운데 하얀 심에서 바깥으로 뻗는 부드러운 하얀 결로만 키위인 걸 보여준다.
+       결은 얼굴 바깥쪽에만 둬서 눈·입을 가리지 않는다. */
+    deco:c=>`<ellipse cx="50" cy="60" rx="30" ry="21" fill="${c.light}" opacity=".45"/>
+             <g fill="#fff" opacity=".5">${[0,1,2,3,4,5,6,7,8,9,10,11].map(i=>{
+               const deg=i*30, a=deg*Math.PI/180;
+               const x=(50+Math.cos(a)*22).toFixed(1), y=(60+Math.sin(a)*15).toFixed(1);
+               return `<ellipse cx="${x}" cy="${y}" rx="6.5" ry="2" transform="rotate(${deg} ${x} ${y})"/>`;
+             }).join('')}</g>
+             <ellipse cx="50" cy="60" rx="6" ry="6" fill="#fff" opacity=".8"/>`,
     face:{x:50,y:58,s:.94}, feet:1, tail:1},
 
   berry:{name:'블루베리', w:32, top:22,
@@ -1258,13 +1263,25 @@ const SHAPES={
     deco:c=>`<circle cx="50" cy="57" r="19" fill="${c.light}" opacity=".4"/>`,
     face:{x:50,y:57,s:.92}, feet:0, tail:0},
 
-  comet:{name:'별똥별', w:30, top:22, grp:1,
-    /* 동그란 머리 뒤로 꼬리가 길게 날린다 — 왼쪽 위로 흐르게 두면 얼굴을 가리지 않는다 */
-    body:f=>`<g ${f}><circle cx="58" cy="60" r="27"/><path d="M40 44 L6 12 q3 27 24 45 z"/></g>`,
-    ears:c=>`<path d="M48 36 L42 19 L60 30 Z" fill="${c.base}"/><path d="M74 38 L86 24 L82 44 Z" fill="${c.base}"/>`,
-    deco:c=>`<g fill="${c.light}" opacity=".8"><circle cx="26" cy="30" r="3.2"/><circle cx="16" cy="20" r="2.2"/>
-             <circle cx="34" cy="42" r="2.4"/></g>`,
-    face:{x:58,y:60,s:.92}, feet:0, tail:0},
+  /* 🌌 은하 — 예전에는 「별똥별」이라고 동그란 머리 옆에 뾰족한 파편이 하나 붙어 있었다.
+     몸이 오른쪽으로 치우쳐 있고 귀가 서로 다른 삼각형이라 「왜 저렇게 생겼지」 소리를 들었다.
+     가운데를 맞추고, 소용돌이 팔 두 가닥을 좌우 대칭으로 감아 은하답게 다시 그렸다. */
+  galaxy:{name:'은하', w:31, top:20, grp:1,
+    body:f=>{
+      /* 팔 한 가닥을 그리고 180° 돌려 반대쪽에 한 번 더 — 그래야 소용돌이가 균형이 맞는다 */
+      const arm='M73 41 q18 3 23 19 q4 13 -8 19 q7 -14 -1 -25 q-7 -9 -20 -11 z';
+      return `<g ${f}><circle cx="50" cy="57" r="28"/>
+        <path d="${arm}"/><path d="${arm}" transform="rotate(180 50 57)"/></g>`;
+    },
+    ears:c=>`<ellipse cx="30" cy="33" rx="9.5" ry="8.5" fill="${c.base}" transform="rotate(-22 30 33)"/>
+             <ellipse cx="70" cy="33" rx="9.5" ry="8.5" fill="${c.base}" transform="rotate(22 70 33)"/>
+             <circle cx="30" cy="33" r="4.3" fill="${c.cheek}"/><circle cx="70" cy="33" r="4.3" fill="${c.cheek}"/>`,
+    /* 얼굴을 가리지 않게 소용돌이 결은 바깥쪽으로만, 별은 팔이 지나가는 자리에 */
+    deco:c=>`<g fill="none" stroke="${c.light}" stroke-width="3.2" stroke-linecap="round" opacity=".5">
+               <path d="M68 39 q15 11 11 25"/><path d="M32 75 q-15 -11 -11 -25"/></g>
+             ${_star(89,45,4.4,'#fff','none')}${_star(11,69,4.4,'#fff','none')}
+             ${_star(76,87,2.8,'#fff','none')}${_star(22,87,2.6,'#fff','none')}`,
+    face:{x:50,y:57,s:.95}, feet:0, tail:0},
 
   waffle:{name:'와플', w:34, top:24,
     body:f=>`<rect x="15" y="31" width="70" height="58" rx="12" ${f}/>`,
@@ -1621,7 +1638,7 @@ const ANCHOR={
   yam   :{hat:{x:54,y:22,s:.78},   hand:{x:80,y:76}},
   arch  :{hat:{x:50,y:52,s:.7},    hand:{x:80,y:82}},
   sun   :{hat:{x:50,y:24,s:.68},   hand:{x:82,y:80}},
-  comet :{hat:{x:58,y:28,s:.76},   hand:{x:80,y:76}},
+  galaxy:{hat:{x:50,y:25,s:.78},   hand:{x:80,y:82}},
   waffle:{hat:{x:50,y:20},         hand:{x:84,y:74}},
   wedge :{hat:{x:50,y:26,s:.82},   hand:{x:80,y:74}},
   /* 특별 햄쮜 — 토끼·고양이는 귀가 있어서 모자를 머리 위가 아니라 귀 사이에 얹는다 */
@@ -1974,7 +1991,7 @@ const FLAVORS=[
  {k:'waffle',  n:'와플',       c:'#e6b06a', c2:'#f7d9ab', lv:17,shape:'waffle', color:'honey',  hn:'와플쮜'},
  {k:'cheese',  n:'치즈케이크', c:'#f7dd9e', c2:'#fff4d6', lv:17,shape:'wedge',  color:'cream',  hn:'치즈케이크쮜'},
  {k:'golden',  n:'황금',       c:'#ffd14e', c2:'#fff0b8', lv:18,shape:'sun',   color:'gold',   hn:'황금쮜',   top:220},
- {k:'galaxy',  n:'은하',       c:'#7a6ab8', c2:'#cbaaf2', lv:20,shape:'comet',   color:'lav',    hn:'은하쮜',   top:340},
+ {k:'galaxy',  n:'은하',       c:'#7a6ab8', c2:'#cbaaf2', lv:20,shape:'galaxy',  color:'lav',    hn:'은하쮜',   top:340},
  /* ---- 🍰 두 번째 진열장 (Lv.21~40) — 통 50가지를 다 모은 뒤에 열린다.
     값이 훨씬 비싸다. 여기서부터는 코인이 「남아도는 것」이 아니라 「모아서 쓰는 것」이 된다. ---- */
  {k:'donut',   n:'도넛',       c:'#e8a86a', c2:'#f7d5ae', lv:21,shape:'donut',    color:'honey',  hn:'도넛쮜'},
@@ -2520,13 +2537,20 @@ const MAIL_ACT_TPL={
     k=>`케이크보다 더 좋은 건<br>같이 있어준 <b>${daysWith(k)}일</b>이에요 💗`,
     k=>`앞으로도 계속 함께 있어줄 거죠?<br>나는 그럴 거예요 👑`
   ],
-  /* 🎫「찌돌의 편지」 쿠폰으로 한꺼번에 부쳐지는 편지들 */
+  /* 🎫「찌돌의 편지」 쿠폰으로 한꺼번에 부쳐지는 편지들.
+     한 번에 다섯 통이 나가므로 문구가 넉넉해야 한다 — 다섯 통이 다 같은 글이면
+     「억지로 써서 서로 베꼈나 봐」 소리를 듣는다. 열 가지에서 겹치지 않게 골라 쓴다. */
   gift:[
     k=>`찌돌이가 우체통을 통째로 들고 왔어요!<br>나도 얼른 한 장 써서 넣었답니다 💌`,
     k=>`오늘 우체부 아저씨가 아주 바빴대요.<br>편지가 이렇게 많은 건 처음이에요! 📮`,
     k=>`무슨 말을 쓸까 한참 고민했어요.<br>… <b>그냥 고마워요!</b> 이게 제일 하고 싶은 말이에요 💗`,
     k=>`찌돌이가 「같이 편지 쓰자」고 해서<br>다 같이 책상에 앉아 썼어요 ✏️`,
-    k=>`봉투에 <b>${nameOf(k)}</b> 라고 또박또박 적었어요.<br>잘 도착했나요? 🥰`
+    k=>`봉투에 <b>${nameOf(k)}</b> 라고 또박또박 적었어요.<br>잘 도착했나요? 🥰`,
+    k=>`나는 <b>${favToyLabel(k)}</b> 이야기를 썼어요.<br>다른 친구들은 뭐라고 썼을까요? 궁금해요 👀`,
+    k=>`글씨가 삐뚤빼뚤해서 미안해요.<br>손이 작아서 연필이 자꾸 미끄러지거든요… ✏️💦`,
+    k=>`우표를 붙이다가 풀을 너무 많이 발랐어요.<br>봉투가 끈적하면 그건 제 탓이에요 🙈`,
+    k=>`${FL[k]?'<b>'+FL[k].n+'</b> 통 친구들끼리':'우리끼리'} 누가 제일 잘 쓰나 겨뤘는데,<br>제가 제일 오래 걸렸어요 😅`,
+    k=>`우리 <b>${daysWith(k)}일</b>째죠?<br>그 이야기를 쓰다 보니 편지가 길어졌어요 💗`
   ]
 };
 /* 편지가 왜 왔는지 한 줄로 — 아이가 「내가 한 일 때문에 왔구나」를 알아채게 */
@@ -2555,11 +2579,24 @@ function mailWho(){
   const fresh=pool.filter(k=>k!==last);
   return pick(fresh.length?fresh:pool);
 }
+/* 문구 고르기 — 최근에 쓴 문구는 빼고 고른다.
+   그냥 무작위로 뽑으면 쿠폰으로 다섯 통이 한꺼번에 갈 때 같은 글이 여러 장 나온다.
+   아이는 그걸 바로 알아채고 「서로 베꼈나 봐」 하고 서운해한다. */
+function mailIdx(pool,r){
+  const recent=[], keep=pool.length-1;
+  for(const m of S.mail){                       /* S.mail 은 최신이 앞 */
+    if((m.r||'')===r){ recent.push(m.i); if(recent.length>=keep) break; }
+  }
+  const free=[];
+  for(let i=0;i<pool.length;i++) if(recent.indexOf(i)<0) free.push(i);
+  return pick(free.length?free:pool.map((_,i)=>i));
+}
 /* 편지 한 통을 우체통에 넣는다. r 이 있으면 「마음 편지」 */
 function mailPush(k,r){
   if(!k||!S.dex[k]) return false;
-  const pool=(r&&MAIL_ACT_TPL[r])||MAIL_TPL;
-  S.mail.unshift({k, t:Date.now(), i:ri(0,pool.length-1), r:r||'', got:0});
+  const rr=r||'';
+  const pool=(rr&&MAIL_ACT_TPL[rr])||MAIL_TPL;
+  S.mail.unshift({k, t:Date.now(), i:mailIdx(pool,rr), r:rr, got:0});
   S.mail=S.mail.slice(0,MAIL_MAX);
   S.mailT=Date.now();
   return true;
@@ -2841,6 +2878,22 @@ function load(){
     if(typeof S.mailT!=='number') S.mailT=0;
     S.mail=S.mail.filter(m=>m && S.dex[m.k]).slice(0,MAIL_MAX);   /* 없어진 햄쮜의 편지는 지운다 */
     S.mail.forEach(m=>{ if(typeof m.r!=='string') m.r=''; });      /* 옛 편지는 「배달 편지」로 본다 */
+    /* 💌 문구를 무작위로만 고르던 때 우체통에 쌓인 「똑같은 편지」를 흩어준다.
+       쿠폰으로 다섯 통이 한꺼번에 온 아이는 다섯 장이 다 같은 글이었다. 한 번만 고쳐주면 된다. */
+    (()=>{
+      const seen={};
+      S.mail.forEach(m=>{
+        const pool=(m.r&&MAIL_ACT_TPL[m.r])||MAIL_TPL;
+        const used=seen[m.r]=seen[m.r]||[];
+        if(used.length>=pool.length) used.length=0;
+        if(!(m.i>=0 && m.i<pool.length) || used.indexOf(m.i)>=0){
+          const free=[];
+          for(let i=0;i<pool.length;i++) if(used.indexOf(i)<0) free.push(i);
+          if(free.length) m.i=pick(free);
+        }
+        used.push(m.i);
+      });
+    })();
     if(!S.err || typeof S.err!=='object') S.err={d:'', t:[], got:0};
     if(!Array.isArray(S.err.t)) S.err.t=[];
     if(typeof S.errAll!=='number') S.errAll=0;
@@ -4486,7 +4539,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-08-25d';
+const NEWS_VER='2026-08-25e';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
