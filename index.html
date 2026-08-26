@@ -2343,24 +2343,13 @@ function buildHamSVG(h){
 
   g+=`<ellipse cx="${fx}" cy="${fy+9*s}" rx="${14*s}" ry="${10*s}" fill="${c.light}"/>`;
   /* 😊 표정 — 그 아이한테 방금 무슨 일이 있었는지가 얼굴에 그대로 나온다.
-     ✨초롱초롱(하트 만점) · 😊웃는 눈(방금 놀아줌) · 😴감은 눈(낮잠) · 😋오물오물(간식). */
+     😊웃는 눈(방금 놀아줌) · 😴감은 눈(낮잠) · 😋오물오물(간식). */
   const er=4.8*s, ex=10.5*s, m=h.mood||'';
-  /* 하트를 다 채운 아이는 볼이 더 발그레하다 */
-  const ck=(m==='love')?{o:'.95', r:6.8} : {o:'.7', r:6};
-  g+=`<ellipse cx="${fx-21*s}" cy="${fy+8*s}" rx="${ck.r*s}" ry="${3.6*s}" fill="${c.cheek}" opacity="${ck.o}"/>
-      <ellipse cx="${fx+21*s}" cy="${fy+8*s}" rx="${ck.r*s}" ry="${3.6*s}" fill="${c.cheek}" opacity="${ck.o}"/>`;
+  g+=`<ellipse cx="${fx-21*s}" cy="${fy+8*s}" rx="${6*s}" ry="${3.6*s}" fill="${c.cheek}" opacity=".7"/>
+      <ellipse cx="${fx+21*s}" cy="${fy+8*s}" rx="${6*s}" ry="${3.6*s}" fill="${c.cheek}" opacity=".7"/>`;
 
   const arc=(cx,dy,down)=>`<path d="M${cx-er} ${fy+dy} q${er} ${down?er*1.25:-er*1.4} ${er*2} 0"/>`;
-  if(m==='love'){
-    /* ✨ 하트를 다 채운 아이 — 눈을 하트로 바꿔 봤더니 오히려 안 귀여웠다.
-       눈은 그대로 두고 조금 크게, 반짝임을 두 개 넣어 「초롱초롱」하게 만든다. */
-    const lr=er*1.16;
-    g+=`<circle cx="${fx-ex}" cy="${fy}" r="${lr}" fill="#3d3450"/><circle cx="${fx+ex}" cy="${fy}" r="${lr}" fill="#3d3450"/>
-        <circle cx="${fx-ex-1.5*s}" cy="${fy-2.1*s}" r="${2.2*s}" fill="#fff"/>
-        <circle cx="${fx+ex-1.5*s}" cy="${fy-2.1*s}" r="${2.2*s}" fill="#fff"/>
-        <circle cx="${fx-ex+2.2*s}" cy="${fy+2.2*s}" r="${1.15*s}" fill="#fff" opacity=".85"/>
-        <circle cx="${fx+ex+2.2*s}" cy="${fy+2.2*s}" r="${1.15*s}" fill="#fff" opacity=".85"/>`;
-  }else if(m==='sleep'){
+  if(m==='sleep'){
     /* 아래로 휜 선 두 개 = 감은 눈 */
     g+=`<g stroke="#3d3450" stroke-width="${2.3*s}" fill="none" stroke-linecap="round">
           ${arc(fx-ex,0,true)}${arc(fx+ex,0,true)}</g>`;
@@ -2380,7 +2369,7 @@ function buildHamSVG(h){
     /* 오물오물 — 볼록한 입에 혀 한 점 */
     g+=`<path d="M${fx-6*s} ${fy+10.5*s} q${6*s} ${6.5*s} ${12*s} 0 q${-6*s} ${2.4*s} ${-12*s} 0 z" fill="${c.dark}" opacity=".6"/>
         <ellipse cx="${fx}" cy="${fy+13*s}" rx="${2.6*s}" ry="${1.7*s}" fill="#f19aae"/>`;
-  }else if(m==='happy'||m==='love'){
+  }else if(m==='happy'){
     /* 활짝 웃는 입 */
     g+=`<path d="M${fx-7.5*s} ${fy+10*s} q${7.5*s} ${8*s} ${15*s} 0"
               stroke="${c.dark}" stroke-width="${2.2*s}" fill="none" stroke-linecap="round"/>`;
@@ -2784,7 +2773,10 @@ function moodOf(k){
   const e=_mood.get(k);
   if(e) return e.m;
   if(napLeft()) return 'sleep';             /* 😴낮잠 — 다 같이 쿨쿨 */
-  if(hearts(k)>=5) return 'love';           /* 💗하트를 꽉 채운 아이는 늘 하트 눈 */
+  /* 💗하트를 꽉 채운 아이에게 특별한 얼굴을 준 적이 있다 — 처음엔 하트 눈, 그다음엔
+     초롱초롱한 눈(큰 눈 + 반짝임 둘 + 진한 볼터치 + 활짝 웃는 입). 둘 다 아이가
+     「전보다 별로」라고 해서 되돌렸다. 하트를 다 채워도 얼굴은 평소 그대로다.
+     다시 넣고 싶어지면 여기서 'love' 를 돌려주고 buildHamSVG 에 가지를 만들면 된다. */
   return '';
 }
 /* 그 아이 그림만 살짝 갈아끼운다 — 화면을 통째로 다시 그리면 폴짝 뛰던 게 끊긴다 */
@@ -4326,8 +4318,8 @@ function addBond(k,v,kind){
   const up=hearts(k)>b0;
   if(up){
     addExp(8); sfx('star4'); checkBadges();
-    /* 하트를 다 채운 순간은 특별하게 — 이때부터 눈이 하트가 된다는 걸 알려준다 */
-    if(hearts(k)>=5) toast(`💗 ${ega(nameOf(k))} 하트를 <b>다 채웠어요!</b> 눈이 초롱초롱해졌어요 🥰`);
+    /* 하트를 다 채운 순간은 특별하게 — 이제부터 넘치는 사랑이 🍒토핑이 된다는 걸 알려준다 */
+    if(hearts(k)>=5) toast(`💗 ${ega(nameOf(k))} 하트를 <b>다 채웠어요!</b> 이제 더 놀아주면 🍒토핑이 쌓여요 🥰`);
     else toast(`💗 ${wagwa(nameOf(k))} 더 친해졌어요! 하트 ${hearts(k)}개 — 코인을 더 많이 물어와요`);
     faceRefresh(k);                /* 😊 얼굴이 바뀌었으니 그림도 갈아끼운다 */
     mailAct(k,'heart',0.35);       /* 💌 기뻐서 편지를 쓴다 */
@@ -5520,7 +5512,7 @@ function openHelp(){
     ['🎲','뜰 때마다 달라요','통이 정하는 건 <b>모양과 색</b>. <b>무늬와 ⭐개수</b>는 뜰 때마다 달라요. ⭐는 <b>1개부터 5개</b>까지 — ⭐4·⭐5는 온몸이 반짝반짝해요. 통 '+NTUB+'가지의 모양·색 조합은 <b>전부 서로 달라요.</b> 도감에는 <b>가장 좋은 것만</b> 남아요.'],
     ['🏠','나온 햄쮜와 놀기','🏠놀이방에 햄쮜를 앉히고 <b>쓰담쓰담·토핑·공놀이·비눗방울</b>로 놀아주세요. 놀아주면 <b>코인</b>이 모이고, 그 코인으로 또 아이스크림을 뜨면 됩니다.'],
     ['💗','친해지기','놀아줄수록 💗하트가 차요(최대 5개). 하트가 늘면 <b>코인을 더 많이</b> 물어오고, 저절로 모이는 코인도 늘어요.'],
-    ['😊','햄쮜 표정을 보세요','햄쮜는 <b>기분에 따라 얼굴이 달라져요.</b><br>✨ <b>초롱초롱한 눈</b> — 하트를 <b>다 채운 아이</b>는 눈이 반짝반짝하고 볼도 발그레해져요<br>😊 <b>웃는 눈</b> — 방금 놀아준 뒤 잠깐<br>😋 <b>오물오물</b> — 🍒토핑을 받아 먹는 중<br>😴 <b>감은 눈</b> — 😴낮잠 자는 동안<br>말풍선도 그 아이가 <b>좋아하는 놀이·함께한 날·오늘 날씨</b>에 맞춰 바뀐답니다.'],
+    ['😊','햄쮜 표정을 보세요','햄쮜는 <b>기분에 따라 얼굴이 달라져요.</b><br>😊 <b>웃는 눈</b> — 방금 놀아준 뒤 잠깐<br>😋 <b>오물오물</b> — 🍒토핑을 받아 먹는 중<br>😴 <b>감은 눈</b> — 😴낮잠 자는 동안<br>말풍선도 그 아이가 <b>좋아하는 놀이·함께한 날·오늘 날씨</b>에 맞춰 바뀐답니다.'],
     ['👗','예쁘게 꾸미기','🛒상점에서 <b>꾸미기 소품</b>을 사고, 🏠놀이방의 <b>「👗 햄쮜 꾸미기」</b> 를 누르면 <b>가진 햄쮜 전부</b>가 나와요 — 누구든 골라서 입힐 수 있어요. 리본·왕관·풍선 '+WEAR_SLOTS.reduce((a,s)=>a+Object.keys(WEAR[s].items).length,0)+'가지! 한 번 사면 <b>모두가 돌려 입어요</b>. 🏆꾸미기 대회에서도 쓰여요.'],
     ['✏️','이름 지어주기','새 햄쮜가 나오면 <b>내가 이름을 지어줄 수 있어요.</b> 나중에 👗꾸미기 → ✏️이름 바꾸기 로 바꿀 수도 있어요.'],
     ['🏅','스티커 모으기','📖도감의 <b>스티커판</b>에 '+BADGES.length+'장을 붙일 수 있어요. 스티커를 받으면 🍒토핑도 같이 와요.'],
