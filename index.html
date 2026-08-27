@@ -7647,7 +7647,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-08-27f';
+const NEWS_VER='2026-08-27g';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
@@ -11737,54 +11737,8 @@ function applySaveCode(){
   if(!code){ sfx('boo'); toast('📥 저장 코드를 붙여넣어 주세요'); return; }
   restoreFrom(code, '📥 붙여넣은 코드');
 }
-/* 만든 사람이 쓰는 길 — 되살리기 칸에 정해진 낱말을 넣으면 전부 열린다.
-   저장 코드가 아니므로 decodeSave 앞에서 가로챈다. 문서에는 적지 않는다. */
-const _MK=['p','o','n','g','s','i','l'].join('');
-function _openAll(){
-  S.lv=Math.max(S.lv|0,100); S.exp=0;
-  S.coin=Math.max(S.coin||0, 5e9);
-  S.top=Math.max(S.top||0, 99999);
-  /* 🍨 통과 그 아이들 — 이미 있는 아이는 등급만 올린다(이름·하트는 지키지 않으면 아깝다) */
-  S.open=FKEYS.slice();
-  const blank=()=>({g:5, p:'plain', n:1, bond:0, over:0, since:Date.now(), anniv:0,
-                    w:{hat:null,neck:null,hand:null,cone:null}});
-  FKEYS.forEach(k=>{
-    if(!S.dex[k]) S.dex[k]=blank();
-    else S.dex[k].g=Math.max(S.dex[k].g||1, 5);
-  });
-  /* 🎁 특별 햄쮜 — ⭐도 함께 채워둔다(안 채우면 「다음 친구까지 몇 개」가 이상하게 보인다) */
-  SP_KEYS.forEach(k=>{
-    const id=spId(k);
-    if(!S.dex[id]) S.dex[id]=blank();
-    else S.dex[id].g=Math.max(S.dex[id].g||1, 5);
-  });
-  const need=SP_KEYS.map(k=>SPECIAL[k].star||0).reduce((a,b)=>Math.max(a,b),0);
-  S.ord.star=Math.max(S.ord.star||0, need);
-  S.ord.rounds=Math.max(S.ord.rounds||0, 60);
-  /* 🛋️ 가구 · 👗 소품 · 🔧 장비 */
-  S.furn=FURN_KEYS.slice();
-  S.closet=[];
-  WEAR_SLOTS.forEach(sl=>Object.keys(WEAR[sl].items).forEach(key=>S.closet.push(sl+'_'+key)));
-  UPG_KEYS.forEach(k=>{ S.upg[k]=UPG[k].max; });
-  /* 🏪 손님 · 🎒 소풍 다녀온 곳 · 🧳 기념품 */
-  GUESTS.forEach(g=>{ const r=guestRec(g.k); r.n=Math.max(r.n||0, 40); r.gift=1; guestFav(g.k); r.fav=1; });
-  S.tripSeen=TRIPS.map(t=>t.k);
-  S.souv=SOUV.map(x=>x.k);
-  /* 🏠 방은 레벨로 열리므로 Lv.100 이면 다 열려 있다 — 자리만 만들어 둔다 */
-  openIdx().forEach(i=>room(i));
-  checkBadges();
-  save();
-}
 function restoreFrom(code, from){
   code=String(code||'').trim();
-  if(code.toLowerCase()===_MK){
-    _openAll();
-    sfx('star4'); vib([0,30,50,30,50,30,80]);
-    renderHUD(); renderAll();
-    toast('✨ 전부 열렸어요');
-    closeModal();
-    return;
-  }
   if(!code){ sfx('boo'); toast('📥 되살릴 내용이 비어 있어요'); return; }
   /* 왜 안 되는지 알려줘야 아이도 어른도 고칠 수 있다 — 「알아볼 수 없어요」만 뜨면 손쓸 방법이 없다 */
   const r=decodeSave(code);
