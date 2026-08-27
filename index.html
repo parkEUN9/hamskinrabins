@@ -58,9 +58,12 @@ header{margin-bottom:7px}
 }
 /* 헤더 버튼은 아이 손가락 기준으로 38px 은 넘긴다 (특히 🎁선물상자는 자주 누른다) */
 .brand .lv{
-  margin-left:auto;font-size:10.5px;font-weight:700;background:var(--card);border:2px solid var(--line);
+  margin-left:auto;font-size:10.5px;font-weight:700;border:2px solid var(--line);
   border-radius:11px;padding:0 6px;min-height:34px;display:flex;align-items:center;
-  cursor:pointer;white-space:nowrap;flex:none
+  cursor:pointer;white-space:nowrap;flex:none;position:relative;overflow:hidden;
+  /* 다음 레벨까지 얼마나 왔는지 칩 안이 차오른다 — 「오르고 있다」가 눈에 보여야 한다 */
+  background:linear-gradient(90deg,#ffdcae 0 var(--p,0%),var(--card) var(--p,0%) 100%);
+  transition:background .3s
 }
 .brand .hbtn{
   width:34px;height:34px;flex:none;border-radius:11px;background:var(--card);border:2px solid var(--line);
@@ -3007,7 +3010,11 @@ function gradeW(){
   return {1:Math.max(20,58.4-bonus-glit), 2:28,
           3:11+bonus*0.72, 4:2.2+bonus*0.24+glit*0.72, 5:0.4+bonus*0.04+glit*0.28};
 }
-function expNeed(lv){ return Math.floor(60*Math.pow(lv,1.3)); }
+/* ⚠️ 1.3 승은 뒤로 갈수록 너무 가팔라서, Lv.30 을 넘으면 하루를 꼬박 놀아도
+   눈금이 거의 안 움직였다 — 아이 말: 「가게 레벨이 잘 안 올라」.
+   1.18 승으로 눕히고 밑값도 60→45 로 내린다.
+   ⚠️ 모아둔 S.exp 는 그대로라, 고친 뒤 처음 켜면 한꺼번에 몇 레벨이 오른다(선물로 친다). */
+function expNeed(lv){ return Math.floor(45*Math.pow(lv,1.18)); }
 function dexCount(){ return Object.keys(S.dex).filter(isTub).length; }
 /* ▶ 처음부터 가지고 있는 통 넷 — 값이 없는 통은 이 넷뿐이다 */
 const FREE_TUBS=['vanilla','straw','choco','milk'];
@@ -3221,6 +3228,7 @@ function tripDone(i){
   const t=tripOf(tr.k), who=(tr.who||[]).filter(k=>S.dex[k]);
   const pay=tripPay(t, who.length||1);
   S.coin+=pay.coin; S.top+=pay.top;
+  addExp(playExp(12*Math.max(1,who.length)));
   S.stats.trip=(S.stats.trip||0)+1;
   if(!Array.isArray(S.tripSeen)) S.tripSeen=[];
   if(S.tripSeen.indexOf(t.k)<0) S.tripSeen.push(t.k);
@@ -3309,6 +3317,7 @@ function makeWish(){
   const coin=Math.round((400+S.lv*220)*(1+dexCount()*0.04));
   const top=2+Math.floor(S.lv/12);
   S.coin+=coin; S.top+=top;
+  addExp(playExp(16));
   S.stats.wish=(S.stats.wish||0)+1;
   const list=seatHams();
   _mailing=true;
@@ -3410,21 +3419,27 @@ const SPECIAL={
   /* 🫧퐁실쮜만 ⭐가 아니라 🎁선물상자에서 온다 — ⭐를 아주 오래 모아야 하는 다른 아이들과 달리
      운으로 「어느 날 갑자기」 오는 친구가 하나쯤 있는 게 재미있다. */
   foam   :{hn:'퐁실쮜',  shape:'foam',    color:'aqua',  c:'#dff4f7', gift:1,    g:4, em:'🫧', pers:'shy',
+           bd:{m:3,d:16},
            d:'퐁실이가 갑자기 햄쮜가 되어버렸어요!'},
   /* 👼천사쮜까지 다 모은 뒤에 오는 둘. ⭐값이 크게 뛰므로 아주 오래 걸리는 목표다. */
   rock   :{hn:'돌쮜',    shape:'rock',    color:'coal',  c:'#c8c4cc', star:215, g:5, em:'🪨', pers:'brave',
+           bd:{m:2,d:26},
            d:'가게 앞에 굴러온 돌인 줄 알았는데 눈을 떴어요'},
   dream  :{hn:'꿈나라쮜',shape:'dream',   color:'lav',   c:'#d8d2f7', star:270, g:5, em:'🌙', pers:'dreamer',
            d:'잠든 아이의 꿈속에서 구름을 타고 건너온 친구예요'},
   /* 👒👑 넷이 한 줄로 이어지는 「높으신 분」들 — 꿈나라쮜 다음의 아주 먼 목표다.
      ⭐ 간격을 점점 넓혀서, 뒤로 갈수록 더 귀한 친구가 되게 했다. */
   lady   :{hn:'숙녀쮜',  shape:'lady',    color:'plum',  c:'#e6c6de', star:330, g:5, em:'👒', pers:'fancy',
+           bd:{m:2,d:26},
            d:'차 마시러 들렀다가 아이스크림에 반해 눌러앉았어요'},
   princess:{hn:'공주쮜', shape:'princess',color:'rose',  c:'#ffd0e2', star:400, g:5, em:'👸', pers:'dreamer',
+           bd:{m:2,d:26},
            d:'성에서 몰래 나와 우리 가게 줄에 조용히 서 있었어요'},
   king   :{hn:'왕쮜',    shape:'king',    color:'gold',  c:'#ffe6a0', star:490, g:5, em:'👑', pers:'foodie',
+           bd:{m:2,d:26},
            d:'나라에서 제일 맛있는 아이스크림을 찾아 직접 왔대요'},
   emperor:{hn:'황제쮜',  shape:'emperor', color:'lav',   c:'#ded0f7', star:600, g:5, em:'🫅', pers:'brave',
+           bd:{m:2,d:26},
            d:'온 나라 아이스크림을 다 먹어봤는데 여기가 제일이래요'}
 };
 const SP_KEYS=Object.keys(SPECIAL);
@@ -3578,6 +3593,7 @@ function freshState(){
     story:{d:'', k:'', p:''},     // 📖 오늘의 이야기 (마지막 날, 이야기 열쇠, 고른 갈래)
     pb:{},                       // 👯 단짝 — '열쇠a|열쇠b' -> 0~100
     giftAt:0, giftP:0, newsSeen:'',
+    mixDay:'',                    // 💞 짝꿍을 마지막으로 만든 날 (하루 한 마리)
     mail:[], mailD:'', mailN:0, mailA:0, mailT:0,
                                   // 💌 받은 편지 · 마지막으로 센 날 · 오늘 온 배달 편지 수 · 마음 편지 수 · 마지막 편지 시각
     stats:{scoop:0, pet:0, best4:0, best5:0, re:0, story:0, party:0},
@@ -3923,6 +3939,7 @@ function storyPick(key){
   S.story={d:todayKey(), k:st.k, p:key};
   S.coin=Math.max(0, S.coin+pay.coin);
   S.top=Math.max(0, S.top+pay.top);
+  addExp(playExp(18));
   /* 그 자리에 있던 아이들에게 마음이 간다 */
   const here=(seatHams().length?seatHams():own).slice(0,6);
   _mailing=true;
@@ -3975,6 +3992,7 @@ function openGift(){
   const coin=Math.ceil((50+S.lv*28)*(1+dexCount()*0.1));
   const top=Math.random()<0.4?ri(1,2):0;
   S.coin+=coin; S.top+=top;
+  addExp(playExp(8));
   const sp=giftSpRoll();
   sfx('gift'); vib([0,30,50,30]); save(); renderHUD(); renderView();
   openModal(`<h2>🎁 선물상자<span class="x" onclick="closeModal()">닫기</span></h2>
@@ -4022,7 +4040,58 @@ function annivKeys(){ return Object.keys(S.dex).filter(k=>annivDue(k)); }
    늘 같은 날이고, 낡은 저장에도 그냥 생긴다. 29~31일은 쓰지 않는다(달마다 없는 날이 생긴다).
    102마리가 336일에 흩어지므로 사나흘에 한 번쯤 생일이 돌아온다 — 기다릴 만한 간격이다.
 ================================================================== */
+/* 🎂 생일 나눠주기 ------------------------------------------------
+   전에는 열쇠를 해시해서 정했다. 그랬더니 <b>같은 날에 셋이 몰리고</b>, 대신
+   닷새 내리 아무 생일도 없는 자리가 생겼다 — 아이가 찾아냈다:
+   「오늘부터 5일 뒤까지 없고 7일 뒤에는 생일이 3명이나 있어」.
+   이제 <b>도감 순서대로 하루씩 다른 날</b>을 나눠 준다.
+   · 저절로 정해지는 아이들끼리는 <b>하나도 안 겹친다</b>.
+   · 제일 긴 빈 자리가 <b>나흘</b>이다 — 어느 날에 봐도 나흘 안에 누군가의 생일이 온다.
+   · 새 햄쮜를 <b>목록 끝에</b> 더하면 그 다음 빈 날을 저절로 가져간다(손댈 것이 없다).
+   ⚠️ 새 통을 목록 <b>가운데</b>에 끼워 넣으면 뒤쪽 아이들의 생일이 한 칸씩 밀린다.
+      저장하는 값이 아니라 게임이 깨지지는 않지만 아이는 「생일이 바뀌었네」 한다.
+      <b>새 통·새 특별 햄쮜는 반드시 목록 끝에 더한다.</b>
+   ⚠️ 2월 29일은 안 쓴다 — 사 년에 한 번만 오는 생일은 아이한테 서운하다.
+   ⚠️ 사용자가 정해준 생일(🫧퐁실쮜 3/16 · 🪨👒👸👑🫅 2/26)은 <b>그대로 둔다</b>.
+      그 다섯이 같은 날인 것은 일부러 그렇게 한 것이다. */
+const BDAY_DIM=[31,28,31,30,31,30,31,31,30,31,30,31];
+const BDAY_MD=(()=>{ const o=[];
+  for(let m=0;m<12;m++) for(let d=1;d<=BDAY_DIM[m];d++) o.push({m:m+1,d});
+  return o; })();
+const BDAY_START='8/29';   /* 여기서부터 나눠 준다 */
+const BDAY_ROW=3;          /* 처음 넷은 하루씩 내리 — 시작하는 며칠에 생일이 이어진다 */
+const BDAY_STEP=4;         /* 그 뒤로는 나흘씩 건너뛴다 (남은 날 수와 서로소여야 골고루 퍼진다) */
+const BDAY_MAP=(()=>{
+  const map={}, taken={}, key=b=>b.m+'/'+b.d;
+  /* ① 정해준 생일이 먼저 자리를 잡는다 */
+  SP_KEYS.forEach(k=>{ const b=SPECIAL[k].bd;
+    if(b){ map[spId(k)]={m:b.m,d:b.d}; taken[key(b)]=1; } });
+  /* ② 남은 날들을 8월 29일부터 한 바퀴 돌며 줄 세운다 */
+  const s0=Math.max(0, BDAY_MD.findIndex(x=>key(x)===BDAY_START));
+  const free=[];
+  for(let i=0;i<BDAY_MD.length;i++){
+    const x=BDAY_MD[(s0+i)%BDAY_MD.length];
+    if(!taken[key(x)]) free.push(x);
+  }
+  /* ③ 도감 순서대로 나흘씩 건너뛰며 나눠 준다.
+     ⚠️ 「전체 마리 수」로 나누면 안 된다 — 새 햄쮜를 하나 더할 때마다
+        <b>이미 있는 아이들의 생일이 전부 밀린다.</b> i번째 아이는 몇 마리가 있든 같은 날. */
+  const who=FKEYS.concat(SP_KEYS.filter(k=>!SPECIAL[k].bd).map(spId));
+  const M=free.length, R=Math.min(BDAY_ROW, M-2), used={};
+  who.forEach((k,i)=>{
+    let j = (i<=R) ? i : (R+1 + ((i-R-1)*BDAY_STEP) % Math.max(1, M-R-1));
+    /* 이미 찬 날이면 그 다음 빈 날로 — 몇 마리가 되든 겹치지 않는다 */
+    for(let n=0; used[j] && n<M; n++) j=(j+1)%M;
+    used[j]=1; map[k]=free[j];
+  });
+  return map;
+})();
 function bdayOf(k){
+  /* 💞짝꿍과 🐣아기는 <b>태어난 날이 곧 생일</b>이다 — 적어둔 날(d.mix.bd)을 먼저 본다.
+     그 다음이 위에서 나눠 준 날. 둘 다 없는 열쇠(옛 짝꿍 등)만 해시로 정한다. */
+  const d = S && S.dex && S.dex[k];
+  const bd = (d && d.mix && d.mix.bd) || BDAY_MAP[k] || null;
+  if(bd && bd.m>=1 && bd.m<=12 && bd.d>=1 && bd.d<=31) return {m:bd.m|0, d:bd.d|0};
   let h=2166136261; const t='bd!'+String(k);
   for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=(h*16777619)>>>0; }
   return {m:(h%12)+1, d:(Math.floor(h/12)%28)+1};
@@ -4177,6 +4246,7 @@ function throwParty(k){
   const coin=Math.round((900+S.lv*420)*(1+dexCount()*0.06)*(cake.coin||1)*(1+who.length*0.08));
   const top=Math.round((8+Math.floor(S.lv/6))*(1+(cake.top||0)*0.12));
   S.coin+=coin; S.top+=top;
+  addExp(playExp(40));
   _mailing=true;
   try{
     d.bond=100;                                   /* 생일인 아이는 하트가 가득 */
@@ -4233,6 +4303,7 @@ function claimAnniv(k){
   const d=S.dex[k];
   d.anniv=a.d;
   S.coin+=a.coin; S.top+=a.top;
+  addExp(playExp(25));
   addBond(k,10);
   mailAct(k,'anniv',0.60);             /* 💌 축하 받은 이야기를 편지로 */
   sfx('gift'); vib([0,30,50,30,50,40]); checkBadges(); save(); renderAll();
@@ -4901,6 +4972,20 @@ const MAIL_ACT_TPL={
             그래서 안 뛰고 사뿐사뿐 걸었는데요…<br>
             아까 딱 한 번 뛰었어요. 아이스크림 나올 때요 🏃💨`
   ],
+  /* 🎂 「생일 축하해 햄쮜들아~」를 듣고 쓴 답장 — 쿠폰으로 오는 편지다 */
+  bdayhi:[
+    (k,m)=>`저 아직 생일 아닌데요…<br>
+            그래도 <b>축하해</b> 소리 들으니까 오늘이 생일 같아요 🎂<br>
+            그래서 그냥 오늘도 생일이라고 할래요. 히히`,
+    (k,m)=>{ const p=mailPalName(m);
+      return `고깔 모자 쓰고 <b>풍선</b>도 들었어요 🎈<br>
+              ${p?`<b>${p}</b>가 저 진짜 파티 가는 애 같대요.`
+                 :'거울 보니까 진짜 파티 가는 애 같아요.'}<br>
+              근데 파티가 어디예요? 저 준비 다 했는데요 🎉`; },
+    (k,m)=>`케이크 초를 <b>제가</b> 불어도 돼요?<br>
+            안 되면 옆에서 후 하는 시늉만 할게요.<br>
+            <b>축하해줘서 고마워요.</b> 저도 축하해요, 우리 다요 💗`
+  ],
   /* 🧳 부산에서 부친 엽서 — 쿠폰으로 오는 편지다 */
   busan:[
     (k,m)=>`여기 <b>부산</b>이에요! 바다가 진짜 컸어요 🌊<br>
@@ -4952,6 +5037,7 @@ const MAIL_WHY={
   pongsil:'🫧 퐁실이가 햄쮜가 된 날 쓴 편지예요',
   lady :'👒 숙녀쮜가 처음 온 날 쓴 편지예요',
   busan:'🌊 부산에서 부친 엽서예요',
+  bdayhi:'🎂 생일 축하 인사를 받고 기뻐서 쓴 편지예요',
   reply:'💌 답장을 받고 기뻐서 쓴 편지예요',
   buddy:'👯 단짝이 생겨서 신나서 쓴 편지예요',
   story:'📖 오늘 있었던 일을 이야기하고 싶어서 쓴 편지예요',
@@ -5087,6 +5173,7 @@ function openMail(i){
     m.coin=Math.ceil((120+S.lv*30)*(1+hearts(m.k)*0.25));
     m.top=Math.random()<0.45?ri(1,2):0;
     S.coin+=m.coin; S.top+=m.top;
+    addExp(playExp(6));
     /* 선물로 오르는 하트까지 편지를 부르면 「편지가 편지를 낳는」 꼴이 된다 — 여기서만 막는다 */
     _mailing=true;
     try{ addBond(m.k,4); } finally{ _mailing=false; }
@@ -5229,6 +5316,13 @@ const COUPONS={
   /* 「햄쮜 운동회」 — 🏆운동회를 기념하는 쿠폰. 상장 대신 받는 상품 한 벌이다.
      🥇메달·🎽머리띠·🚩깃발은 이 쿠폰과 함께 새로 생긴 소품이고,
      `sport:1` 은 오늘 운동회를 한 번 더 열어준다 — 이미 열었어도 다시 열린다. */
+  /* 「생일 축하해 햄쮜들아~」 — 🎂생일을 다 같이 축하하는 쿠폰.
+     방을 파티장으로 꾸밀 것들과 파티 옷 한 벌이 들어 있다.
+     ⚠️ 물결표(~)는 useCoupon 이 지우므로 열쇠에는 넣지 않는다. */
+  '생일축하해햄쮜들아':{em:'🎂', name:'생일 축하해 햄쮜들아', coin:5200, top:36,
+                      wear:['hat_party','neck_bowtie','hand_balloon'],
+                      tub:['cheese'], furn:['cake','ribbon','mobile'],
+                      mail:3, mailR:'bdayhi'},
   '햄쮜운동회':{em:'🏆', name:'햄쮜 운동회', coin:4400, top:31,
                       wear:['neck_medal','hat_hband','hand_flag'],
                       tub:['misu'], furn:['trophy'], sport:1},
@@ -5267,9 +5361,10 @@ function openCoupon(){
 }
 function useCoupon(){
   const i=$('#cp-in');
-  /* 띄어쓰기와 느낌표는 무시한다 — 「쮜돌이는 숙녀!」를 그대로 적어도 찾아온다.
-     ⚠️ 쿠폰 이름에 ! 를 넣지 않는다(넣으면 여기서 지워져 영영 안 맞는다). */
-  const code=(i?String(i.value||''):'').replace(/[\s!！]/g,'');
+  /* 띄어쓰기·느낌표·물결표는 무시한다 — 「쮜돌이는 숙녀!」나
+     「생일 축하해 햄쮜들아~」를 그대로 적어도 찾아온다.
+     ⚠️ 쿠폰 이름(열쇠)에는 ! 나 ~ 를 넣지 않는다 — 여기서 지워져 영영 안 맞는다. */
+  const code=(i?String(i.value||''):'').replace(/[\s!！~～]/g,'');
   if(!code){ sfx('boo'); toast('🎫 쿠폰 번호를 적어주세요'); return; }
   const c=COUPONS[code];
   if(!c){ sfx('boo'); toast('🎫 그런 쿠폰은 없어요 — 번호를 다시 봐주세요'); if(i){ i.value=''; i.focus(); } return; }
@@ -5628,30 +5723,62 @@ function load(){
    그 위로만 통 레벨만큼 얹는다. 안 그러면 Lv.41→65 에
    「제일 싼 통 5만 번 뜨기」가 제일 빠른 길이 되어 버린다 —
    새로 만든 통을 쓸수록 빨라지는 쪽이 맞다. */
+/* 좋은 통일수록 경험이 더 쌓인다 — 새로 산 통을 뜨는 것이 레벨 올리는 지름길이 되게.
+   ⚠️ 전에는 Lv.21 통부터만 줬다. 그래서 처음 스무 레벨 동안은 한 번 뜰 때 5 뿐이라
+   한 레벨에 사백 번씩 떠야 했다. 이제 첫 통부터 통 레벨에 비례해서 준다. */
 function scoopExp(k){
   const f=FL[k];
-  return (f && f.lv>20) ? Math.round((f.lv-20)*1.2) : 0;
+  return f ? Math.round(f.lv*0.9) : 0;
 }
 function addExp(v){
-  S.exp+=v; let up=0;
+  S.exp+=v; const from=S.lv; let up=0;
   while(S.exp>=expNeed(S.lv)){ S.exp-=expNeed(S.lv); S.lv++; up++; }
-  if(up) onLevelUp();
+  if(up) onLevelUp(from, up);
 }
-function onLevelUp(){
-  S.top+=2; sfx('gift');
-  /* 이번 레벨에 <b>새로 열린 것</b>을 전부 모아서 알려준다.
+/* 놀이로 받는 경험치 — 레벨이 오르면 필요한 양도 늘어나니 같이 올려준다.
+   ⚠️ 고정값으로 두면 Lv.40 쯤부터는 하루치 놀이를 다 해도 눈금 한 칸을 못 채운다.
+   ⚠️ 새 놀이를 만들 때는 코인·토핑만 주지 말고 <b>여기도 꼭</b> 부른다 —
+      아이가 제일 많이 하는 놀이가 경험치를 안 주면 레벨이 멈춘 것처럼 보인다. */
+function playExp(base){ return Math.max(1, Math.round(base*(1+S.lv*0.05))); }
+/* ⚠️ 한 번에 <b>여러 레벨</b>이 오를 수 있다 — 큰 놀이를 끝냈을 때, 그리고
+   필요 경험치를 낮춘 날 처음 켰을 때. 그때 S.lv 하나만 보면 <b>지나친 레벨</b>에서
+   열린 통·방·장비가 조용히 넘어가 버린다. 그래서 from~S.lv 구간을 다 훑는다. */
+function onLevelUp(from, up){
+  up   = Math.max(1, up|0);
+  from = (from|0) || (S.lv-up);
+  S.top += 2*up; sfx('gift');
+  /* 이번에 <b>새로 열린 것</b>을 전부 모아서 알려준다.
      전에는 새 통만 말해줘서, 통이 다 열린 Lv.65 뒤로는 레벨업이 조용하기만 했다. */
+  const nw = x => x>from && x<=S.lv;
   const got=[];
-  const tubs=FLAVORS.filter(f=>f.lv===S.lv);
+  const tubs=FLAVORS.filter(f=>nw(f.lv));
   if(tubs.length) got.push(`🍨 새 통 ${eul('<b>'+tubs.map(f=>f.n).join('·')+'</b>')} 상점에`);
-  ROOMS.forEach((r,i)=>{ if(r.lv===S.lv) got.push(`🏠 <b>${r.dn}</b>이 열렸어요`); });
-  UPG_KEYS.forEach(k=>{ if(UPG[k].lv===S.lv) got.push(`${UPG[k].em} <b>${UPG[k].name}</b> 를 살 수 있어요`); });
-  Object.keys(THEMES).forEach(t=>{ if(THEMES[t].lv===S.lv) got.push(`🖼️ 새 배경 <b>${THEMES[t].name}</b>`); });
-  TRIPS.forEach(t=>{ if(t.lv===S.lv) got.push(`${t.em} <b>${t.n}</b> 으로 소풍을 갈 수 있어요`); });
-  toast(`🎉 가게 Lv.${S.lv}! 🍒토핑 +2`+(got.length?'<br>'+got.join('<br>'):''));
+  ROOMS.forEach((r,i)=>{ if(nw(r.lv)) got.push(`🏠 <b>${r.dn}</b>이 열렸어요`); });
+  UPG_KEYS.forEach(k=>{ if(nw(UPG[k].lv)) got.push(`${UPG[k].em} <b>${UPG[k].name}</b> 를 살 수 있어요`); });
+  Object.keys(THEMES).forEach(t=>{ if(nw(THEMES[t].lv)) got.push(`🖼️ 새 배경 <b>${THEMES[t].name}</b>`); });
+  TRIPS.forEach(t=>{ if(nw(t.lv)) got.push(`${t.em} <b>${t.n}</b> 으로 소풍을 갈 수 있어요`); });
+  toast(`🎉 가게 Lv.${S.lv}!${up>1?` <b>${up}단계나</b> 올랐어요!`:''} 🍒토핑 +${2*up}`
+        +(got.length?'<br>'+got.join('<br>'):''));
   /* 뭔가 열린 레벨은 토스트만으로 지나가기 아깝다 — 창으로 한 번 더 보여준다 */
-  if(got.length) setTimeout(()=>openLevelUp(S.lv, got), 700);
+  if(got.length) queueLevelUp(S.lv, got);
   save();
+}
+/* ⚠️ 50번 뜨기 도중에 레벨이 오르면 축하 창이 <b>뜬 결과 창을 덮어버린다</b>.
+   그래서 (1) 여러 번 올라도 하나로 모으고, (2) 열린 창이 닫힐 때까지 기다렸다 연다. */
+let _lvPend=null, _lvTm=0;
+function queueLevelUp(lv, got){
+  if(_lvPend){ _lvPend.lv=lv; _lvPend.got=_lvPend.got.concat(got); }
+  else _lvPend={lv, got:got.slice()};
+  if(_lvTm) return;
+  const tick=()=>{
+    _lvTm=0;
+    if(!_lvPend) return;
+    const veil=$('#veil');
+    if(veil && veil.classList.contains('on')){ _lvTm=setTimeout(tick,700); return; }
+    const q=_lvPend; _lvPend=null;
+    openLevelUp(q.lv, q.got);
+  };
+  _lvTm=setTimeout(tick, 700);
 }
 function openLevelUp(lv, got){
   openModal(`<h2>🎉 가게 Lv.${lv}<span class="x" onclick="closeModal()">닫기</span></h2>
@@ -6152,7 +6279,7 @@ function buyFurn(k,sk){
   if(f.gift){ sfx('boo'); toast(`${f.em} ${f.n}${jong(f.n)?'은':'는'} 📚 동화를 다 읽으면 받아요`); return; }
   if(f.top){ if(S.top<f.top){ sfx('boo'); toast(`🍒 토핑이 ${f.top-S.top}개 더 필요해요`); return; } S.top-=f.top; }
   else{ if(S.coin<f.coin){ sfx('boo'); toast(`🪙 코인이 ${fmt(f.coin-S.coin)} 더 필요해요`); return; } S.coin-=f.coin; }
-  S.furn.push(k); sfx('gift'); addExp(12);
+  S.furn.push(k); sfx('gift'); addExp(playExp(12));
   placeFurn(sk,k);                                  /* 산 자리에 바로 놓아 준다 */
   toast(`🛍️ ${f.em} ${eul('<b>'+f.n+'</b>')} 샀어요!`);
 }
@@ -6316,7 +6443,7 @@ function addBond(k,v,kind){
   }
   const up=hearts(k)>b0;
   if(up){
-    addExp(8); sfx('star4'); checkBadges();
+    addExp(playExp(8)); sfx('star4'); checkBadges();
     /* 하트를 다 채운 순간은 특별하게 — 이제부터 넘치는 사랑이 🍒토핑이 된다는 걸 알려준다 */
     if(hearts(k)>=5) toast(`💗 ${ega(nameOf(k))} 하트를 <b>다 채웠어요!</b> 이제 더 놀아주면 🍒토핑이 쌓여요 🥰`);
     else toast(`💗 ${wagwa(nameOf(k))} 더 친해졌어요! 하트 ${hearts(k)}개 — 코인을 더 많이 물어와요`);
@@ -7265,6 +7392,8 @@ function renderDexTab(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
       <button class="btn w sm" onclick="openAlbum()">📸 사진첩 (${S.album.length}장)</button>
       <button class="btn w sm" onclick="openBadges()">🏅 스티커판 (${S.badge.length}/${BADGES.length})</button>
+      <button class="btn ${bdayReady()?'g':'w'} sm" style="grid-column:1/-1" onclick="openBdays()">
+        🎂 생일표 보기${bdayReady()?` — <b>오늘 ${bdayKeys().length}마리!</b>`:''}</button>
       <button class="btn w sm" style="grid-column:1/-1" onclick="openStats()">🧾 내 기록 보기</button>
     </div>
   </div>`;
@@ -7281,6 +7410,41 @@ function openBadges(){
       return `<div class="stk ${got?'got':''}" onclick="toast('${b.em} <b>${b.n}</b> — ${b.d}${got?'':` (🍒+${b.top})`}')">
         <div class="e">${got?b.em:'❔'}</div><div class="n">${got?b.n:'???'}</div></div>`;
     }).join('')}</div>`);
+}
+/* 🎂 생일표 — 우리 햄쮜들의 생일을 <b>다가오는 순서로</b> 한 줄씩.
+   생일이 여기저기 흩어져 있어서 「누가 언제였지?」를 알 데가 없었다. */
+function openBdays(){
+  sfx('tap');
+  const all=Object.keys(S.dex).slice()
+    .sort((a,b)=> (bdayLeft(a)-bdayLeft(b)) || nameOf(a).localeCompare(nameOf(b)));
+  const today=all.filter(isBday);
+  const row=k=>{
+    const on=isBday(k), done=partyDone(k), left=bdayLeft(k);
+    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:10px;
+      ${on?'background:#fff0f5;border:1.5px solid var(--acc)':'border:1.5px solid transparent'}"
+      onclick="closeModal();openInfo('${k}')">
+      <span class="hs" style="width:30px;height:30px;flex:none">${hamSVG(hamOf(k))}</span>
+      <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+        font-weight:700;font-size:12.5px">${nameOf(k)}</span>
+      <span style="font-size:11.5px;color:var(--ink2);white-space:nowrap">${bdayLabel(k)}</span>
+      <span style="font-size:11.5px;white-space:nowrap;font-weight:700;
+        color:${on?'var(--acc)':'var(--ink2)'}">${on?(done?'🎉 파티 완료':'🎂 오늘!'):left+'일 뒤'}</span>
+    </div>`;
+  };
+  openModal(`<h2>🎂 생일표<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="margin-bottom:8px;line-height:1.7">
+      우리 햄쮜 <b>${all.length}마리</b>의 생일이에요 — <b>다가오는 순서</b>로 놓았어요.<br>
+      이름을 누르면 그 아이 카드가 열려요 💗</div>
+    ${today.length?`<div class="card" style="margin:0 0 8px;background:#fff6fa">
+      <h3>🎉 오늘 생일이에요!</h3>
+      ${today.map(row).join('')}
+      <div class="muted" style="margin-top:5px">🎮놀이터나 그 아이 카드에서 <b>파티</b>를 열어줄 수 있어요</div>
+    </div>`:''}
+    <div class="card" style="margin:0">
+      <h3>📅 다가오는 생일</h3>
+      ${all.length?all.filter(k=>!isBday(k)).map(row).join('')
+                  :'<div class="muted">아직 만난 햄쮜가 없어요</div>'}
+    </div>`);
 }
 function openStats(){
   sfx('tap');
@@ -7599,7 +7763,7 @@ function buyTub(k){
   if(f.lv>S.lv){ sfx('boo'); toast(`🔒 가게 Lv.${f.lv} 가 되면 살 수 있어요`); return; }
   if(f.top){ if(S.top<f.top){ sfx('boo'); toast(`🍒 토핑이 ${f.top-S.top}개 더 필요해요`); return; } S.top-=f.top; }
   else{ if(S.coin<f.coin){ sfx('boo'); toast(`🪙 코인이 ${fmt(f.coin-S.coin)} 더 필요해요`); return; } S.coin-=f.coin; }
-  S.open.push(k); addExp(20); sel=k; sfx('gift'); checkBadges(); save(); renderAll();
+  S.open.push(k); addExp(playExp(24)); sel=k; sfx('gift'); checkBadges(); save(); renderAll();
   openModal(`<h2>🍧 새 통이 들어왔어요!<span class="x" onclick="closeModal()">닫기</span></h2>
     <div style="text-align:center">
       <span style="display:inline-block;width:104px;height:74px;border-radius:50% 50% 32% 32%;background:linear-gradient(160deg,${f.c2},${f.c});box-shadow:inset -6px -8px 0 rgba(0,0,0,.08)"></span>
@@ -7617,7 +7781,7 @@ function buyUpg(k){
   S.coin-=c; S.upg[k]=upgLv(k)+1; sfx('coin');
   /* 🪑자리 늘리기와 🏡넓은 가게는 둘 다 자리를 늘린다 */
   if(k==='seat'||k==='hall') for(let i=0;i<ROOMS.length;i++) if(S.rooms[i]) S.rooms[i].seat.push(null);
-  addExp(14); save(); renderAll();
+  addExp(playExp(20)); save(); renderAll();
   toast(`${u.em} ${u.name} Lv.${upgLv(k)} 로 올렸어요!`);
 }
 
@@ -7632,7 +7796,11 @@ function openLevel(){
       <h3>Lv.${S.lv} <small>${have} / ${need}</small></h3>
       <div class="bar"><div style="width:${clamp(have/need,0,1)*100}%"></div></div>
       <div class="muted" style="margin-top:6px">
-        한 번 뜨기 +5 · 새 햄쮜 +26 · 새 통 +20 · 하트 +8 · 가게 키우기 +14<br>
+        <b>놀면 다 올라요!</b> 🧳여행 · 🎪축제 · 📚동화 · 🏆운동회 · 🎒소풍 ·
+        🌟부탁 들어주기 · 🎂생일 파티 · 🧩짝 맞추기 · 🍽️주문 · 💌편지 · 🎁선물상자<br>
+        🍨 한 번 뜨기 +${5+scoopExp(typeof sel!=='undefined'&&FL[sel]?sel:FKEYS[0])}
+        <b>— 좋은 통일수록 많이 올라요</b> · 💖새 햄쮜 +26<br>
+        🛒새 통 +20 · 🔧장비 올리기 +14 · 💗하트 한 칸 +8<br>
         레벨이 오르면 🍒토핑 +2, 새 통·새 방·방 소품이 열려요.
       </div>
     </div>
@@ -7647,7 +7815,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-08-27g';
+const NEWS_VER='2026-08-27l';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
@@ -7848,7 +8016,7 @@ function claimStamp(){
   }
   const full=S.stamp.n>=7;
   if(full) S.stamp.n=0;                       /* 일곱 개를 채우면 새 판 */
-  sfx('gift'); vib([0,30,50,30]); addExp(6); checkBadges(); save(); renderHUD(); renderView();
+  sfx('gift'); vib([0,30,50,30]); addExp(playExp(10)); checkBadges(); save(); renderHUD(); renderView();
   openModal(`<h2>${full?'🎉 도장판을 다 채웠어요!':'📅 도장을 찍었어요!'}<span class="x" onclick="nextModal()">닫기</span></h2>
     <div style="text-align:center;font-size:50px;line-height:1.2" class="burst">${st.em}</div>
     <div style="text-align:center;font-size:14.5px;margin-top:4px">
@@ -7933,7 +8101,7 @@ function errBump(k,by){
   }
   save();
 }
-function errPay(){ return {coin:Math.ceil(700*(1+S.lv*0.3)), top:5, exp:45}; }
+function errPay(){ return {coin:Math.ceil(700*(1+S.lv*0.3)), top:5, exp:playExp(45)}; }
 function claimErr(){
   if(!errReady()){ sfx('boo'); return; }
   const p=errPay();
@@ -8027,7 +8195,7 @@ function pickCup(i){
     S.coin+=c;
     toast(`🙈 아쉬워요! 그래도 🪙+${fmt(c)}`);
   }
-  sfx(win?'nw':'boo'); vib(win?[0,35,55,35]:14); addExp(win?6:2); checkBadges(); save(); renderHUD();
+  sfx(win?'nw':'boo'); vib(win?[0,35,55,35]:14); addExp(playExp(win?7:3)); checkBadges(); save(); renderHUD();
   renderCup(true);
   setTimeout(()=>{ if(tab==='scoop'||tab==='play') renderView(); },10);
 }
@@ -8176,7 +8344,7 @@ function detPick(k){
     const coin=Math.ceil((300+S.lv*S.lv*18)*(1+bonus*0.4));
     const top=1+bonus;
     S.coin+=coin; S.top+=top; S.det.win++; S.det.all=(S.det.all||0)+1; errBump('det');
-    addExp(14); addBond(k,4);
+    addExp(playExp(14)); addBond(k,4);
     sfx('star4'); vib([0,30,50,30,50,40]);
     checkBadges(); save(); renderHUD();
     drawDet({coin, top, bonus});
@@ -8304,10 +8472,17 @@ function openSpInfo(k){
     </div>
     <div class="card" style="margin:9px 0 0;font-size:12.5px;line-height:1.8">
       ${s.em} ${s.d}<br>
-      ${have?`💗 친한 정도 <b>${heartStr(id)}</b> — 놀아줄 때 코인 <b>+${hearts(id)*20}%</b>`
-            :(s.gift?`🎁 헤더의 <b>선물상자</b>를 열 때마다 나올 가능성이 조금씩 커져요`
-                    :`🔔 <b>주문 놀이</b>에서 손님을 잘 대접하면 ⭐가 모여요`)}
+      ${have?`💗 친한 정도 <b>${heartStr(id)}</b> — 놀아줄 때 코인 <b>+${hearts(id)*20}%</b><br>`
+            :(s.gift?`🎁 헤더의 <b>선물상자</b>를 열 때마다 나올 가능성이 조금씩 커져요<br>`
+                    :`🔔 <b>주문 놀이</b>에서 손님을 잘 대접하면 ⭐가 모여요<br>`)}
+      🎂 생일 <b>${bdayLabel(id)}</b> ${isBday(id)
+        ? (have ? (partyDone(id) ? '— <b>오늘이에요!</b> 파티는 열어줬어요 🎉'
+                                 : '— <b>바로 오늘이에요!</b> 🎉')
+                : '— <b>바로 오늘이에요!</b> 🎉')
+        : `— ${bdayLeft(id)}일 뒤`}
     </div>
+    ${(have&&isBday(id)&&!partyDone(id)) ? `<div class="row" style="justify-content:center;margin-top:9px">
+      <button class="btn g" onclick="closeModal();openParty('${id}')">🎂 생일 파티 열어주기</button></div>` : ''}
     ${have?`<div class="card" style="margin:9px 0 0">
       <h3>⭐ 별 올리기 <small>지금 ★${S.dex[id].g} / 5</small></h3>
       ${S.dex[id].g>=5
@@ -8359,7 +8534,7 @@ function spUp(id){
     S.stats.spUp=(S.stats.spUp||0)+1;
     if(d.g>=5) S.stats.best5=(S.stats.best5||0)+1;
     _svgCache.clear();
-    sfx('star4'); vib([0,30,50,30,50,40]); addExp(12);
+    sfx('star4'); vib([0,30,50,30,50,40]); addExp(playExp(20));
     checkBadges(); save(); renderHUD(); renderView();
     toast(`✨ 해냈어요! ${ega(nameOf(id))} <b>★${d.g}</b> 이 됐어요!`);
     const k=String(id).slice(3);
@@ -8605,6 +8780,7 @@ function eggCare(){
   e.d=todayKey();
   const coin=Math.round((400+S.lv*180)*(1+dexCount()*0.03));
   S.coin+=coin;
+  addExp(playExp(12));
   _mailing=true;
   try{ [e.a,e.b].forEach(k=>{ if(S.dex[k]) addBond(k,12); }); } finally{ _mailing=false; }
   [e.a,e.b].forEach(k=>{ if(S.dex[k]) setMood(k,'happy'); });
@@ -8629,12 +8805,15 @@ function eggHatch(){
   /* 아기는 부모 색을 섞은 뒤 <b>흰빛을 더 섞어</b> 뽀얗게 만든다 — 그래야 아기처럼 보인다 */
   const pale=h=>mixHex(mixHex(h,'#ffffff'),h);
   const da=S.dex[x], db=S.dex[y];
+  const now=new Date();
   let g=Math.max(1, Math.min(5, Math.round(((da.g||1)+(db.g||1))/2)));
   S.dex[key]={
     g, p:pick([da.p||'plain', db.p||'plain']), n:1, bond:0, over:0,
     since:Date.now(), anniv:0, w:{hat:null,neck:null,hand:null,cone:null},
     mix:{
       a:x, b:y, baby:1, born:Date.now(), stage:0,
+      /* 🎂 알에서 나온 오늘이 생일 — 💞짝꿍과 같은 길(bdayOf 가 이걸 먼저 본다) */
+      bd:{m:now.getMonth()+1, d:now.getDate()},
       hn:babyNameOf(x,y),
       sa:anyShape(x), sb:anyShape(y),
       shape:ensureMixShape(anyShape(x), anyShape(y)),
@@ -8648,7 +8827,7 @@ function eggHatch(){
   };
   S.egg=null;
   S.stats.baby=(S.stats.baby||0)+1;
-  addExp(40); sfx('nw'); vib([0,40,60,40,60,40,80]);
+  addExp(playExp(60)); sfx('nw'); vib([0,40,60,40,60,40,80]);
   _mailing=true;
   try{ [x,y].forEach(k=>addBond(k,25)); } finally{ _mailing=false; }
   checkBadges(); save(); renderHUD(); renderView();
@@ -8661,6 +8840,9 @@ function eggHatch(){
       아직 아주 <b>작아요</b> 🐣<br>
       <b>이틀</b>이 지나면 어린이가 되고, <b>닷새</b>가 지나면 다 커요.<br>
       <span class="muted">그동안 많이 놀아주세요 — 📖도감에서 볼 수 있어요</span></div>
+    <div class="card" style="margin:9px 0 0;background:#fff6fa;text-align:center;font-size:13.5px;line-height:1.9">
+      🎂 <b>오늘이 생일이에요!</b> 알에서 나온 날이니까요 🍰<br>
+      <span class="muted">🎮<b>놀이터</b>나 아기 카드에서 <b>생일 파티</b>를 열어줄 수 있어요</span></div>
     <div class="row" style="justify-content:center;margin-top:11px">
       <button class="btn" onclick="closeModal();openMixInfo('${key}')">🐣 보러 가기</button>
       <button class="btn w" onclick="closeModal()">반가워! 🥰</button></div>`);
@@ -8682,6 +8864,7 @@ function babyGrow(){
   grew.forEach(k=>{
     const coin=Math.round((1400+S.lv*520)*(1+dexCount()*0.03));
     S.coin+=coin; S.top+=4;
+    addExp(playExp(30));
     _mailing=true;
     try{ addBond(k,20); } finally{ _mailing=false; }
     setMood(k,'happy');
@@ -9103,6 +9286,7 @@ function reqCheck(){
   done.forEach(r=>{
     const p=reqPay();
     S.coin+=p.coin; S.top+=p.top;
+    addExp(playExp(20));
     S.stats.req=(S.stats.req||0)+1;
     _mailing=true;
     try{ addBond(r.k,p.bond); } finally{ _mailing=false; }
@@ -9391,6 +9575,7 @@ function festPlay(key){
   const top=[3,6,10][tier];
   const bond=[8,14,22][tier];
   S.coin+=coin; S.top+=top;
+  addExp(playExp(30));
   S.stats.fest=(S.stats.fest||0)+1;
   if(tier===2) S.festBest=(S.festBest||0)+1;
   _mailing=true;
@@ -9424,6 +9609,7 @@ function festPrize(){
   const coin=Math.round(24000+S.lv*5200);
   const top=60;
   S.coin+=coin; S.top+=top;
+  addExp(playExp(120));
   /* 🏮🎏 축제에서만 받는 소품 둘 — 상점에는 없다 */
   ['hand_lamp','hat_festflo'].forEach(w=>{ if(S.closet.indexOf(w)<0) S.closet.push(w); });
   S.festDone=(S.festDone||0)+1;
@@ -9694,6 +9880,7 @@ function talePick(key){
   if(last) t.done=(t.done|0)+1;
   S.coin=Math.max(0,S.coin+pay.coin);
   S.top=Math.max(0,S.top+pay.top);
+  addExp(playExp(last?120:22));
   S.stats.tale=(S.stats.tale||0)+1;
   const here=(seatHams().length?seatHams():Object.keys(S.dex)).slice(0,6);
   _mailing=true;
@@ -9914,7 +10101,7 @@ function memWin(){
   _mailing=true;
   try{ g.ks.forEach(k=>addBond(k,4)); } finally{ _mailing=false; }
   g.ks.forEach(k=>setMood(k,'happy'));
-  addExp(3);
+  addExp(playExp((6+stars*4)*(lv.pairs/3)));
   sfx('star4'); vib([0,30,50,30,60]);
   const ks=g.ks.slice();
   _mg=null;
@@ -10079,6 +10266,7 @@ function travToday(){
   const coin=Math.round((1400+S.lv*520)*(1+day*0.15)*who.length*(1+dexCount()*0.04)*(0.7+0.3*give.length));
   const top=Math.max(2, Math.round(4+day*1.4+give.length*1.5));
   S.coin+=coin; S.top+=top;
+  addExp(playExp(45));
   S.stats.trav=(S.stats.trav||0)+1;
   _mailing=true;
   try{ who.forEach(k=>addBond(k,18)); pbPlayRoom(who); } finally{ _mailing=false; }
@@ -10159,6 +10347,7 @@ function travEnd(){
   const coin=Math.round((6000+S.lv*1600)*(1+got*0.22)*(1+day*0.1));
   const top=Math.round(16+got*3.5+day*2);
   S.coin+=coin; S.top+=top;
+  addExp(playExp(120));
   S.travDone=(S.travDone||0)+1;
   S.travBest=Math.max(S.travBest||0, got);
   /* 기념품은 여행이 끝나도 남는다 — 다음 여행에서 이어서 모은다 */
@@ -10302,6 +10491,7 @@ function sportGo(){
   const coin=Math.round(base*(0.7+total/60));
   const top=3+Math.floor(total/14);
   S.coin+=coin; S.top+=top;
+  addExp(playExp(35));
   S.stats.sport=(S.stats.sport||0)+1;
   if(!Array.isArray(S.sportWin)) S.sportWin=[];
   if(S.sportWin.indexOf(rows[0].k)<0) S.sportWin.push(rows[0].k);
@@ -10594,7 +10784,7 @@ function finishRound(){
   S.ord.rounds=(S.ord.rounds||0)+1;
   errBump('round');
   S.ord.best=Math.max(S.ord.best||0, og.sc);
-  S.coin+=coin; S.top+=tops; addExp(5+og.sc);
+  S.coin+=coin; S.top+=tops; addExp(playExp(6+og.sc*1.6));
   og.pay={coin,tops,star:st};
   og.newSp=grantSpecials();
   sfx(st===3?'star4':'gift'); vib(st===3?[0,30,50,30,50,30]:[0,30,50,30]);
@@ -10911,7 +11101,7 @@ function joinContest(k,ok){
   S.cont.best=Math.max(S.cont.best||0,tot);
   if(rank===1) S.cont.win=(S.cont.win||0)+1;
   S.top+=pay.t; S.coin+=pay.c;
-  addBond(k,pay.b); addExp(pay.e);
+  addBond(k,pay.b); addExp(playExp(pay.e*1.4));
   mailAct(k,'cont',0.40);              /* 💌 무대에 섰던 이야기를 편지로 */
   contRes={k,rows,tot,rank,pay};
   sfx(rank===1?'star4':'nw'); vib(rank===1?[0,30,50,30,50,30]:[0,30,50,30]);
@@ -11122,7 +11312,7 @@ function savePhoto(){
     sfx('boo'); toast(`📸 사진첩이 꽉 찼어요(${ALBUM_MAX}장) — 한 장 지워주세요`); openAlbum(); return;
   }
   S.album.unshift(p); photoDraft=null;
-  sfx('gift'); addExp(4); errBump('photo'); checkBadges(); save(); renderHUD(); renderView();
+  sfx('gift'); addExp(playExp(4)); errBump('photo'); checkBadges(); save(); renderHUD(); renderView();
   toast('📸 사진첩에 넣었어요!');
   openAlbum();
 }
@@ -11161,6 +11351,9 @@ function delPhoto(i){
       색은 두 햄쮜의 색을 진짜로 섞어서 세상에 없던 색을 만든다.
 ================================================================== */
 const MIX_TOP=5;                      /* 짝지어줄 때 드는 🍒토핑 */
+const MIX_DAY=1;                      /* 하루에 태어나는 짝꿍 수 */
+/* 오늘 짝꿍을 몇 마리 더 만들 수 있는지 */
+function mixLeft(){ return String(S.mixDay||'')===todayKey() ? 0 : MIX_DAY; }
 const MIX_NEED_HEART=1;               /* 둘 다 하트가 이만큼은 있어야 한다 */
 
 function mixHex(a,b){                 /* 색 두 개의 한가운데 색 */
@@ -11178,6 +11371,9 @@ function mixNameOf(a,b){
   return FL[x].n.charAt(0)+FL[y].n.charAt(0)+'쮜';
 }
 function canMix(a,b){
+  /* ⚠️ 하루 한 마리는 <b>제일 먼저</b> 알려준다 — 둘을 다 고르고 나서
+     「오늘은 안 돼요」라고 하면 고른 게 헛수고가 된다. */
+  if(mixLeft()<=0) return '💞 짝꿍은 <b>하루에 한 마리</b>만 태어나요 — 내일 또 만들어요!';
   if(!a||!b||a===b) return '서로 다른 햄쮜 둘을 골라주세요';
   if(!S.dex[a]||!S.dex[b]) return '아직 만나지 못한 햄쮜예요';
   if(!isTub(a)||!isTub(b)) return '통에서 뜬 햄쮜끼리만 짝지을 수 있어요';
@@ -11195,7 +11391,9 @@ function makeMix(a,b){
   const cx=COLORS[fx.color], cy=COLORS[fy.color];
 
   S.top-=MIX_TOP;
+  S.mixDay=todayKey();                 /* 💞 오늘 몫을 썼다 */
   const key=mixKeyOf(x,y);
+  const now=new Date();
   let g=Math.max(dx.g,dy.g);
   if(g<=3){ if(Math.random()<0.3) g++; }                      /* 둘보다 좋아질 수도 */
   else if(g===4 && Math.random()<0.08) g=5;                   /* ⭐4 둘이면 아주 드물게 ⭐5 */
@@ -11203,6 +11401,8 @@ function makeMix(a,b){
     g, p:pick([dx.p,dy.p]), n:1, bond:0, over:0, since:Date.now(), anniv:0, w:{hat:null,neck:null,hand:null,cone:null},
     mix:{
       a:x, b:y, hn:mixNameOf(x,y),
+      /* 🎂 태어난 오늘이 생일 — 그래서 바로 파티를 열어줄 수 있다 */
+      bd:{m:now.getMonth()+1, d:now.getDate()},
       /* 예전엔 둘 중 한쪽 모양을 그냥 골랐다 — 그러면 색만 바뀐 것처럼 보여서
          짝지어 줄 이유가 없었다. 몸은 첫째, 귀는 둘째, 장식은 둘 다 얹는다. */
       sa:fx.shape, sb:fy.shape,
@@ -11217,7 +11417,7 @@ function makeMix(a,b){
       }
     }
   };
-  addExp(30); sfx('nw'); vib([0,40,60,40,60,40]); checkBadges(); save(); renderHUD(); renderView();
+  addExp(playExp(45)); sfx('nw'); vib([0,40,60,40,60,40]); checkBadges(); save(); renderHUD(); renderView();
   showMixBorn(key);
 }
 function showMixBorn(key){
@@ -11236,6 +11436,10 @@ function showMixBorn(key){
       <div class="muted" style="margin-top:3px">
         ${wagwa(nameOf(m.a))} ${nameOf(m.b)} 에게서 나온 새로운 햄쮜 · ${SHAPES[m.shape].name} 모양 · ${PATTERNS[d.p]}<br>
         <b>세상에 하나뿐인 색</b>이에요 🎨
+      </div>
+      <div class="card" style="margin:9px 0 0;background:#fff6fa">
+        🎂 <b>오늘이 생일이에요!</b> 태어난 날이니까요 🍰<br>
+        <span class="muted">이름을 지어준 다음 🎮<b>놀이터</b>에서 <b>생일 파티</b>를 열어줄 수 있어요</span>
       </div>
     </div>
     <div class="card" style="margin:10px 0 0">
@@ -11285,6 +11489,9 @@ function openMixLab(slot){
       <h3 style="margin-top:10px">🐹 둘째 고르기</h3>
       <div class="mgrid">${pick2(mixB,'b')}</div>
       <div class="muted" style="margin-top:8px;line-height:1.6">
+        💞 짝꿍은 <b>하루에 한 마리</b>만 태어나요 —
+        오늘은 <b>${mixLeft()?'한 마리 만들 수 있어요':'다 만들었어요, 내일 또 만나요!'}</b><br>
+        🎂 태어난 <b>그날이 생일</b>이라서, 바로 <b>생일 파티</b>를 열어줄 수 있어요!<br>
         둘 다 💗하트가 ${MIX_NEED_HEART}개 이상이어야 해요(놀이방에서 놀아주면 올라가요).<br>
         같은 짝에서는 한 마리만 태어나요. 새로운 햄쮜의 색은 <b>두 햄쮜의 색을 섞어</b> 만들어집니다.
       </div>
@@ -11319,8 +11526,14 @@ function openMixInfo(key){
            🌱 지금은 <b>${BABY_STAGE[babyStage(key)]}</b> — 태어난 지 <b>${babyDays(key)}일째</b>
            ${babyGrown(key)?'(다 컸어요! 🎉)':`· <b>${babyLeft(key)}일</b> 더 지나면 자라요`}<br>`
         : `💞 짝은 <b>${nameOf(m.a)}</b> 와 <b>${nameOf(m.b)}</b> 였어요<br>`}
-      💗 친한 정도 <b>${heartStr(key)}</b> — 놀아줄 때 코인 <b>+${hearts(key)*20}%</b>
+      💗 친한 정도 <b>${heartStr(key)}</b> — 놀아줄 때 코인 <b>+${hearts(key)*20}%</b><br>
+      🎂 생일 <b>${bdayLabel(key)}</b> ${isBday(key)
+        ? (partyDone(key) ? '— <b>오늘이에요!</b> 파티는 열어줬어요 🎉'
+                          : '— <b>바로 오늘이에요!</b> 🎉')
+        : `— ${bdayLeft(key)}일 뒤`}
     </div>
+    ${(isBday(key)&&!partyDone(key)) ? `<div class="row" style="justify-content:center;margin-top:9px">
+      <button class="btn g" onclick="closeModal();openParty('${key}')">🎂 생일 파티 열어주기</button></div>` : ''}
     ${playCardHTML(key)}
     <div class="row" style="justify-content:center;margin-top:10px">
       <button class="btn" onclick="openCloset('${key}')">👗 꾸미기</button>
@@ -11899,6 +12112,11 @@ function renderHUD(){
   setTxt('h-dex',  dexCount()+'/'+NTUB);
   setTxt('h-stk',  S.badge.length+'/'+BADGES.length);
   setTxt('h-lv',   '🏪 Lv.'+S.lv);
+  /* 칩 안을 다음 레벨까지의 몫만큼 채운다 */
+  if(H['h-lv']){
+    const pc=Math.round(clamp(S.exp/expNeed(S.lv),0,1)*100);
+    if(H.last.lvp!==pc){ H.last.lvp=pc; H['h-lv'].style.setProperty('--p', pc+'%'); }
+  }
   const dotOn=storeDot();
   if(H['s-dot'] && H.last.dot!==dotOn){ H.last.dot=dotOn; H['s-dot'].style.display=dotOn?'block':'none'; }
   /* 🎮놀이터 탭 — 오늘 할 수 있는 놀이가 남았으면 점을 띄운다 */
