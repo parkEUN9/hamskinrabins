@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>햄스킨라빈스 · 8월 27일 소식</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Jua&display=swap">
+
+<style>
+/* ─────────────────────────────────────────────
+   아이스크림 가게 메뉴판 — 밝은 테마가 기본값
+   ───────────────────────────────────────────── */
+:root{
+  --paper:#FBF7EF;        /* 와플 포장지 크림 — 노란기가 도는 흰색 */
+  --card:#FFFFFF;
+  --ink:#3B3230;          /* 코코아 먹색 */
+  --ink-soft:#7A6B64;
+  --line:#E6DCCC;
+  --mint:#5FBEA3;         /* 피스타치오 */
+  --mint-soft:#DDF2EA;
+  --berry:#E0537F;        /* 딸기 — 제일 센 색, 한 군데만 */
+  --berry-soft:#FCE4EC;
+  --butter:#EFB94F;       /* 와플콘 */
+  --butter-soft:#FBEED1;
+  --grape:#A48CD8;
+  --grape-soft:#EDE6FA;
+  --shadow:rgba(94,72,60,.13);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#231C1A; --card:#2E2523; --ink:#F6EDE4; --ink-soft:#B9A79D;
+    --line:#453833; --mint:#79D3B8; --mint-soft:#22423A; --berry:#F2799C;
+    --berry-soft:#4A2331; --butter:#F5CD73; --butter-soft:#4A3A1D;
+    --grape:#BFAAEC; --grape-soft:#352A4C; --shadow:rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#231C1A; --card:#2E2523; --ink:#F6EDE4; --ink-soft:#B9A79D;
+  --line:#453833; --mint:#79D3B8; --mint-soft:#22423A; --berry:#F2799C;
+  --berry-soft:#4A2331; --butter:#F5CD73; --butter-soft:#4A3A1D;
+  --grape:#BFAAEC; --grape-soft:#352A4C; --shadow:rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Gowun Dodum','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:19px; line-height:1.85;
+  -webkit-text-size-adjust:100%;
+  /* 한글은 어절 단위로만 줄을 넘긴다 — 어린이가 읽는 글이라 「아이스크림처/럼」 같은 끊김을 막는다 */
+  word-break:keep-all; overflow-wrap:break-word;
+}
+.wrap{max-width:640px; margin:0 auto; padding:0 20px 72px; display:flex; flex-direction:column; gap:34px}
+
+/* ───── 게임으로 돌아가기 ─────
+   게임 안 📢 단추로 들어오니, 아이가 길을 잃지 않게 위아래 양쪽에 둔다 */
+.topbar{
+  position:sticky; top:0; z-index:5; margin:0 -20px; padding:11px 20px;
+  background:var(--paper); border-bottom:1.5px solid var(--line);
+  display:flex; align-items:center;
+}
+.topbar a{
+  display:inline-flex; align-items:center; gap:7px; text-decoration:none;
+  font-family:'Jua',sans-serif; font-size:17px; color:var(--berry);
+  background:var(--berry-soft); padding:7px 16px; border-radius:999px; line-height:1.4;
+}
+.topbar a:focus-visible, .backbtn:focus-visible{outline:3px solid var(--mint); outline-offset:3px}
+.backbtn{
+  display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;
+  font-family:'Jua',sans-serif; font-size:20px; color:#fff; background:var(--berry);
+  padding:15px 22px; border-radius:18px; box-shadow:0 4px 0 var(--shadow); line-height:1.4;
+}
+.backbtn:active{transform:translateY(2px); box-shadow:0 2px 0 var(--shadow)}
+
+/* ───── 머리말 ───── */
+.hero{display:flex; flex-direction:column; align-items:center; gap:6px; padding-top:14px; text-align:center}
+.hero svg{width:min(232px,58vw); height:auto; display:block}
+.eyebrow{
+  font-family:'Gowun Dodum',sans-serif; font-size:14px; letter-spacing:.16em;
+  color:var(--mint); background:var(--mint-soft);
+  padding:5px 15px; border-radius:999px; line-height:1.4;
+}
+h1{
+  font-family:'Gaegu','Apple SD Gothic Neo',cursive; font-weight:700;
+  font-size:clamp(38px,11vw,58px); line-height:1.12; margin:6px 0 0;
+  text-wrap:balance; letter-spacing:-.01em;
+}
+.hero .sub{margin:0; color:var(--ink-soft); font-size:17px; text-wrap:balance}
+.count{color:var(--berry); font-weight:700}
+
+/* ───── 쿠폰 ───── */
+.gifts{display:flex; flex-direction:column; gap:16px}
+.gifts h2, .changes h2{
+  font-family:'Jua',sans-serif; font-size:25px; margin:0;
+  display:flex; align-items:center; gap:9px; line-height:1.3;
+}
+.ticket{
+  position:relative; background:var(--card); border:2.5px dashed var(--berry);
+  border-radius:20px; padding:20px 22px; display:flex; flex-direction:column; gap:9px;
+  box-shadow:0 4px 0 var(--shadow);
+}
+.ticket .label{
+  font-size:13px; letter-spacing:.14em; color:var(--berry);
+  background:var(--berry-soft); align-self:flex-start; padding:3px 12px; border-radius:999px; line-height:1.5;
+}
+.code{
+  font-family:'Jua',sans-serif; font-size:clamp(24px,6.6vw,31px); line-height:1.25;
+  color:var(--ink); word-break:keep-all;
+}
+.ticket .gets{margin:0; color:var(--ink-soft); font-size:17px; line-height:1.75}
+.howto{
+  background:var(--butter-soft); border-radius:16px; padding:15px 20px;
+  font-size:17px; line-height:1.8; color:var(--ink);
+}
+.howto b{color:var(--ink)}
+
+/* ───── 새로 바뀐 것 ───── */
+.changes{display:flex; flex-direction:column; gap:18px}
+.scoops{display:flex; flex-direction:column; gap:16px; margin:0; padding:0; list-style:none; counter-reset:s}
+.scoop{
+  counter-increment:s;
+  background:var(--card); border:1.5px solid var(--line); border-radius:20px;
+  padding:20px 22px 21px; display:flex; flex-direction:column; gap:7px;
+  box-shadow:0 3px 0 var(--shadow);
+}
+.scoop .num{
+  display:flex; align-items:center; gap:10px;
+  font-family:'Jua',sans-serif; font-size:14px; letter-spacing:.05em; color:var(--ink-soft);
+}
+.scoop .num::before{
+  content:counter(s); flex:none;
+  width:32px; height:32px; border-radius:50% 50% 46% 46%;
+  display:grid; place-items:center; font-size:17px; color:#fff;
+}
+.scoop h3{
+  font-family:'Gaegu',cursive; font-weight:700; font-size:clamp(25px,6.6vw,31px);
+  margin:0; line-height:1.25; text-wrap:balance;
+}
+.scoop p{margin:0; color:var(--ink-soft); line-height:1.85}
+.scoop p em{font-style:normal; color:var(--ink); background:var(--butter-soft); padding:1px 5px; border-radius:6px}
+/* 장비처럼 「이름 — 설명」이 여러 줄 이어질 때는 문단보다 목록이 읽기 쉽다 */
+.scoop ul.mini{margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px}
+.scoop ul.mini li{
+  color:var(--ink-soft); line-height:1.7; font-size:15px;
+  background:var(--butter-soft); border-radius:12px; padding:9px 13px;
+}
+.scoop ul.mini li em{
+  font-style:normal; font-size:13px; color:var(--grape);
+  background:var(--grape-soft); padding:2px 8px; border-radius:999px; margin:0 3px;
+}
+.scoop ul.mini + p{margin-top:10px}
+.scoop:nth-child(6n+1) .num::before{background:var(--berry)}
+.scoop:nth-child(6n+2) .num::before{background:var(--mint)}
+.scoop:nth-child(6n+3) .num::before{background:var(--butter)}
+.scoop:nth-child(6n+4) .num::before{background:var(--grape)}
+.scoop:nth-child(6n+5) .num::before{background:var(--berry)}
+.scoop:nth-child(6n)   .num::before{background:var(--mint)}
+
+/* ───── 맛보기 줄 ───── */
+.tastes{
+  display:flex; gap:9px; overflow-x:auto; padding:3px 0 5px; margin-top:3px;
+  scrollbar-width:thin;
+}
+.taste{
+  flex:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+  font-size:13px; color:var(--ink-soft); width:64px; text-align:center; line-height:1.4;
+}
+.taste svg{width:56px; height:56px; display:block}
+
+/* ───── 지난 소식 ─────
+   버전마다 페이지를 따로 두고, 아래에서 서로 오갈 수 있게 한다.
+   한 페이지에 다 쌓으면 「이번에 뭐가 바뀐 건지」가 묻힌다. */
+.past{display:flex; flex-direction:column; gap:12px}
+.past h2{
+  font-family:'Jua',sans-serif; font-size:22px; margin:0;
+  display:flex; align-items:center; gap:9px; line-height:1.3; color:var(--ink-soft);
+}
+.pastnote{margin:0; color:var(--ink-soft); font-size:16px; line-height:1.75}
+.pastlink{
+  display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit;
+  background:var(--card); border:1.5px solid var(--line); border-radius:18px;
+  padding:15px 18px; box-shadow:0 3px 0 var(--shadow); line-height:1.4;
+}
+.pastlink:active{transform:translateY(2px); box-shadow:0 1px 0 var(--shadow)}
+.pastlink .d{
+  flex:none; font-family:'Jua',sans-serif; font-size:14px; color:var(--grape);
+  background:var(--grape-soft); padding:5px 12px; border-radius:999px;
+}
+.pastlink .t{flex:1; font-family:'Gaegu',cursive; font-weight:700; font-size:24px; line-height:1.2}
+.pastlink .n{flex:none; font-size:14px; color:var(--ink-soft)}
+
+/* ───── 꼬리말 ───── */
+.foot{
+  text-align:center; color:var(--ink-soft); font-size:16px; line-height:1.8;
+  border-top:2px dashed var(--line); padding-top:24px; text-wrap:balance;
+}
+.sprinkles{display:flex; justify-content:center; gap:7px; margin-bottom:12px}
+.sprinkles i{display:block; width:6px; height:15px; border-radius:3px}
+
+@media (min-width:600px){
+  body{font-size:20px}
+  .wrap{padding-bottom:88px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .hero svg{animation:bob 3.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <nav class="topbar"><a href="index.html">◀ 게임으로 돌아가기</a></nav>
+
+  <header class="hero">
+    <svg viewBox="0 0 200 224" role="img" aria-label="와플콘 위에 앉아 있는 크림색 햄쮜">
+      <!-- 귀 -->
+      <circle cx="58" cy="52" r="22" fill="#F4D9A8"/><circle cx="142" cy="52" r="22" fill="#F4D9A8"/>
+      <circle cx="58" cy="52" r="10.5" fill="#F7B7C6"/><circle cx="142" cy="52" r="10.5" fill="#F7B7C6"/>
+      <!-- 몸 -->
+      <circle cx="100" cy="90" r="57" fill="#F4D9A8" stroke="#D3A061" stroke-width="3" stroke-opacity=".45"/>
+      <!-- 볼 -->
+      <ellipse cx="64" cy="104" rx="13" ry="9" fill="#F7B7C6" opacity=".8"/>
+      <ellipse cx="136" cy="104" rx="13" ry="9" fill="#F7B7C6" opacity=".8"/>
+      <!-- 눈 -->
+      <circle cx="80" cy="88" r="8.5" fill="#463A33"/><circle cx="120" cy="88" r="8.5" fill="#463A33"/>
+      <circle cx="82.5" cy="85" r="3" fill="#fff"/><circle cx="122.5" cy="85" r="3" fill="#fff"/>
+      <!-- 코와 입 -->
+      <ellipse cx="100" cy="104" rx="5.5" ry="4.2" fill="#D98A9C"/>
+      <path d="M100 109 q-6 7 -12 2 M100 109 q6 7 12 2" stroke="#C08A5E" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- 와플콘 — 몸 아래에 그려 테두리가 몸을 살짝 덮게 -->
+      <path d="M54 152 L100 216 L146 152 Z" fill="#E6B678" stroke="#B3803F" stroke-width="3.5" stroke-linejoin="round"/>
+      <g stroke="#C08C4C" stroke-width="2.4" opacity=".7" fill="none">
+        <path d="M68 152 L100 197 M84 152 L100 174 M116 152 L100 174 M132 152 L100 197"/>
+        <path d="M60 164 L140 164 M66 178 L134 178 M76 192 L124 192"/>
+      </g>
+      <ellipse cx="100" cy="152" rx="47" ry="11" fill="#F2CD97" stroke="#B3803F" stroke-width="3.2"/>
+      <ellipse cx="100" cy="149" rx="36" ry="6.5" fill="#FFC2D4" opacity=".55"/>
+      <!-- 뿌리기 -->
+      <g opacity=".95">
+        <rect x="41" y="120" width="4.4" height="11" rx="2.2" fill="#E0537F" transform="rotate(-24 43 126)"/>
+        <rect x="156" y="112" width="4.4" height="11" rx="2.2" fill="#5FBEA3" transform="rotate(31 158 118)"/>
+        <rect x="168" y="146" width="4.4" height="11" rx="2.2" fill="#EFB94F" transform="rotate(-14 170 152)"/>
+        <rect x="28" y="152" width="4.4" height="11" rx="2.2" fill="#A48CD8" transform="rotate(40 30 158)"/>
+      </g>
+    </svg>
+    <span class="eyebrow">햄스킨라빈스 · 8월 27일</span>
+    <h1>새 놀이가<br>많이 생겼어요</h1>
+    <p class="sub">🎂 <span class="count">생일표</span>로 누가 언제인지 한눈에 봐요!<br>
+      📅 생일이 <span class="count">골고루</span> 나뉘어서 자주 파티해요 🎈<br>
+      🐣 아기 햄쮜도 <span class="count">태어난 날</span>이 생일이에요<br>
+      💞 짝꿍 햄쮜도 <span class="count">생일</span>이 생겼어요 🎂<br>
+      🏪 가게 레벨이 <span class="count">훨씬 잘</span> 올라요!<br>
+      🥚 단짝에게 <span class="count">아기 햄쮜</span>가 태어나요 🐣<br>
+      🧩 <span class="count">짝 맞추기</span> 놀이가 새로 생겼어요 🃏<br>
+      🎂 생일에 <span class="count">파티를 차려줄</span> 수 있어요!<br>
+      📖 도감을 <span class="count">접었다 펼쳤다</span> 할 수 있어요!<br>
+      🍨 아이스크림을 <span class="count">직접 만들고</span> 이름도 지어요!<br>
+      🌟 햄쮜가 먼저 <span class="count">부탁</span>을 해요 💭<br>
+      🧳 이제 <span class="count">여행</span>에 햄쮜를 데려가요!<br>
+      🎪 <span class="count">여름 축제</span>도 엿새 동안 열려요 🎆<br>
+      📚 <span class="count">열 밤</span>짜리 긴 동화도 읽어요 🌙<br>
+      햄쮜가 <span class="count">89마리</span> + 특별 햄쮜 <span class="count">17마리</span> 🍎<br>
+      👒숙녀쮜 👸공주쮜 👑왕쮜 🫅황제쮜가 새로 왔어요!<br>
+      🔧가게 장비가 <span class="count">스물세 가지</span>로 늘었어요!<br>
+      🖼️새 배경 둘과 새 방 둘이 생겨서 놀이방은 <span class="count">열세 곳</span>이 됐어요 🏡</p>
+  </header>
+
+  <section class="changes">
+    <h2>🍨 8월 27일에 바뀐 것</h2>
+
+    <ol class="scoops">
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🎂 <b>생일표</b>가 생겼어요 — 누가 언제인지 한눈에!</h3>
+        <p>📖<b>도감</b> 맨 아래 「📚 더 보기」에 <b>🎂 생일표 보기</b>가 생겼어요.
+          우리 햄쮜 <b>모두의 생일</b>이 <b>다가오는 순서</b>로 줄 서 있답니다 📅<br>
+          이름을 누르면 그 아이 카드가 바로 열려요. <b>오늘 생일인 아이</b>는 맨 위에 따로 모여요 🎉</p>
+        <ul class="mini">
+          <li>🎁 <b>특별 햄쮜 카드에도</b> 생일이 적혔어요 — 전에는 통 햄쮜 카드에만 있었거든요</li>
+          <li>🫧 <b>퐁실쮜의 생일은 3월 16일</b>이에요</li>
+          <li>🪨돌쮜 · 👒숙녀쮜 · 👸공주쮜 · 👑왕쮜 · 🫅황제쮜는
+            <b>다 같이 2월 26일</b>이에요 — 같은 날 다 같이 파티! 🎈</li>
+        </ul>
+        <p class="muted">아직 못 만난 특별 햄쮜의 생일도 미리 볼 수 있어요 💗</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>📅 생일이 <b>골고루</b> 나뉘었어요</h3>
+        <p>같은 날에 <b>셋씩 몰려</b> 있고, 그 대신 <b>닷새 내리</b> 아무 생일도 없는 날이
+          있었지요. 이제 햄쮜들이 <b>하루씩 다른 날</b>을 나눠 가졌어요 🎂</p>
+        <ul class="mini">
+          <li>겹치는 아이가 <b>없어요</b> — 🪨돌쮜 👒숙녀쮜 👸공주쮜 👑왕쮜 🫅황제쮜만
+            <b>일부러</b> 같은 날(2월 26일)이에요</li>
+          <li>제일 긴 빈 자리가 <b>나흘</b>이에요 — 언제 봐도 <b>나흘 안에</b> 누군가의 생일이 와요</li>
+          <li>🍦바닐라쮜 · 🍓딸기쮜 · 🍫초코쮜 · 🥛우유쮜 처럼
+            <b>처음 만난 친구들</b>의 생일이 바로 <b>이번 주</b>예요!</li>
+        </ul>
+        <p class="muted">앞으로 새 햄쮜가 와도 <b>비어 있는 날</b>을 골라서 들어와요 📅</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🐣 아기 햄쮜도 <b>태어난 날이 생일</b>이에요</h3>
+        <p>알에서 <b>톡</b> 하고 나온 그날이 아기의 생일이에요 🥚🐣<br>
+          그래서 <b>태어난 날 바로</b> 🎂<b>첫 생일 파티</b>를 차려줄 수 있답니다!
+          아기는 아직 아주 작아서, 케이크 앞에 앉아 있으면 정말 귀여워요 🍰</p>
+        <p class="muted">💞짝꿍도 똑같아요 — 만든 날이 생일이랍니다</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>💞 짝꿍 햄쮜도 <b>생일이 생겼어요</b></h3>
+        <p>짝꿍을 만들면 <b>그날이 바로 생일</b>이에요 — 태어난 날이니까요 🎂<br>
+          그래서 <b>만든 날 바로</b> 🎂<b>생일 파티</b>를 차려줄 수 있답니다!
+          케이크도 고르고, 꾸미기도 하고, 친구들도 불러서요 🎈</p>
+        <ul class="mini">
+          <li>💞 <b>짝꿍은 하루에 한 마리</b>만 태어나요 — 오늘 만들었으면 <b>내일 또</b> 만들어요</li>
+          <li>📖 짝꿍 카드에 <b>🎂 생일</b>이 적혀 있어요.
+            생일인 날에는 <b>「생일 파티 열어주기」</b> 단추가 바로 나와요</li>
+          <li>🎉 파티를 열면 📸<b>사진첩</b>에 파티 사진이 한 장 남아요</li>
+        </ul>
+        <p class="muted">전에 만든 짝꿍들의 생일은 <b>그대로예요</b> — 도감에서 언제인지 볼 수 있어요 💗</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🏪 가게 레벨이 <b>훨씬 잘 올라요</b></h3>
+        <p>「가게 레벨이 잘 안 올라」라고 말해줘서 고쳤어요. <b>세 가지</b>를 바꿨답니다!</p>
+        <ul class="mini">
+          <li>다음 레벨까지 필요한 게 <b>절반쯤으로</b> 줄었어요</li>
+          <li>🍨<b>뜨기</b> — 전에는 <b>좋은 통(Lv.21 위)</b>만 경험이 쌓였어요.
+            이제 <b>첫 통부터</b> 쌓이고, <b>좋은 통일수록 더 많이</b> 올라요</li>
+          <li>🧳여행 · 🎪축제 · 📚동화 · 🏆운동회 · 🎒소풍 · 🌟부탁 들어주기 ·
+            🎂생일 파티 · 🧩짝 맞추기 · 🍽️주문 · 💌편지 · 🎁선물상자 —
+            <b>이 놀이들은 코인만 줬어요.</b> 이제 <b>가게 레벨도 같이</b> 올라요!</li>
+        </ul>
+        <p>머리 위 <b>🏪 Lv.</b> 칸이 다음 레벨까지 <b>조금씩 차올라요</b> —
+          얼마나 왔는지 눈으로 보여요 🍑<br>
+          한 번에 <b>여러 단계</b>가 오르면 그 사이에 열린 통·방·장비도 <b>빠짐없이</b> 알려줘요 🎉</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🧩 짝 맞추기 놀이가 생겼어요</h3>
+        <p>카드를 뒤집어 <b>같은 햄쮜 얼굴 둘</b>을 찾는 놀이예요.
+          카드에 나오는 얼굴은 전부 <b>내가 모은 햄쮜</b>랍니다 🃏<br>
+          🎮놀이터의 <b>「🎮 다른 놀이」</b> 칸에 있어요.</p>
+        <ul class="mini">
+          <li>🐣 <b>쉬워요</b>(3쌍) · 🐹 <b>보통</b>(6쌍) · 🏆 <b>어려워요</b>(8쌍)</li>
+          <li>⭐ <b>적게 뒤집을수록</b> 별이 많아요 — <b>시간 제한은 없어요</b>,
+            천천히 해도 괜찮아요</li>
+          <li>🏆 <b>제일 잘한 기록</b>이 남아요 — 다음엔 더 적게 뒤집어 보세요!</li>
+          <li>🎁 <b>오늘 첫 판</b>은 선물이 <b>세 배</b>예요</li>
+        </ul>
+        <p><b>지는 법이 없어요.</b> 몇 번을 뒤집든 끝은 나고, 그만두어도 아무 일 없어요.
+          그리고 <b>몇 번이든</b> 또 할 수 있답니다 😊</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🎂 생일 파티를 <b>차려줄</b> 수 있어요</h3>
+        <p>전에는 생일에 「파티 열어주기」를 누르기만 했죠?
+          이제는 <b>내가 차려줘요</b> 🎉</p>
+        <ul class="mini">
+          <li>🍰 <b>케이크</b> 다섯 가지 — 딸기 · 초코 · 컵케이크 · 아이스 · 푸딩</li>
+          <li>🎈 <b>꾸미기</b> 다섯 가지 — 풍선 · 깃발 · 반짝이 · 꽃 · 리본</li>
+          <li>🎁 <b>선물</b> 네 가지 — 인형 · 그림책 · 공 · 왕관</li>
+          <li>👯 <b>친구를 네 마리까지</b> 초대할 수 있어요</li>
+        </ul>
+        <p>고른 대로 <b>파티 그림이 달라져요</b> — 꾸미기가 위에 걸리고,
+          케이크가 앞에 놓이고, <b>몇 번째 파티인지만큼 촛불</b>이 꽂혀요 🕯️<br>
+          그리고 차린 파티는 📸<b>사진첩에 한 장 남아요!</b></p>
+        <p><b>틀린 선택은 없어요.</b> 뭘 골라도 파티는 잘 되니까 마음껏 골라보세요 💕</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">새로워요!</span>
+        <h3>📖 도감을 <b>접었다 펼쳤다</b> 할 수 있어요</h3>
+        <p>도감이 너무 길어서 아래쪽까지 가기 힘들었죠?
+          이제 <b>묶음 이름을 누르면</b> 그 묶음이 <b>착</b> 접혀요.
+          맨 위 <b>「📕 다 접기」</b>를 누르면 한꺼번에 접혀서
+          🥚아기 햄쮜도 🎁특별 햄쮜도 바로 보여요!</p>
+        <ul class="mini">
+          <li>▶ 접힘 · ▼ 펼침 — 삼각형만 보면 알 수 있어요</li>
+          <li>📊 접어도 <b>몇 마리인지와 진행바는 그대로</b> 보여요</li>
+          <li>💾 접어둔 건 <b>기억돼요</b> — 다음에 켜도 그대로예요</li>
+        </ul>
+      </li>
+
+      <li class="scoop">
+        <span class="num">새로워요!</span>
+        <h3>🥚 아기 햄쮜가 태어나요</h3>
+        <p>👯<b>단짝</b>이 된 두 아이에게 <b>알</b>이 하나 생겨요.
+          📖도감 아래 <b>🥚아기 햄쮜</b>에서 짝을 고르면 돼요 (🍒토핑 12개)</p>
+        <ul class="mini">
+          <li>🏠 알은 <b>엄마 아빠가 앉아 있는 놀이방 바닥</b>에 놓여요 —
+            <b>알을 눌러서</b> 품어주면 돼요</li>
+          <li>🤲 <b>사흘</b> 동안 하루에 한 번씩 <b>품어주세요</b>.
+            품을 때마다 알에 <b>알록달록한 무늬</b>가 늘어나요</li>
+          <li>🐣 사흘이 지나면 알이 흔들흔들 — <b>아기가 태어나요!</b></li>
+          <li>🌱 아기는 아주 <b>작아요</b>. <b>이틀</b> 뒤 어린이, <b>닷새</b> 뒤에 다 커요</li>
+          <li>📸 <b>사진 속에서도 아기는 작게</b> 나와요 — 다 커도
+            그때 찍은 사진은 <b>아기 그대로</b>랍니다</li>
+        </ul>
+        <p>제일 재밌는 건 <b>태어난 다음</b>이에요. 아기는 진짜로 <b>작게</b> 그려지고,
+          날이 갈수록 <b>조금씩 커져요</b> 🐣 자랄 때마다 알려주고 선물도 줘요!</p>
+        <p>다 크면 이름에서 <b>「아기」가 떨어져요</b> — 딸초<b>아기</b>쮜 → 딸초쮜 처럼요.
+          직접 지어준 이름은 그대로 있어요 ✏️</p>
+        <p>💞<b>짝꿍 합체</b>랑은 달라요. 합체는 둘이 하나로 합쳐지지만,
+          아기는 <b>엄마 아빠가 그대로 있어요</b> 👨‍👩‍👧</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🍨 나만의 아이스크림을 만들어요</h3>
+        <p>생각해보니 이상하죠? <b>아이스크림 가게</b>인데 아이스크림을
+          직접 만들어 본 적이 한 번도 없었어요. 이제 만들 수 있어요!</p>
+        <ul class="mini">
+          <li>🧇 <b>콘</b> 고르기 — 와플콘 · 슈가콘 · 초코콘 · 무지개콘 · 예쁜 컵</li>
+          <li>🍨 <b>스쿱</b> 쌓기 — 세 개까지, 같은 맛을 두 번 쌓아도 돼요</li>
+          <li>🍒 <b>토핑</b> 얹기 — 체리 · 딸기 · 초코칩 · 무지개 뿌리기 · 쿠키 · 별사탕 · 마시멜로</li>
+          <li>✏️ <b>이름</b> 지어주기 — 「딸기별 눈사람」 같은 거요!</li>
+        </ul>
+        <p>만든 걸 <b>🪧간판에 걸면</b> 손님이 그걸 보고 와요.
+          <b>코인 벌이가 늘고</b>(스쿱이 많고 토핑을 얹을수록 더!),
+          🏪<b>손님 팁도 10% 더</b> 받아요 💰</p>
+        <p>메뉴는 <b>여섯 개까지</b> 만들 수 있어요. 🍨<b>뜨기</b> 탭에서 만들어요!</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🌟 햄쮜가 먼저 <b>부탁</b>을 해요</h3>
+        <p>이제 햄쮜가 먼저 말을 걸어요. 「이거 해주면 안 돼요?」 하고요 💭</p>
+        <ul class="mini">
+          <li>🎀 「<b>리본</b> 달아주면 안 돼요? 거울 보면서 연습까지 했어요」</li>
+          <li>🌇 「<b>노을 마을</b>에 앉아보고 싶어요. 거기 진짜 예쁘대요!」</li>
+          <li>🪑 「<b>딸기쮜</b> 바로 옆에 앉고 싶어요. 할 얘기가 진짜 많거든요!」</li>
+          <li>🎒 「<b>바닷가</b>에 가보고 싶어요! 가방도 다 쌌어요」</li>
+          <li>📸 「저 <b>사진</b> 찍어주세요! 사진첩에 저도 있고 싶어요」</li>
+        </ul>
+        <p>부탁이 있는 햄쮜는 이름표에 <b>💭</b>가 붙어요.
+          들어주면 아주 기뻐하면서 <b>고맙다는 편지</b>를 써요 💌</p>
+        <p><b>안 들어줘도 괜찮아요.</b> 기한 같은 거 없어요 —
+          햄쮜는 얼마든지 기다려 줄 거예요 😊</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🧳 여행 갈 때 <b>햄쮜를 데려가요</b></h3>
+        <p>여행 가나요? 🎮놀이터의 <b>🧳여행 가기</b>에서 햄쮜를
+          <b>세 마리까지</b> 골라 가방에 넣어요. 그리고 여행하는 동안
+          <b>하루에 한 번</b> 「오늘의 여행」을 눌러주세요!</p>
+        <ul class="mini">
+          <li>🎁 <b>기념품</b>을 하루에 <b>네 가지</b>씩 주워 와요 —
+            <b>세 밤이면 열두 가지를 다 모아요</b> 🎉</li>
+          <li>💌 그날 있었던 일을 <b>엽서</b>로 써 보내요</li>
+          <li>📍 엽서에는 <b>진짜 그날 날씨와 지금 있는 곳 이름</b>이 들어가요!</li>
+        </ul>
+        <p>🥟씨앗호떡 · 🍜밀면 · 🍢어묵 · 🏖️해운대 모래 · 🌉광안대교 ·
+          🏘️감천마을 · 🐚조개 · 🕊️갈매기 깃털 · 🌺동백꽃 · 🗼부산타워 ·
+          🍲돼지국밥 · 🚋해변열차 — 부산에 가면 이런 걸 주워 와요 🧳</p>
+        <p>🎒소풍이랑 다른 점이 하나 있어요. <b>여행 간 햄쮜는 방에서 안 빠져요</b> —
+          코인도 그대로 벌어요. 며칠씩 걸리니까요 😊</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🎪 여름 축제가 <b>엿새</b> 동안 열려요</h3>
+        <p>마을에 축제가 열렸어요! <b>하루에 부스 하나</b>씩 열려요.</p>
+        <ul class="mini">
+          <li>🎯 <b>물총 쏘기</b> — 💪씩씩이가 잘해요</li>
+          <li>🍧 <b>빙수 먹기 시합</b> — 😋먹보가 잘해요</li>
+          <li>🎏 <b>금붕어 뜨기</b> — 🙈수줍이가 잘해요</li>
+          <li>🏮 <b>등불 띄우기</b> — 🌙꿈꾸는이가 잘해요</li>
+          <li>🎆 <b>불꽃놀이 구경</b> — 🎀멋쟁이가 잘해요</li>
+          <li>💃 <b>축제 춤 대회</b> — 😜장난꾸러기가 잘해요</li>
+        </ul>
+        <p>누구를 보낼지 <b>잘 고르는 게 놀이</b>예요! 🏆운동회 보물찾기랑 똑같아요.
+          ⭐별이랑 💗하트도 같이 봐요.</p>
+        <p><b>못해도 괜찮아요.</b> 어떤 결과가 나와도 <b>도장은 꼭 찍혀요</b> —
+          잘하면 상이 커질 뿐이에요 🎪</p>
+        <p>도장 여섯 개를 다 모으면 <b>🎆축제 대상</b>이에요!
+          <b>🏮축제 등불</b>이랑 <b>🎏축제 머리꽃</b>을 받아요 —
+          <b>상점에서는 못 사는</b> 소품이랍니다 ✨</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>📚 <b>열 밤</b>짜리 긴 동화가 시작돼요</h3>
+        <p>「<b>달빛 아이스크림</b>」이라는 긴 이야기예요.
+          <b>하루에 한 장씩</b>, 열 밤 동안 이어져요 🌙</p>
+        <p>먼저 <b>주인공</b>을 골라주세요 — 내 햄쮜 중에서 아무나요!
+          그 아이가 이야기의 주인공이 돼요 🐹</p>
+        <p>제일 재밌는 건요, <b>어제 고른 것이 오늘 이야기에 나온다</b>는 거예요.</p>
+        <ul class="mini">
+          <li>둘째 밤에 <b>야광 버섯</b>을 땄으면 → 다섯째 밤에 문지기한테 줄 수 있어요 🍄</li>
+          <li>셋째 밤에 <b>반딧불이</b>를 도와줬으면 → 넷째 밤에 같이 강을 건너요 💡</li>
+          <li>마지막 밤은 그동안 <b>남을 먼저 생각한 만큼</b> 달라져요 💗</li>
+        </ul>
+        <p>다 읽으면 <b>🥄달빛 스푼</b>을 받아요 — 이것도 <b>상점에 없는</b> 가구예요!
+          그리고 <b>처음부터 다시</b> 읽으면서 이번엔 다른 쪽을 골라볼 수 있어요 📚</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>👒👑 특별 햄쮜 <b>넷</b>이 더 왔어요</h3>
+        <p>🌙꿈나라쮜 다음으로 오는 친구들이에요. ⭐를 아주 많이 모아야 해요!</p>
+        <ul class="mini">
+          <li>👒 <b>숙녀쮜</b> <em>⭐330</em> — 올림머리에 꽃을 꽂고 진주 목걸이를 했어요</li>
+          <li>👸 <b>공주쮜</b> <em>⭐400</em> — 티아라를 쓰고 어깨에 리본을 둘렀어요</li>
+          <li>👑 <b>왕쮜</b> <em>⭐490</em> — 커다란 금 왕관에 흰 털 깃을 달았어요</li>
+          <li>🫅 <b>황제쮜</b> <em>⭐600</em> — 이중 왕관에 보라색 망토까지 둘렀어요!</li>
+        </ul>
+        <p>넷이 <b>한 줄로 이어지는</b> 친구들이라, 뒤로 갈수록 머리 위가 점점 높아져요 👑</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🔧 가게 장비가 <b>스물세 가지</b>로 늘었어요</h3>
+        <p>가게를 키워도 살 게 금방 떨어졌지요. <b>열 가지를 새로 넣었어요!</b></p>
+        <ul class="mini">
+          <li>⏳ <b>모래시계</b> <em>Lv.18</em> — 놀고 나서 <b>쉬는 시간이 짧아져요</b></li>
+          <li>📮 <b>큰 우체통</b> <em>Lv.22</em> — 편지가 하루에 <b>한 통씩 더</b> 와요</li>
+          <li>🎀 <b>선물 리본</b> <em>Lv.26</em> — 🎁선물상자가 <b>더 빨리</b> 채워져요</li>
+          <li>🍰 <b>손님 방석</b> <em>Lv.32</em> — 🏪손님이 <b>자주 오고 팁도 더</b> 줘요</li>
+          <li>📣 <b>응원 깃대</b> <em>Lv.38</em> — 🏆운동회에 <b>한 마리 더</b> 나가요</li>
+          <li>🍱 <b>소풍 도시락</b> <em>Lv.44</em> — 🎒소풍 선물이 <b>더 많아져요</b></li>
+          <li>🔭 <b>소원 망원경</b> <em>Lv.58</em> — 🌠별똥별이 <b>더 자주</b> 지나가요</li>
+          <li>👑 <b>황금 간판</b> <em>Lv.70</em> · 💎 <b>보석 진열대</b> <em>Lv.80</em> ·
+            🌝 <b>달빛 조명</b> <em>Lv.90</em> — <b>아주 큰 것들</b>이에요!</li>
+        </ul>
+        <p><b>레벨이 올라가면 이제 꼭 알려줘요.</b> 새 통 · 새 방 · 새 장비 · 새 배경 ·
+          새 소풍 갈 곳 중에 뭐가 열렸는지 <b>창으로 보여주고</b> 상점까지 바로 갈 수 있어요 🎉</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🖼️ 새 배경 <b>둘</b>과 새 방 <b>둘</b></h3>
+        <p>방 꾸미기에 배경이 두 가지 더 생겼어요. 배경이 <b>그 방의 성격</b>이라는 것, 기억하죠?</p>
+        <ul class="mini">
+          <li>🌇 <b>노을 마을</b> <em>Lv.60</em> — 해 질 무렵이라 <b>코인도 하트도 10%씩 더</b></li>
+          <li>🌲 <b>깊은 숲</b> <em>Lv.75</em> — 푹신한 낙엽 위라
+            <b>쉬는 시간 20% 짧고 🍒토핑도 더</b></li>
+        </ul>
+        <p>방도 <b>아홉째 방</b>(Lv.68)과 <b>열째 방</b>(Lv.82)이 생겨서
+          이제 방이 <b>열세 곳</b>, 자리가 <b>일흔여덟</b>이에요 🏠</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🌙 밤에도 <b>들여다보면 깨어 있어요</b></h3>
+        <p>밤에는 다 같이 쿨쿨 자지요. 그런데 <b>편지를 읽을 때도, 도감을 볼 때도</b>
+          자고 있어서 놀자고 하기가 미안했지요?</p>
+        <p>이제 <b>눌러서 들어간 창</b>에서는 눈을 뜨고 있어요 —
+          📖도감 자세히 보기 · 💌편지 · 👗꾸미기 · 🎒소풍 · 🏆운동회 · 🪑자리 고르기요.<br>
+          🏠놀이방이랑 📖도감 목록에서는 <b>그대로 자고 있어요</b>. 밤은 밤이니까요 🌙</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>💌 편지가 <b>더 아이답게</b> 바뀌었어요</h3>
+        <p>햄쮜들이 너무 어른처럼 편지를 썼어요. 이제 <b>진짜 아이처럼</b> 써요 —
+          짧은 문장으로, 자랑도 하고 조르기도 하고, 실수한 이야기도 하면서요.</p>
+        <p>「손가락으로 세다가 발가락까지 셌는데 모자랐어요」<br>
+          「글씨가 자꾸 삐뚤어져서 세 번이나 다시 썼어요」<br>
+          「제가 조금 더 먹었어요. 미안해요. 다음엔 똑같이 나눌게요」<br>
+          이런 식이에요 ✏️ <b>편지 개수는 그대로</b>라서 전에 받은 편지도 그대로 있어요 💌</p>
+        <p><b>답장했을 때 하는 말도 전부 바꿨어요.</b> 다정하게 답장하면 햄쮜가
+          「심장이 콩!」 같은 어른 같은 말을 했었는데, 이제
+          <b>「헉! 그런 말 갑자기 하기 있기 없기! …좋아요. 헤헤」</b> 처럼 말해요 😆<br>
+          답장 고르는 말도 「나도 보고 싶었어」 → <b>「나도 네가 좋아」</b> 로 바꿨어요 💗</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🧸 불편했던 것 <b>두 가지</b>를 고쳤어요</h3>
+        <ul class="mini">
+          <li>🌳 마당에서 <b>장난감 칸이 날씨 아래</b>에 있어서 놀려면 한참 내려야 했지요.
+            이제 <b>장난감이 위</b>, 날씨가 맨 아래예요</li>
+          <li>🎒 소풍이나 🏆운동회에서 <b>한 마리 고를 때마다 화면이 맨 위로 튀던 것</b> —
+            이제 <b>고르던 자리 그대로</b> 있어요</li>
+        </ul>
+        <p>창을 새로 열 때 <b>앞 창이 내려가 있던 자리</b>에서 시작하던 것도 같이 고쳤어요 📜</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">제일 새로워요!</span>
+        <h3>🏅 스티커 <b>다섯 장</b>이 더 늘었어요</h3>
+        <p>오늘 생긴 두 놀이에도 스티커가 붙어요!</p>
+        <ul class="mini">
+          <li>🧩<b>첫 짝 맞추기</b> · 🃏<b>열 판 맞추기</b> ·
+            ⭐<b>별 셋 받기</b> — 짝 맞추기 스티커 셋</li>
+          <li>🎂<b>첫 생일 파티</b> · 🎈<b>파티 다섯 번</b> — 파티 스티커 둘</li>
+        </ul>
+        <p>모두 <b>134장</b>이 됐어요. 이미 받아둔 스티커는 <b>그대로</b> 있어요 🏅</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">혹시 몰랐나요?</span>
+        <h3>🎮 놀이가 이만큼 있어요</h3>
+        <p>소식에서 제대로 말 안 한 놀이들이에요. 🎮<b>놀이터</b>의
+          「🎮 다른 놀이」 칸에 다 있답니다!</p>
+        <ul class="mini">
+          <li>🕵️ <b>햄쮜 탐정</b> — 「누가 아이스크림을 몰래 먹었을까?」
+            내 햄쮜가 용의자예요. 힌트를 하나씩 열어서 범인을 찾아요 (하루 3판)</li>
+          <li>🙈 <b>숨바꼭질</b> — 햄쮜가 컵 뒤에 숨어요. 어느 컵일까요?
+            조금 쉬었다가 또 할 수 있어요</li>
+          <li>🏆 <b>꾸미기 대회</b> — 제일 예쁘게 꾸민 햄쮜를 내보내요 (하루 한 번)</li>
+          <li>🧩 <b>짝 맞추기</b> — 이번에 새로 생긴 놀이예요!</li>
+        </ul>
+      </li>
+
+      <li class="scoop">
+        <span class="num">혹시 몰랐나요?</span>
+        <h3>🛝 마당에는 놀이기구가 있어요</h3>
+        <p>🌳<b>마당</b>과 🌻<b>뒷마당</b>에 놀이기구를 놓을 수 있어요.
+          놓고 나서 <b>누르면 햄쮜가 걸어가서 타요!</b> 💕</p>
+        <ul class="mini">
+          <li>🛝 <b>미끄럼틀</b> · 🎠 <b>회전목마</b> · 🪁 <b>연날리기</b></li>
+          <li>🏖️ <b>모래성</b> · 🎋 <b>그네</b></li>
+        </ul>
+        <p>🛒상점의 <b>방 가구</b> 칸에서 살 수 있어요.
+          그리고 마당은 <b>진짜 오늘 날씨</b>를 따라간답니다 ☀️🌧️</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">혹시 몰랐나요?</span>
+        <h3>✨ 반짝 게이지와 🥄 골든 스쿱</h3>
+        <p>아이스크림을 뜰 때마다 <b>✨반짝 게이지</b>가 조금씩 차요.
+          <b>가득 차면 다음에 뜨는 햄쮜는 ⭐3개 이상이 확실해요!</b></p>
+        <ul class="mini">
+          <li>✨ 게이지는 🍨뜨기 화면에서 볼 수 있어요 — 눌러보면 설명도 나와요</li>
+          <li>🥄 기다리기 싫으면 <b>골든 스쿱</b> — 🍒토핑을 얹으면
+            그 자리에서 ⭐3개 이상이 나와요</li>
+        </ul>
+      </li>
+
+      <li class="scoop">
+        <span class="num">혹시 몰랐나요?</span>
+        <h3>🎁 함께한 날을 세고 있어요</h3>
+        <p>햄쮜마다 <b>처음 만난 날</b>이 적혀 있어요. 📖도감에서 볼 수 있답니다.</p>
+        <ul class="mini">
+          <li>🌱 <b>일주일</b> · 🌸 <b>한 달</b> · 🎂 <b>백 일</b> · 👑 <b>일 년</b>
+            — 이 날이 오면 <b>기념일 선물</b>을 받아요!</li>
+          <li>📆 🎮놀이터에서 <b>「🎁 축하하기」</b>를 누르면 돼요</li>
+        </ul>
+      </li>
+
+      <li class="scoop">
+        <span class="num">혹시 몰랐나요?</span>
+        <h3>✏️ 햄쮜 이름을 내가 지어줄 수 있어요</h3>
+        <p>새 햄쮜가 나오면 <b>이름을 지어줄 수 있어요.</b>
+          나중에 바꾸고 싶으면 👗<b>꾸미기</b> → <b>✏️ 이름 바꾸기</b>로 언제든 바꿔요.</p>
+        <p>지어준 이름은 💌<b>편지에도</b>, 📸<b>사진에도</b> 그대로 나온답니다 💕</p>
+      </li>
+
+      <li class="scoop">
+        <span class="num">혹시 몰랐나요?</span>
+        <h3>📸 사진을 <b>그림 파일로</b> 저장할 수 있어요</h3>
+        <p>🏠놀이방의 <b>📸</b>를 누르면 그 방 햄쮜들로 사진을 찍어요.
+          테두리도 네 가지 중에 고르고, 사진에 <b>제목</b>도 붙일 수 있어요.</p>
+        <ul class="mini">
+          <li>📤 사진첩에서 <b>그림으로 저장</b>을 누르면 <b>진짜 그림 파일</b>이 돼요 —
+            폰에서는 꾹 눌러 저장하면 돼요</li>
+          <li>🎂 <b>생일 파티</b>를 차려주면 그 사진도 <b>저절로</b> 한 장 남아요!</li>
+        </ul>
+      </li>
+
+      <li class="scoop">
+        <span class="num">혹시 몰랐나요?</span>
+        <h3>📅 오늘의 즐거움 — 도장판과 심부름</h3>
+        <p>🎮<b>놀이터</b> 맨 위에 <b>오늘의 즐거움</b>이 있어요.</p>
+        <ul class="mini">
+          <li>📅 <b>도장판</b> — 하루에 한 번 도장을 받아요.
+            <b>날마다 이어서</b> 받으면 선물이 점점 커져요!</li>
+          <li>🎯 <b>오늘의 심부름</b> — 「🍨세 번 뜨기」처럼 작은 일 세 가지예요.
+            다 하면 🎁선물을 받아요</li>
+          <li>✨ 그 아래 <b>「오늘 아직 안 한 것」</b>에 오늘 할 수 있는 게 모여 있어요</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <section class="gifts">
+    <h2>🎫 이때 준 선물</h2>
+
+    <div class="ticket">
+      <span class="label">쿠폰 번호</span>
+      <div class="code">생일 축하해 햄쮜들아~</div>
+      <p class="gets">🎂<b>다 같이 생일 파티</b> 꾸러미예요! 방을 파티장으로 꾸며봐요 🎈<br>
+        🎉<b>고깔 모자</b> · 🎗️<b>나비 넥타이</b> · 🎈<b>하트 풍선</b> — 파티 옷 한 벌<br>
+        🎂<b>케이크</b> · 🎀<b>리본 줄</b> · ⭐<b>별 모빌</b> (방에 놓을 수 있어요)<br>
+        🍰<b>치즈케이크 통</b> — 생일에는 케이크죠!<br>
+        💌<b>편지 세 통</b> — 축하 인사를 들은 햄쮜들이 답장을 써요<br>
+        🪙 코인 5,200개 · 🍒 토핑 36개<br>
+        <b>물결표(~)는 있어도 없어도 괜찮아요!</b></p>
+    </div>
+
+    <div class="ticket">
+      <span class="label">쿠폰 번호</span>
+      <div class="code">쮜돌이는 숙녀!</div>
+      <p class="gets">👒<b>숙녀쮜</b> — 차 마시러 들렀다가 그대로 눌러앉는 특별 햄쮜예요!<br>
+        💌<b>숙녀쮜가 도착해서 쓴 첫 편지</b> — 숙녀 인사를 연습해 왔대요<br>
+        📿<b>진주 목걸이</b> · 🌸<b>들꽃 장식</b> · ☂️<b>꽃 우산</b> — 숙녀에게 딱이죠<br>
+        🍵<b>밀크티 통</b> · 🪞<b>거울</b> · 🕰️<b>시계</b> (방에 놓을 수 있어요)<br>
+        🪙 코인 3,200개 · 🍒 토핑 24개<br>
+        <b>느낌표는 있어도 없어도 괜찮아요!</b></p>
+    </div>
+
+    <div class="ticket">
+      <span class="label">쿠폰 번호</span>
+      <div class="code">부산가는 쮜돌</div>
+      <p class="gets">여행 갈 때 챙기는 <b>바닷가 준비물</b> 꾸러미예요 🌊<br>
+        🌸<b>꽃 목걸이</b> · 🌈<b>무지개콘</b> · 🍭<b>막대사탕</b><br>
+        🧂<b>소금우유 통</b> · 🥤<b>소다 통</b> — 바다 색깔이에요!<br>
+        ⛱️<b>파라솔</b> · 🏖️<b>모래성</b> (마당에 놓을 수 있어요)<br>
+        🪙 코인 4,200개 · 🍒 토핑 30개</p>
+      <p class="gets"><b>🎁기념품이랑 💌부산 엽서는 일부러 안 넣었어요.</b>
+        그건 🧳<b>여행을 가야</b> 받을 수 있답니다 — 그게 더 재미있으니까요!
+        🎮놀이터의 <b>🧳여행 가기</b>로 햄쮜를 데려가 보세요</p>
+    </div>
+
+    <p class="howto">쿠폰은 <b>🍨 뜨기</b> 화면을 아래로 내려서 <b>🎫 쿠폰</b>을 누르면 적을 수 있어요.
+      띄어쓰기는 안 해도 괜찮아요. 한 번호는 <b>한 번만</b> 쓸 수 있어요!</p>
+  </section>
+
+  <a class="backbtn" href="index.html">🍨 게임으로 돌아가서 놀기</a>
+
+  <section class="past">
+    <h2>📚 다른 소식</h2>
+    <p class="pastnote">전에 바뀐 것들은 여기에 따로 모아뒀어요. 쿠폰도 여기 있어요!</p>
+    <a class="pastlink" href="news.html">
+      <span class="d">8월 28일</span>
+      <span class="t">🍯토핑 항아리가 생겼어요</span>
+      <span class="n">제일 새 소식</span>
+    </a>
+    <a class="pastlink" href="news-20260826.html">
+      <span class="d">8월 26일</span>
+      <span class="t">🏆운동회와 🎒소풍이 생겼어요</span>
+      <span class="n">28가지 · 🎫쿠폰 2장</span>
+    </a>
+    <a class="pastlink" href="news-20260825.html">
+      <span class="d">8월 25일</span>
+      <span class="t">두 번째 진열장이 열렸어요</span>
+      <span class="n">14가지 · 🎫쿠폰 1장</span>
+    </a>
+    <a class="pastlink" href="news-20260824.html">
+      <span class="d">8월 24일</span>
+      <span class="t">햄쮜가 콘을 탔어요</span>
+      <span class="n">7가지 · 🎫쿠폰 2장</span>
+    </a>
+  </section>
+
+
+  <footer class="foot">
+    <div class="sprinkles" aria-hidden="true">
+      <i style="background:var(--berry)"></i><i style="background:var(--butter)"></i>
+      <i style="background:var(--mint)"></i><i style="background:var(--grape)"></i>
+      <i style="background:var(--berry)"></i>
+    </div>
+    재미있게 놀다가 <b>이상한 게 보이면 꼭 알려주세요.</b><br>
+    다음에 더 고쳐서 올려줄게요 🍨
+  </footer>
+
+</div>
+
+</body>
+</html>

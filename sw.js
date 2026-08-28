@@ -2,11 +2,12 @@
    게임 화면(HTML)은 네트워크 우선: 온라인이면 항상 최신, 오프라인이면 캐시에서 꺼낸다.
    아이콘·매니페스트 같은 정적 파일은 캐시 우선.
    게임을 고쳐 올릴 때 CACHE 뒤의 숫자를 올리면 헌 캐시가 정리된다. */
-const CACHE = "hamskin-v52";
+const CACHE = "hamskin-v55";
 const ASSETS = [
   "./",
   "index.html",
   "news.html",
+  "news-20260827.html",
   "news-20260826.html",
   "news-20260825.html",
   "news-20260824.html",
