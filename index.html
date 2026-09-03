@@ -800,7 +800,10 @@ header{margin-bottom:7px}
 }
 .photo .pic .sky{position:absolute;inset:0}
 .photo .pic .fl{position:absolute;left:0;right:0;bottom:0;height:36%}
-.photo .pic .hs{width:54px;height:54px;position:relative;z-index:2;flex:0 0 auto}
+/* ⚠️ 햄쮜 칸은 <b>줄어들 수 있어야</b> 한다 — 54px 로 못 박아두면
+   다섯 마리(274px)부터 사진 칸(272px)을 넘겨서 가장자리 아이가 잘려 나간다.
+   작은 사진(.photo.sm)도 같은 이유로 이렇게 돼 있다. 비율은 aspect-ratio 가 지킨다. */
+.photo .pic .hs{width:54px;aspect-ratio:1;height:auto;position:relative;z-index:2;flex:0 1 auto;min-width:0}
 .photo .pic .cn{position:absolute;font-size:13px;z-index:3;opacity:.9}
 /* 🖼️ 아이가 붙인 스티커 — 손가락은 그대로 통과한다(사진을 눌러 크게 보는 게 먼저다) */
 .photo .pic .stk{position:absolute;z-index:6;pointer-events:none;font-size:19px;line-height:1;
@@ -1046,6 +1049,8 @@ function eun (s){ return s+(jong(s)?'은':'는'); }
 function ega (s){ return s+(jong(s)?'이':'가'); }
 /* 으로/로 만 규칙이 하나 더 있다 — ㄹ 받침은 「로」 (하늘로, 서울로) */
 function wagwa(s){ return s+(jong(s)?'과':'와'); }
+/* 아이 말투에서는 「과/와」보다 「이랑/랑」을 훨씬 많이 쓴다 */
+function irang(s){ return s+(jong(s)?'이랑':'랑'); }
 function euro(s){
   const t=String(s).replace(/<[^>]*>/g,'').trim();
   const c=t.charCodeAt(t.length-1)-0xac00;
@@ -1994,7 +1999,8 @@ const SHAPES={
               <g fill="#fff" opacity=".8">
               <circle cx="45" cy="16" r="2.2"/><circle cx="55" cy="12" r="1.6"/><circle cx="50" cy="6" r="1.3"/></g>`,
     face:{x:50,y:58,s:.84}, feet:1, tail:1, shine:1},
-  fizzy:{name:'탄산방울', w:36, top:16, grp:1,
+  /* ⚠️ 이름표가 fizz(소다쮜)와 <b>둘 다 「탄산방울」</b>이었다 — 모양은 다른데 이름이 같았다 */
+  fizzy:{name:'사이다방울', w:36, top:16, grp:1,
     body:f=>`<g ${f}><circle cx="50" cy="63" r="28"/><circle cx="25" cy="33" r="11"/>
              <circle cx="76" cy="28" r="8"/><circle cx="60" cy="16" r="5"/></g>`,
     ears:c=>``,
@@ -2081,16 +2087,21 @@ const SHAPES={
              <rect x="60" y="10" width="18" height="15" rx="7" fill="${c.base}"/>
              <rect x="26" y="14" width="10" height="6" rx="3" fill="${c.cheek}"/>
              <rect x="64" y="14" width="10" height="6" rx="3" fill="${c.cheek}"/>`,
-    deco:()=>`<path d="M26 66 Q35 60 44 65 Q51 69 60 64 Q69 59 74 66 L74 76
-              Q74 83 66 83 H34 Q26 83 26 76 Z" fill="#7fae4a"/>
-              <path d="M26 66 Q35 60 44 65 Q51 69 60 64 Q69 59 74 66 L74 70
-              Q66 64 59 68 Q50 73 43 69 Q34 64 26 70 Z" fill="#b7d97e"/>
-              <g stroke="#e6c877" stroke-width="1.5" stroke-linecap="round" opacity=".9" fill="none">
-              <path d="M32 74 q8 -3 15 1"/><path d="M53 73 q8 -3 14 2"/>
-              <path d="M33 80 q9 -3 16 1"/><path d="M54 80 q8 -3 13 1"/></g>
-              <path d="M27 33 q10 -6 21 -5" stroke="#fff" stroke-width="3.6" fill="none"
-              stroke-linecap="round" opacity=".33"/>`,
-    face:{x:50,y:47,s:.84}, feet:1, tail:1},
+    /* 🍫 표시는 <b>머리 위에 얹은 피스타치오 토핑</b>이다 — 겉면을 덮은 것이라 「속」이 아니다.
+       ⚠️ 배(x26~74, y50~85)에는 절대 아무것도 그리지 않는다. 거기에 색이 들어가면
+          무엇을 그리든 몸을 가른 것처럼 보인다(아이가 두 번 그렇게 봤다). */
+    deco:()=>`<path d="M18 40 Q18 21 50 21 Q82 21 82 40 Q66 31 50 31 Q34 31 18 40 Z" fill="#6f9c42"/>
+              <path d="M18 40 Q18 21 50 21 Q82 21 82 40 Q66 28 50 28 Q34 28 18 36 Z" fill="#9cc95e"/>
+              <g stroke="#f0d489" stroke-width="1.5" stroke-linecap="round" opacity=".95" fill="none">
+              <path d="M25 31 q8 -5 16 -2"/><path d="M44 27 q9 -3 16 2"/><path d="M62 30 q8 -4 15 1"/>
+              <path d="M30 37 q9 -4 17 0"/><path d="M54 36 q9 -4 16 1"/></g>
+              <path d="M25 34 q-2 7 2 10" stroke="#6f9c42" stroke-width="3.4" fill="none"
+              stroke-linecap="round"/>
+              <path d="M75 33 q3 8 -1 11" stroke="#6f9c42" stroke-width="3.2" fill="none"
+              stroke-linecap="round"/>
+              <path d="M28 26 q9 -4 17 -3" stroke="#e8f6cf" stroke-width="2.6" fill="none"
+              stroke-linecap="round" opacity=".55"/>`,
+    face:{x:50,y:56,s:.84}, feet:1, tail:1},
   /* ==================================================================
      🆕 새 통 열여섯 가지 모양 (Lv.73~88).
      ⚠️ 통 하나에 모양 하나다 — 있는 모양을 돌려 쓰면 아이가 바로 알아본다.
@@ -2367,6 +2378,784 @@ const SHAPES={
               stroke-linecap="round" opacity=".3"/>`,
     face:{x:50,y:58,s:.9}, feet:1, tail:1, shine:1},
   /* ==================================================================
+     🆕 통 열두 가지 모양 (Lv.89~100). 실루엣을 서로 다르게 했다 —
+     꽃무늬 과자 · 네모 슬래브 · 타르트 컵 · 팬케이크 탑 · 빨대 컵 · 찻잔 ·
+     통 케이크 · 젤리곰 · 땅콩 껍질 · 양갱 막대 · 두툼한 네모 · 누운 롤케이크.
+  ================================================================== */
+  /* 🍯 약과 — 표시는 <b>가장자리의 꽃잎 물결</b>과 가운데 구멍이다 */
+  yakgwa:{name:'약과', w:34, top:20,
+    body:f=>`<path d="M50 18 L61 23 L72 21 L77 31 L87 38 L84 50 L87 62 L77 69 L72 79
+             L61 77 L50 82 L39 77 L28 79 L23 69 L13 62 L16 50 L13 38 L23 31 L28 21 L39 23 Z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="18" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="70" cy="18" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="30" cy="19" rx="3.6" ry="3" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="19" rx="3.6" ry="3" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="1.6" opacity=".5">
+             <path d="M26 30 q24 -7 48 0"/><path d="M24 71 q26 7 52 0"/></g>
+             <path d="M22 26 q10 -5 19 -4" stroke="#fff9e0" stroke-width="3" fill="none"
+             stroke-linecap="round" opacity=".45"/>`,
+    face:{x:50,y:50,s:.86}, feet:1, tail:1},
+
+  /* ☕ 티라미수 — 표시는 <b>위에 두껍게 덮인 코코아 가루</b>다 */
+  tiramisu:{name:'티라미수', w:35, top:22,
+    body:f=>`<path d="M17 30 h66 v52 q0 8 -8 8 h-50 q-8 0 -8 -8 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<rect x="23" y="17" width="16" height="14" rx="5" fill="${c.base}"/>
+             <rect x="61" y="17" width="16" height="14" rx="5" fill="${c.base}"/>
+             <rect x="27" y="21" width="8" height="6" rx="3" fill="${c.cheek}"/>
+             <rect x="65" y="21" width="8" height="6" rx="3" fill="${c.cheek}"/>`,
+    deco:()=>`<path d="M17 30 h66 v9 h-66 z" fill="#6d4426"/>
+              <path d="M17 30 h66 v4 h-66 z" fill="#855634"/>
+              <g fill="#4e2f18" opacity=".55"><circle cx="28" cy="35" r="1.3"/><circle cx="44" cy="34" r="1.1"/>
+              <circle cx="58" cy="36" r="1.2"/><circle cx="72" cy="34" r="1.1"/></g>
+              <ellipse cx="72" cy="76" rx="6" ry="4.4" fill="#5b3a1f" transform="rotate(-18 72 76)"/>
+              <path d="M72 72.4 v7.2" stroke="#3f2612" stroke-width="1.1" stroke-linecap="round"/>`,
+    face:{x:50,y:58,s:.88}, feet:1, tail:0},
+
+  /* 🥧 에그타르트 — 표시는 <b>주름진 타르트 껍질</b>과 노란 커스터드다 */
+  eggtart:{name:'에그타르트', w:35, top:26,
+    body:f=>`<path d="M18 44 h64 l-7 38 q-1 8 -9 8 h-32 q-8 0 -9 -8 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="28" cy="36" rx="8.5" ry="7" fill="${c.base}"/>
+             <ellipse cx="72" cy="36" rx="8.5" ry="7" fill="${c.base}"/>
+             <ellipse cx="28" cy="37" rx="4" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="72" cy="37" rx="4" ry="3.2" fill="${c.cheek}"/>`,
+    deco:c=>`<ellipse cx="50" cy="44" rx="32" ry="8" fill="#f7cf62"/>
+             <ellipse cx="50" cy="43" rx="28" ry="6" fill="#ffe08a"/>
+             <g fill="#a4641f" opacity=".7"><ellipse cx="37" cy="43" rx="3.4" ry="2.2"/>
+             <ellipse cx="55" cy="41" rx="2.8" ry="1.9"/><ellipse cx="64" cy="45" rx="2.4" ry="1.6"/></g>
+             <g stroke="${c.dark}" stroke-width="1.5" opacity=".45">
+             <path d="M25 52 l-1 8 M35 54 l-1 9 M65 54 l1 9 M75 52 l1 8"/></g>`,
+    face:{x:50,y:64,s:.82}, feet:1, tail:0},
+
+  /* 🥞 팬케이크 — 표시는 <b>세 장 포갠 층</b>과 위에 얹힌 버터다 */
+  pancake:{name:'팬케이크', w:35, top:24,
+    body:f=>`<g ${f}><ellipse cx="50" cy="42" rx="34" ry="10"/>
+             <ellipse cx="50" cy="58" rx="35" ry="11"/>
+             <ellipse cx="50" cy="75" rx="33" ry="11"/>
+             <rect x="15" y="42" width="70" height="33"/></g>`,
+    ears:c=>`<ellipse cx="30" cy="28" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="70" cy="28" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="30" cy="29" rx="4" ry="3.4" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="29" rx="4" ry="3.4" fill="${c.cheek}"/>`,
+    deco:c=>`<ellipse cx="50" cy="42" rx="34" ry="10" fill="${c.light}"/>
+             <rect x="41" y="33" width="18" height="9" rx="2.5" fill="#ffe27a" stroke="#e0b93f" stroke-width="1.2"/>
+             <path d="M22 44 q6 8 2 14" stroke="#c98a3a" stroke-width="3" fill="none"
+             stroke-linecap="round" opacity=".75"/>
+             <path d="M78 44 q-5 9 -1 15" stroke="#c98a3a" stroke-width="3" fill="none"
+             stroke-linecap="round" opacity=".75"/>`,
+    face:{x:50,y:60,s:.84}, feet:1, tail:1},
+
+  /* 🧊 슬러시 — 표시는 <b>컵 밖으로 솟은 얼음</b>과 빨대다 */
+  slush:{name:'슬러시', w:32, top:12,
+    body:f=>`<path d="M24 34 h52 l-7 50 q-1 7 -8 7 h-22 q-7 0 -8 -7 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>``,
+    deco:c=>`<path d="M22 34 q6 -12 14 -6 q4 -12 14 -5 q8 -10 15 3 q9 -2 13 8 z" fill="${c.light}"/>
+             <path d="M24 34 q7 -8 13 -3 q5 -9 14 -3 q7 -7 13 3 q6 -1 10 3 z" fill="#ffffff" opacity=".75"/>
+             <path d="M62 24 L70 6" stroke="#ff8fb2" stroke-width="4.5" stroke-linecap="round"/>
+             <g fill="none" stroke="${c.dark}" stroke-width="1.4" opacity=".4">
+             <path d="M28 52 h44 M30 66 h40"/></g>`,
+    face:{x:50,y:56,s:.8}, feet:0, tail:0},
+
+  /* 🍵 호지차 — 표시는 <b>손잡이 달린 찻잔</b>과 받침이다 */
+  hojicha:{name:'호지차', w:33, top:24,
+    body:f=>`<path d="M22 36 h56 v26 q0 22 -28 22 q-28 0 -28 -22 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="31" cy="28" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="69" cy="28" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="31" cy="29" rx="3.6" ry="3" fill="${c.cheek}"/>
+             <ellipse cx="69" cy="29" rx="3.6" ry="3" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M78 44 q12 2 10 12 q-2 9 -12 8" stroke="${c.dark}" stroke-width="4"
+             fill="none" stroke-linecap="round" opacity=".85"/>
+             <ellipse cx="50" cy="88" rx="30" ry="6" fill="${c.light}" stroke="${c.dark}"
+             stroke-width="1.4" stroke-opacity=".45"/>
+             <path d="M22 36 h56 v6 h-56 z" fill="${c.light}" opacity=".8"/>
+             <g stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".5">
+             <path d="M38 24 q4 -6 0 -12"/><path d="M62 24 q4 -6 0 -12"/></g>`,
+    face:{x:50,y:58,s:.84}, feet:0, tail:1},
+
+  /* 🔥 바스크치즈케이크 — 표시는 <b>새까맣게 그을린 윗면</b>이다 */
+  basque:{name:'바스크치즈케이크', w:35, top:22,
+    body:f=>`<path d="M20 34 q30 -8 60 0 l-4 48 q-1 8 -9 8 h-34 q-8 0 -9 -8 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="29" cy="26" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="71" cy="26" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="29" cy="27" rx="4" ry="3.4" fill="${c.cheek}"/>
+             <ellipse cx="71" cy="27" rx="4" ry="3.4" fill="${c.cheek}"/>`,
+    deco:()=>`<path d="M20 34 q30 -8 60 0 l-1 10 q-29 -7 -58 0 z" fill="#5a3418"/>
+              <path d="M20 34 q30 -8 60 0 l-.5 5 q-29 -6 -59 0 z" fill="#7a4a24"/>
+              <g fill="#3f2410" opacity=".5"><ellipse cx="34" cy="38" rx="4" ry="2"/>
+              <ellipse cx="56" cy="36" rx="5" ry="2.2"/><ellipse cx="70" cy="39" rx="3.4" ry="1.8"/></g>
+              <path d="M26 76 q24 5 48 0" stroke="#fff" stroke-width="2" fill="none"
+              opacity=".3" stroke-linecap="round"/>`,
+    face:{x:50,y:60,s:.86}, feet:1, tail:0},
+
+  /* 🐻 젤리곰 — 표시는 <b>젤리곰 실루엣</b>(둥근 귀와 짧은 팔)과 말캉한 광택이다 */
+  gummy:{name:'젤리곰', w:33, top:18,
+    body:f=>`<g ${f}><ellipse cx="50" cy="60" rx="25" ry="30"/>
+             <ellipse cx="23" cy="57" rx="9" ry="12"/><ellipse cx="77" cy="57" rx="9" ry="12"/>
+             <ellipse cx="35" cy="88" rx="10" ry="8"/><ellipse cx="65" cy="88" rx="10" ry="8"/></g>`,
+    ears:c=>`<circle cx="30" cy="26" r="11" fill="${c.base}"/><circle cx="70" cy="26" r="11" fill="${c.base}"/>
+             <circle cx="30" cy="26" r="5" fill="${c.cheek}"/><circle cx="70" cy="26" r="5" fill="${c.cheek}"/>`,
+    deco:()=>`<ellipse cx="34" cy="40" rx="8" ry="5" fill="#fff" opacity=".42" transform="rotate(-24 34 40)"/>
+              <ellipse cx="24" cy="52" rx="3" ry="5" fill="#fff" opacity=".35"/>
+              <ellipse cx="76" cy="52" rx="3" ry="5" fill="#fff" opacity=".35"/>`,
+    face:{x:50,y:56,s:.86}, feet:0, tail:0, grp:1},
+
+  /* 🥜 땅콩버터 — 표시는 <b>땅콩 껍질 모양</b>(가운데가 잘록한 8자)이다 */
+  peanut:{name:'땅콩버터', w:32, top:16,
+    body:f=>`<path d="M50 16 q22 0 22 19 q0 9 -6 13 q6 5 6 15 q0 21 -22 21 q-22 0 -22 -21
+             q0 -10 6 -15 q-6 -4 -6 -13 q0 -19 22 -19 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="31" cy="14" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="69" cy="14" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="31" cy="15" rx="3.6" ry="3" fill="${c.cheek}"/>
+             <ellipse cx="69" cy="15" rx="3.6" ry="3" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="1.5" opacity=".45">
+             <path d="M31 26 q19 -6 38 0"/><path d="M30 78 q20 6 40 0"/>
+             <path d="M33 84 q17 5 34 0"/></g>
+             <path d="M33 24 q9 -5 17 -4" stroke="#fff6df" stroke-width="3" fill="none"
+             stroke-linecap="round" opacity=".45"/>`,
+    face:{x:50,y:52,s:.82}, feet:1, tail:1},
+
+  /* 🌰 밤양갱 — 표시는 <b>반들반들한 검붉은 막대</b>와 박힌 밤 조각이다 */
+  yanggaeng:{name:'밤양갱', w:33, top:26,
+    body:f=>`<rect x="20" y="34" width="60" height="56" rx="9" ${f}/>`,
+    ears:c=>`<rect x="26" y="22" width="16" height="14" rx="5" fill="${c.base}"/>
+             <rect x="58" y="22" width="16" height="14" rx="5" fill="${c.base}"/>
+             <rect x="30" y="26" width="8" height="6" rx="3" fill="${c.cheek}"/>
+             <rect x="62" y="26" width="8" height="6" rx="3" fill="${c.cheek}"/>`,
+    deco:()=>`<g fill="#e5c489"><ellipse cx="31" cy="78" rx="6" ry="5"/><ellipse cx="50" cy="83" rx="5.4" ry="4.6"/>
+              <ellipse cx="69" cy="77" rx="6" ry="5"/></g>
+              <g fill="#c19a5e" opacity=".8"><ellipse cx="31" cy="80" rx="6" ry="2.4"/>
+              <ellipse cx="50" cy="85" rx="5.4" ry="2.2"/><ellipse cx="69" cy="79" rx="6" ry="2.4"/></g>
+              <path d="M26 40 q10 -3 19 -2" stroke="#fff" stroke-width="3.4" fill="none"
+              stroke-linecap="round" opacity=".3"/>`,
+    face:{x:50,y:58,s:.86}, feet:1, tail:1},
+
+  /* 🍫 브라우니 — 표시는 <b>쩍쩍 갈라진 윗면</b>과 박힌 초코 덩이다 */
+  brownie:{name:'브라우니', w:35, top:28,
+    body:f=>`<path d="M18 36 h64 v46 q0 8 -8 8 h-48 q-8 0 -8 -8 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<rect x="24" y="24" width="17" height="14" rx="4.5" fill="${c.base}"/>
+             <rect x="59" y="24" width="17" height="14" rx="4.5" fill="${c.base}"/>
+             <rect x="28" y="28" width="9" height="6" rx="3" fill="${c.cheek}"/>
+             <rect x="63" y="28" width="9" height="6" rx="3" fill="${c.cheek}"/>`,
+    deco:()=>`<path d="M18 36 h64 v8 h-64 z" fill="#8a5a35" opacity=".75"/>
+              <g stroke="#f0dcc2" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".7">
+              <path d="M24 40 q6 -3 11 1 q5 3 10 -1"/><path d="M56 39 q6 3 11 -1 q4 -2 9 1"/></g>
+              <g fill="#4a2a14"><rect x="27" y="74" width="10" height="9" rx="2.4"/>
+              <rect x="45" y="78" width="9" height="8" rx="2.2"/>
+              <rect x="63" y="73" width="10" height="9" rx="2.4"/></g>`,
+    face:{x:50,y:58,s:.88}, feet:1, tail:0},
+
+  /* 🍰 롤케이크 — <b>옆으로 누운 통</b>이라 왼쪽 단면에 소용돌이가 보인다.
+     ⚠️ 얼굴을 오른쪽(x56)으로 밀어서 소용돌이가 얼굴에 안 겹치게 했다. */
+  rollcake:{name:'롤케이크', w:34, top:26,
+    body:f=>`<rect x="12" y="34" width="76" height="52" rx="26" ${f}/>`,
+    ears:c=>`<ellipse cx="46" cy="27" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="72" cy="27" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="46" cy="28" rx="4" ry="3.4" fill="${c.cheek}"/>
+             <ellipse cx="72" cy="28" rx="4" ry="3.4" fill="${c.cheek}"/>`,
+    deco:c=>`<ellipse cx="26" cy="60" rx="14" ry="26" fill="${c.light}"/>
+             <path d="M26 60 m0 -20 a20 20 0 1 1 -0.1 0 M26 60 m0 -12 a12 12 0 1 0 0.1 0"
+             fill="none" stroke="#c8724f" stroke-width="4.5" transform="scale(.7,1.3) translate(11.1,-18)"/>
+             <ellipse cx="26" cy="60" r="0" rx="4" ry="7" fill="#c8724f"/>`,
+    face:{x:57,y:58,s:.84}, feet:1, tail:0},
+
+  /* ---- 🆕 특별 햄쮜 모양 여섯 — 「음식 말고 귀여운 것」(아이 요청) ---- */
+
+  /* 🦊 여우 — 표시는 <b>뾰족하고 큰 귀</b>와 <b>흰 끝이 달린 굵은 꼬리</b>다.
+     ⚠️ 꼬리를 몸 안에 그리므로 tail:0 이다 — 기본 꼬리를 켜면 꼬리가 둘이 된다. */
+  fox:{name:'여우', w:33, top:22,
+    body:f=>`<g ${f}><ellipse cx="45" cy="62" rx="29" ry="27"/>
+             <path d="M66 82 q24 0 24 -21 q0 -15 -12 -20 q9 17 -4 27 q-10 7 -8 14 z"/></g>`,
+    /* 👂 좌우가 <b>아예 다른 삼각형</b>이었다 — 왼쪽은 머리를 가로지르는 큰 것, 오른쪽은
+       머리에 거의 닿지도 않는 좁은 것. 아이가 「귀 위치가 이상하다」고 했다.
+       ⚠️ 여우 머리 중심은 <b>x45</b> 다(x50 이 아니다). 한쪽만 그리고 <b>x'=90-x</b> 로
+          뒤집어 짝을 만든다 — 두 번 손으로 그리면 이렇게 어긋난다.
+       ⚠️ 밑변은 머리 <b>안쪽</b>(y47→32)에 묻는다. ears 는 몸보다 먼저 그리는 층이라
+          묻힌 부분은 가려지고, 그래야 귀가 머리에 붙어 보인다. */
+    ears:c=>`<path d="M22 47 L18 13 L41 32 Z" fill="${c.base}" stroke="${c.dark}" stroke-width="1.6"
+             stroke-opacity=".4" stroke-linejoin="round"/>
+             <path d="M68 47 L72 13 L49 32 Z" fill="${c.base}" stroke="${c.dark}" stroke-width="1.6"
+             stroke-opacity=".4" stroke-linejoin="round"/>
+             <path d="M24.3 39.7 L22.1 21 L34.7 31.4 Z" fill="${c.cheek}"/>
+             <path d="M65.7 39.7 L67.9 21 L55.3 31.4 Z" fill="${c.cheek}"/>
+             <path d="M18 13 L19 22 L24 18 Z" fill="#5a4436"/>
+             <path d="M72 13 L71 22 L66 18 Z" fill="#5a4436"/>`,
+    /* 🤍 꼬리 끝의 흰 털 — 얼굴 자리(x 50±22, y 40~85)를 피해 오른쪽 끝에만 있다 */
+    /* ⚠️ 왼쪽 볼에 흰 덩어리를 하나 더 그렸다가 지웠다 — 뜻이 없어서 그냥 <b>얼룩</b>으로 보였다 */
+    deco:()=>`<path d="M78 41 q12 5 12 20 q-9 -14 -18 -8 q4 -8 6 -12 z" fill="#fff6ee" opacity=".95"/>`,
+    /* ⚠️ grp:1 이 있어야 꼬리 이음선이 안 그려진다 — 없으면 꼬리 윤곽이 몸 위를 가로질러
+       꼬리가 <b>몸 앞에 붙인 것</b>처럼 보인다(아이가 그렇게 봤다). */
+    face:{x:45,y:60,s:.9}, feet:1, tail:0, grp:1},
+
+  /* 🐧 펭귄 — 표시는 <b>주황 부리</b>와 <b>양옆으로 붙은 날개</b>다.
+     ⚠️ 부리는 mouth 를 갈아끼워 그린다 — 그러면 <b>기본 코가 안 그려지므로</b> 부리가 코 노릇을 한다.
+        표정이 바뀌어도 부리는 그대로다(부리는 웃지 않는다). */
+  penguin:{name:'펭귄', w:32, top:16,
+    /* ⚠️ 몸은 <b>타원 하나</b>다. 날개를 몸 조각으로 묶어 그렸다가 되돌렸다 —
+       grp 를 안 켜고 조각을 묶으면 조각마다 테두리가 따로 그려져서 <b>이음선</b>이 보이고
+       몸에 <b>덧붙인 물건</b>처럼 읽힌다. 날개는 deco 로만 얹는다. */
+    body:f=>`<ellipse cx="50" cy="60" rx="28" ry="30" ${f}/>`,
+    /* 👂🐧 귀와 <b>날개</b>를 여기 함께 넣는다 — ears 는 <b>몸보다 먼저</b> 그리는 층이라,
+       여기 둔 것은 안쪽이 몸에 <b>묻혀서</b> 확실히 붙어 보이고 볼터치와도 안 겹친다.
+       ⚠️ 날개를 deco(몸 위)에 뒀다가 되돌렸다 — 볼터치가 날개 위에 얹혀 <b>분홍 얼룩</b>이 됐다.
+       ⚠️ 귀를 (28,24)까지 올렸다가 되돌렸다 — 둥근 몸은 <b>위쪽이 급하게 좁아져서</b>
+          y31 에서 몸 너비가 x43~57 뿐이라 귀가 <b>허공에 떠</b> 있었다. 어깨(y33)까지 내렸다. */
+    ears:c=>`<circle cx="28" cy="33" r="8" fill="${c.base}"/><circle cx="72" cy="33" r="8" fill="${c.base}"/>
+             <circle cx="28" cy="33" r="3.6" fill="${c.cheek}"/><circle cx="72" cy="33" r="3.6" fill="${c.cheek}"/>
+             <g fill="#4a5566">
+             <path d="M32 57 Q15 64 15 74 Q17 83 24 82 Q31 74 34 62 Z"/>
+             <path d="M68 57 Q85 64 85 74 Q83 83 76 82 Q69 74 66 62 Z"/></g>`,
+    /* ⚠️ 검은 것은 <b>머리 위 모자</b>뿐이다(날개는 위 ears 층에 있다).
+       모자 아랫단(y44~47)은 <b>눈(y53쯤)보다 위</b>에 있어야 한다 —
+       얼굴 둘레를 감싸면 가면처럼 보여서 무서워진다(한 번 그렇게 만들었다).
+       ⚠️ 모자를 <b>몸 타원과 같은 호(A 28 30)</b>로 그린다. 양 끝을 타원 위의 점으로 잡으면
+          호가 곧 타원이라 <b>한 치도 삐져나오지 않는다</b>. 손으로 그린 곡선으로 흉내냈다가
+          모자가 머리 옆으로 <b>8이나 튀어나와</b> 챙 달린 헬멧처럼 됐다.
+       ⚠️ 뒤 장은 앞 장보다 <b>더 내려와야</b> 아랫단 선으로 보인다 —
+          덜 내려오면 앞 장에 통째로 덮여서 두 장을 그린 값이 없다(그렇게 그렸었다).
+       ⚠️⚠️ 호의 <b>마지막 두 숫자(0 1)</b>를 함부로 두지 마라. 끝점 둘과 반지름만으로는
+          타원 중심이 <b>두 곳</b> 나오는데, 그 두 숫자가 어느 쪽을 쓸지 고른다.
+          <b>0 0</b> 으로 뒀더니 위쪽 중심이 뽑혀 호가 <b>아래로 부풀어</b>,
+          모자가 눈을 가로지르는 <b>복면</b>이 됐다. 위로 덮으려면 <b>0 1</b> 이다. */
+    deco:()=>`<path d="M24.8 47 A28 30 0 0 1 75.2 47 Q62 44 50 44 Q38 44 24.8 47 Z" fill="#3d4657"/>
+              <path d="M25.8 45 A28 30 0 0 1 74.2 45 Q62 41 50 41 Q38 41 25.8 45 Z" fill="#4a5566"/>
+              <g fill="#f0a63c"><ellipse cx="38" cy="88" rx="8" ry="4"/><ellipse cx="62" cy="88" rx="8" ry="4"/></g>`,
+    mouth:(c,fx,fy,s)=>`<path d="M${fx-5.4*s} ${fy+6*s} L${fx+5.4*s} ${fy+6*s} L${fx} ${fy+13.5*s} Z"
+              fill="#f0a63c" stroke="#c9822a" stroke-width="${1.2*s}" stroke-linejoin="round"/>`,
+    face:{x:50,y:58,s:.9}, feet:0, tail:0},
+
+  /* 🦋 나비 — 표시는 <b>네 장의 날개</b>와 <b>더듬이</b>다. 몸은 작고 날개가 크다. */
+  butterfly:{name:'나비', w:26, top:14,
+    body:f=>`<g ${f}><ellipse cx="50" cy="60" rx="17" ry="25"/>
+             <ellipse cx="22" cy="46" rx="16" ry="14" transform="rotate(-22 22 46)"/>
+             <ellipse cx="78" cy="46" rx="16" ry="14" transform="rotate(22 78 46)"/>
+             <ellipse cx="26" cy="76" rx="13" ry="11" transform="rotate(-14 26 76)"/>
+             <ellipse cx="74" cy="76" rx="13" ry="11" transform="rotate(14 74 76)"/></g>`,
+    ears:c=>`<g stroke="${c.dark}" stroke-width="2.6" fill="none" stroke-linecap="round">
+             <path d="M42 34 q-8 -14 -14 -18"/><path d="M58 34 q8 -14 14 -18"/></g>
+             <circle cx="27" cy="15" r="4" fill="${c.dark}"/><circle cx="73" cy="15" r="4" fill="${c.dark}"/>`,
+    /* 🎨 날개 무늬 — 얼굴 자리(x 50±21, y 40~85)를 피해 <b>날개 위</b>에만 찍는다 */
+    deco:c=>`<g fill="${c.light}"><circle cx="20" cy="44" r="5.5"/><circle cx="80" cy="44" r="5.5"/>
+             <circle cx="24" cy="77" r="4.2"/><circle cx="76" cy="77" r="4.2"/></g>
+             <g fill="#fff" opacity=".55"><circle cx="20" cy="44" r="2.4"/><circle cx="80" cy="44" r="2.4"/></g>`,
+    face:{x:50,y:60,s:.78}, feet:0, tail:0, grp:1},
+
+  /* 🧜 인어 — 표시는 <b>아래로 갈수록 좁아지다 갈라지는 꼬리지느러미</b>와 <b>조개 머리핀</b>이다. */
+  mermaid:{name:'인어', w:31, top:18,
+    /* ⚠️ 꼬리는 <b>곧은 선</b>으로 그린다 — 곡선을 겹쳐 그렸더니 폭이 안 생겨서
+       <b>가는 실</b>처럼 보였다. 허리를 좁혔다가 V 로 활짝 펴야 지느러미가 된다. */
+    body:f=>`<g ${f}><ellipse cx="50" cy="54" rx="27" ry="25"/>
+             <path d="M35 68 L65 68 L59 79 L84 97 L50 90 L16 97 L41 79 Z"/></g>`,
+    ears:c=>`<ellipse cx="27" cy="28" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="73" cy="28" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="27" cy="29" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="73" cy="29" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <path d="M76 24 q9 -3 12 5 q-6 5 -12 3 z" fill="#ffc2da" stroke="#e08bb0"
+             stroke-width="1.3" stroke-linejoin="round"/>
+             <path d="M79 25 l4 4 M83 23 l2 5" stroke="#e08bb0" stroke-width="1.1"/>`,
+    /* 🐟 지느러미 살 — <b>지느러미 안</b>에만 긋는다.
+       ⚠️ 처음엔 비늘 두 줄을 <b>턱 밑</b>에 그렸는데 비늘이 아니라 <b>목도리</b>로 보였다.
+          무늬는 그 무늬가 있어야 할 자리에 둬야 한다.
+       ⚠️ 지느러미는 가운데(y82~90)가 갈라져 있다 — 거기 걸치는 선은 허공에 뜬다. */
+    deco:c=>`<g fill="none" stroke="${c.light}" stroke-width="2" opacity=".85" stroke-linecap="round">
+             <path d="M41 80 L23 93"/><path d="M44 84 L34 92"/>
+             <path d="M59 80 L77 93"/><path d="M56 84 L66 92"/></g>`,
+    /* ⚠️ grp:1 — 없으면 꼬리지느러미 윤곽이 몸 위를 가로질러 <b>몸 앞에</b> 있는 것처럼 보인다 */
+    face:{x:50,y:52,s:.88}, feet:0, tail:0, grp:1},
+
+  /* 🐳 고래 — 표시는 <b>오른쪽으로 뻗은 꼬리지느러미</b>와 <b>머리 위 물줄기</b>다.
+     ⚠️ 물줄기는 ears 에 그린다 — 유니콘 뿔과 같은 방식이다. */
+  whale:{name:'고래', w:35, top:10,
+    body:f=>`<g ${f}><ellipse cx="46" cy="64" rx="33" ry="25"/>
+             <path d="M74 66 q12 -14 18 -12 q-4 8 -2 14 q-2 6 2 14 q-6 2 -18 -12 z"/></g>`,
+    ears:c=>`<ellipse cx="27" cy="38" rx="8" ry="6.5" fill="${c.base}" transform="rotate(-20 27 38)"/>
+             <ellipse cx="66" cy="38" rx="8" ry="6.5" fill="${c.base}" transform="rotate(18 66 38)"/>
+             <ellipse cx="27" cy="39" rx="3.6" ry="2.9" fill="${c.cheek}"/>
+             <ellipse cx="66" cy="39" rx="3.6" ry="2.9" fill="${c.cheek}"/>
+             <g stroke="#a8dcf0" stroke-width="3.6" fill="none" stroke-linecap="round">
+             <path d="M46 34 q-6 -12 -10 -16"/><path d="M46 34 q0 -14 0 -19"/>
+             <path d="M46 34 q6 -12 10 -16"/></g>
+             <circle cx="36" cy="16" r="3" fill="#cdeefb"/><circle cx="46" cy="13" r="3.4" fill="#cdeefb"/>
+             <circle cx="56" cy="16" r="3" fill="#cdeefb"/>`,
+    /* 🌊 배주름 — 얼굴 자리 아래(y 80~)에만 */
+    deco:c=>`<g fill="none" stroke="${c.light}" stroke-width="2" opacity=".7" stroke-linecap="round">
+             <path d="M30 82 q16 6 32 0"/><path d="M34 87 q12 4 24 0"/></g>`,
+    /* ⚠️ grp:1 — 없으면 꼬리지느러미 윤곽이 몸 위를 가로질러 <b>몸 앞에</b> 있는 것처럼 보인다 */
+    face:{x:46,y:62,s:.88}, feet:0, tail:0, grp:1},
+
+  /* 🦌 사슴 — 표시는 <b>가지 친 뿔</b>과 <b>등에 찍힌 흰 점</b>이다.
+     ⚠️ 뿔은 <b>가지가 갈라져야</b> 한다 — 곧은 뿔 하나면 유니콘과 헷갈린다. */
+  deer:{name:'사슴', w:33, top:36,
+    body:f=>`<ellipse cx="50" cy="62" rx="30" ry="27" ${f}/>`,
+    ears:c=>`<ellipse cx="24" cy="40" rx="10" ry="6.5" fill="${c.base}" transform="rotate(-32 24 40)"/>
+             <ellipse cx="76" cy="40" rx="10" ry="6.5" fill="${c.base}" transform="rotate(32 76 40)"/>
+             <ellipse cx="25" cy="40" rx="5" ry="3" fill="${c.cheek}" transform="rotate(-32 25 40)"/>
+             <ellipse cx="75" cy="40" rx="5" ry="3" fill="${c.cheek}" transform="rotate(32 75 40)"/>
+             <g stroke="#a97b4c" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M38 34 q-4 -14 -2 -22"/><path d="M37 22 q-8 -2 -11 -8"/><path d="M36.5 15 q-6 -3 -8 -8"/>
+             <path d="M62 34 q4 -14 2 -22"/><path d="M63 22 q8 -2 11 -8"/><path d="M63.5 15 q6 -3 8 -8"/></g>`,
+    /* 🤍 등의 흰 점 — 얼굴 자리(x 50±22, y 39~85) 밖 양옆에만 찍는다 */
+    /* ⚠️ 작은 점을 가장자리에 줄줄이 박았더니 <b>진주 목걸이</b>처럼 보였다 —
+       <b>크고 성기게</b>, 양옆에 둘씩만 찍는다. */
+    deco:()=>`<g fill="#fff6ee" opacity=".85">
+              <ellipse cx="25" cy="57" rx="5" ry="4"/><ellipse cx="27" cy="72" rx="4.2" ry="3.4"/>
+              <ellipse cx="75" cy="57" rx="5" ry="4"/><ellipse cx="73" cy="72" rx="4.2" ry="3.4"/></g>`,
+    face:{x:50,y:61,s:.9}, feet:1, tail:1},
+
+  /* ---- 🆕 새 모양 열두 가지 (Lv.101~112) ----
+     ⚠️ 열두 가지 <b>모양이 전부 달라야</b> 한다. 색만 바꾸면 아이가 「같은 통」이라고 한다. */
+
+  /* 🍡 탕후루 — 표시는 <b>꼬치에 꿴 알</b>과 <b>유리처럼 반들거리는 설탕옷</b>이다.
+     ⚠️ 꼬치는 머리 <b>위로</b> 나온다 — 몸을 뚫고 지나가게 그리면 꼬치에 꽂힌 것처럼 보여 무섭다. */
+  tanghulu:{name:'탕후루', w:31, top:8,
+    body:f=>`<g ${f}><circle cx="50" cy="66" r="25"/><circle cx="50" cy="38" r="17"/></g>`,
+    ears:c=>`<circle cx="33" cy="27" r="9" fill="${c.base}"/><circle cx="67" cy="27" r="9" fill="${c.base}"/>
+             <circle cx="33" cy="27" r="4.2" fill="${c.cheek}"/><circle cx="67" cy="27" r="4.2" fill="${c.cheek}"/>`,
+    deco:()=>`<rect x="47.5" y="4" width="5" height="18" rx="2.5" fill="#d9b98a"/>
+              <rect x="47.5" y="4" width="2" height="18" rx="1" fill="#f0dcbb"/>
+              <ellipse cx="38" cy="30" rx="7" ry="4.5" fill="#fff" opacity=".5" transform="rotate(-28 38 30)"/>
+              <ellipse cx="34" cy="58" rx="6" ry="10" fill="#fff" opacity=".33" transform="rotate(-14 34 58)"/>
+              <ellipse cx="68" cy="76" rx="4" ry="6" fill="#fff" opacity=".22"/>`,
+    face:{x:50,y:66,s:.82}, feet:1, tail:1, grp:1},
+
+  /* 🥚 계란빵 — 표시는 <b>머리에 얹힌 달걀 하나</b>다.
+     ⚠️ 🍮푸딩으로 만들려다 걸렀다 — <b>특별햄쮜에 푸딩쮜가 이미 있고</b>
+        SHAPES.pudding 도 사다리꼴+카라멜이라 이름도 모양도 겹쳤다.
+        새 통을 고를 때는 FLAVORS 뿐 아니라 <b>SPECIAL·COLLAB 이름까지</b> 본다.
+     ⚠️ 달걀은 얼굴 자리(y47.5부터)를 <b>안 넘게</b> y29~46.5 에 둔다. */
+  eggbread:{name:'계란빵', w:33, top:14,
+    body:f=>`<path d="M50 30 q27 0 27 25 l0 21 q0 14 -27 14 q-27 0 -27 -14 l0 -21 q0 -25 27 -25 z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="26" cy="36" rx="8" ry="7" fill="${c.base}" transform="rotate(-16 26 36)"/>
+             <ellipse cx="74" cy="36" rx="8" ry="7" fill="${c.base}" transform="rotate(16 74 36)"/>
+             <ellipse cx="26" cy="37" rx="3.6" ry="3.1" fill="${c.cheek}"/>
+             <ellipse cx="74" cy="37" rx="3.6" ry="3.1" fill="${c.cheek}"/>`,
+    deco:c=>`<ellipse cx="50" cy="38" rx="16" ry="8.5" fill="#fffdf3"/>
+             <ellipse cx="50" cy="39.5" rx="16" ry="7" fill="#fff8e4" opacity=".9"/>
+             <circle cx="50" cy="37" r="6" fill="#f6bb2c"/>
+             <ellipse cx="47.6" cy="34.8" rx="2" ry="1.4" fill="#ffe08a" opacity=".85"/>
+             <g fill="${c.dark}" opacity=".3">
+             <circle cx="36" cy="46" r="1.3"/><circle cx="64" cy="45" r="1.2"/></g>
+             <path d="M27 74 q23 7 46 0" stroke="${c.dark}" stroke-width="2" fill="none"
+             stroke-linecap="round" opacity=".3"/>
+             <path d="M30 52 q7 -6 14 -6" stroke="#fff" stroke-width="3.2" fill="none"
+             stroke-linecap="round" opacity=".4"/>`,
+    face:{x:50,y:66,s:.84}, feet:1, tail:1},
+
+  /* 🥐 크루아상 — 표시는 <b>결마다 갈라진 덩이가 활처럼 이어진 것</b>이다.
+     ⚠️ 한 줄로 휜 띠(초승달)로 그리면 <b>바나나</b>가 된다 — 한 번 그랬다.
+        덩이를 <b>다섯 개 겹쳐</b> 놓아야 크루아상으로 보인다. grp 로 바깥선을 하나로 묶는다. */
+  croissant:{name:'크루아상', w:33, top:18,
+    body:f=>`<g ${f}><ellipse cx="50" cy="52" rx="23" ry="21"/>
+             <ellipse cx="25" cy="65" rx="15" ry="12.5" transform="rotate(-38 25 65)"/>
+             <ellipse cx="75" cy="65" rx="15" ry="12.5" transform="rotate(38 75 65)"/>
+             <ellipse cx="12" cy="80" rx="8" ry="6" transform="rotate(-48 12 80)"/>
+             <ellipse cx="88" cy="80" rx="8" ry="6" transform="rotate(48 88 80)"/></g>`,
+    ears:c=>`<ellipse cx="34" cy="27" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="66" cy="27" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="34" cy="28" rx="3.6" ry="3" fill="${c.cheek}"/>
+             <ellipse cx="66" cy="28" rx="3.6" ry="3" fill="${c.cheek}"/>`,
+    /* 덩이와 덩이 사이의 <b>접힌 골</b> — 이게 있어야 결이 보인다 */
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="2" opacity=".45" stroke-linecap="round">
+             <path d="M31 48 q-3 12 2 22"/><path d="M69 48 q3 12 -2 22"/>
+             <path d="M15 71 q-2 6 1 11"/><path d="M85 71 q2 6 -1 11"/></g>
+             <path d="M34 38 q13 -8 28 -3" stroke="#fff3dc" stroke-width="3.6" fill="none"
+             stroke-linecap="round" opacity=".55"/>`,
+    face:{x:50,y:53,s:.8}, feet:1, tail:1, grp:1},
+
+  /* 🥖 츄러스 — 표시는 <b>세로로 팬 골</b>과 <b>뿌려진 계피설탕</b>이다.
+     ⚠️ 골은 몸 <b>전체</b>에 세로로 곧게 간다 — 몇 줄만 그으면 그냥 줄무늬 통이 된다. */
+  churros:{name:'츄러스', w:30, top:20,
+    body:f=>`<rect x="27" y="28" width="46" height="62" rx="16" ${f}/>`,
+    ears:c=>`<ellipse cx="34" cy="20" rx="7.5" ry="8" fill="${c.base}"/>
+             <ellipse cx="66" cy="20" rx="7.5" ry="8" fill="${c.base}"/>
+             <ellipse cx="34" cy="21" rx="3.4" ry="3.6" fill="${c.cheek}"/>
+             <ellipse cx="66" cy="21" rx="3.4" ry="3.6" fill="${c.cheek}"/>`,
+    /* ⚠️ 골을 <b>넷</b> 그으면 나무판이 된다 — <b>둘만 굵게</b> 파고 사이를 밝게 띄운다.
+       설탕은 <b>흰 알갱이</b>다. 갈색 점을 뿌리면 그냥 때 묻은 것처럼 보인다. */
+    deco:c=>`<g stroke="${c.dark}" stroke-width="3.4" fill="none" opacity=".38" stroke-linecap="round">
+             <path d="M39 34 v50"/><path d="M61 34 v50"/></g>
+             <g stroke="${c.light}" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round">
+             <path d="M50 34 v50"/><path d="M31 40 v38"/><path d="M69 40 v38"/></g>
+             <g fill="#fffaf0" opacity=".95">
+             <circle cx="35" cy="44" r="2"/><circle cx="64" cy="39" r="1.8"/><circle cx="45" cy="83" r="2"/>
+             <circle cx="57" cy="87" r="1.7"/><circle cx="68" cy="68" r="1.9"/><circle cx="32" cy="72" r="1.8"/>
+             <circle cx="53" cy="56" r="1.6"/><circle cx="42" cy="64" r="1.5"/></g>`,
+    face:{x:50,y:58,s:.78}, feet:1, tail:1},
+
+  /* 🥞 호떡 — 표시는 <b>납작하게 눌린 동그라미</b>와 <b>눌은 자국</b>, 그리고 흘러나온 흑설탕이다 */
+  hotteok:{name:'호떡', w:36, top:30,
+    body:f=>`<ellipse cx="50" cy="62" rx="38" ry="29" ${f}/>`,
+    ears:c=>`<ellipse cx="26" cy="36" rx="9" ry="7" fill="${c.base}" transform="rotate(-22 26 36)"/>
+             <ellipse cx="74" cy="36" rx="9" ry="7" fill="${c.base}" transform="rotate(22 74 36)"/>
+             <ellipse cx="26" cy="37" rx="4" ry="3" fill="${c.cheek}"/>
+             <ellipse cx="74" cy="37" rx="4" ry="3" fill="${c.cheek}"/>`,
+    deco:()=>`<g fill="#a2662c" opacity=".5">
+              <ellipse cx="24" cy="55" rx="8" ry="5" transform="rotate(-16 24 55)"/>
+              <ellipse cx="76" cy="68" rx="7" ry="4.5" transform="rotate(12 76 68)"/>
+              <ellipse cx="52" cy="84" rx="9" ry="4" /></g>
+              <path d="M62 78 q7 4 6 11 q-1 5 -6 4 q-5 -1 -4 -6 q1 -5 4 -9 z" fill="#7a4212" opacity=".85"/>
+              <ellipse cx="34" cy="46" rx="10" ry="4.5" fill="#fff" opacity=".35" transform="rotate(-14 34 46)"/>`,
+    face:{x:50,y:60,s:.86}, feet:1, tail:0},
+
+  /* 🌰 호두과자 — 표시는 <b>호두알처럼 두 쪽으로 갈라진 몸</b>과 쪼글쪼글한 골이다 */
+  hodu:{name:'호두과자', w:32, top:20,
+    body:f=>`<path d="M50 26 q26 0 26 26 q0 24 -12 34 q-6 5 -14 5 q-8 0 -14 -5
+             q-12 -10 -12 -34 q0 -26 26 -26 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="33" cy="22" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="67" cy="22" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="33" cy="23" rx="3.6" ry="3" fill="${c.cheek}"/>
+             <ellipse cx="67" cy="23" rx="3.6" ry="3" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M50 30 v58" stroke="${c.dark}" stroke-width="2.2" opacity=".5" stroke-linecap="round"/>
+             <g fill="none" stroke="${c.dark}" stroke-width="1.5" opacity=".38" stroke-linecap="round">
+             <path d="M40 40 q-8 8 -6 20"/><path d="M60 40 q8 8 6 20"/>
+             <path d="M38 66 q-4 8 0 14"/><path d="M62 66 q4 8 0 14"/></g>
+             <path d="M34 38 q8 -7 15 -6" stroke="#fff6e4" stroke-width="3" fill="none"
+             stroke-linecap="round" opacity=".45"/>`,
+    face:{x:50,y:56,s:.8}, feet:1, tail:1},
+
+  /* 🥮 슈크림 — 표시는 <b>부풀어 갈라진 윗머리</b>와 <b>옆으로 삐져나온 크림</b>이다.
+     ⚠️ 크림은 <b>옆구리</b>로 나온다 — 배 한가운데를 가르면 속이 보이는 꼴이 된다. */
+  chou:{name:'슈크림', w:34, top:16,
+    body:f=>`<path d="M50 22 q30 0 30 30 q0 20 -8 28 q-8 8 -22 8 q-14 0 -22 -8
+             q-8 -8 -8 -28 q0 -30 30 -30 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="30" rx="9" ry="8" fill="${c.base}"/>
+             <ellipse cx="70" cy="30" rx="9" ry="8" fill="${c.base}"/>
+             <ellipse cx="30" cy="31" rx="4" ry="3.4" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="31" rx="4" ry="3.4" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="1.8" opacity=".4" stroke-linecap="round">
+             <path d="M32 36 q7 -6 13 -2"/><path d="M54 33 q7 -5 14 0"/><path d="M40 27 q6 -5 12 -2"/></g>
+             <g fill="#fff3cf">
+             <ellipse cx="21" cy="66" rx="9" ry="7"/><ellipse cx="79" cy="70" rx="8" ry="6.4"/></g>
+             <g fill="#f3dda6">
+             <ellipse cx="21" cy="69" rx="9" ry="3"/><ellipse cx="79" cy="72.5" rx="8" ry="2.8"/></g>
+             <ellipse cx="36" cy="34" rx="8" ry="4" fill="#fff" opacity=".4" transform="rotate(-18 36 34)"/>`,
+    face:{x:50,y:56,s:.86}, feet:1, tail:0},
+
+  /* 🍶 식혜 — 표시는 <b>사발</b>과 <b>동동 뜬 밥알</b>, 그리고 잣 하나다.
+     ⚠️ 밥알은 <b>머리 위(사발 위쪽 물낯)</b>에 뜬다. 배에 그리면 속이 보이는 꼴이 된다. */
+  sikhye:{name:'식혜', w:35, top:26,
+    body:f=>`<path d="M20 38 h60 q-2 34 -10 44 q-6 8 -20 8 q-14 0 -20 -8 q-8 -10 -10 -44 z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="29" rx="8.5" ry="7" fill="${c.base}"/>
+             <ellipse cx="70" cy="29" rx="8.5" ry="7" fill="${c.base}"/>
+             <ellipse cx="30" cy="30" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="30" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    deco:()=>`<ellipse cx="50" cy="38" rx="30" ry="6" fill="#e6c384"/>
+              <ellipse cx="50" cy="37" rx="30" ry="5" fill="#f7e6bd"/>
+              <g fill="#fffdf6"><ellipse cx="38" cy="36" rx="3.4" ry="2.2"/>
+              <ellipse cx="50" cy="38" rx="3.6" ry="2.3"/><ellipse cx="62" cy="35" rx="3.2" ry="2.1"/>
+              <ellipse cx="28" cy="38" rx="2.8" ry="1.9"/></g>
+              <ellipse cx="70" cy="38" rx="3.4" ry="2.4" fill="#d8c79a"/>
+              <path d="M26 52 q8 -4 15 -3" stroke="#fff" stroke-width="3" fill="none"
+              stroke-linecap="round" opacity=".4"/>`,
+    face:{x:50,y:62,s:.84}, feet:1, tail:1},
+
+  /* 🍘 뻥튀기 — 표시는 <b>아주 넓고 얇은 동그라미</b>와 <b>뻥 튀겨진 오돌토돌한 알갱이</b>다 */
+  ppeong:{name:'뻥튀기', w:38, top:34,
+    body:f=>`<ellipse cx="50" cy="62" rx="42" ry="26" ${f}/>`,
+    ears:c=>`<ellipse cx="24" cy="40" rx="8" ry="6.5" fill="${c.base}" transform="rotate(-26 24 40)"/>
+             <ellipse cx="76" cy="40" rx="8" ry="6.5" fill="${c.base}" transform="rotate(26 76 40)"/>
+             <ellipse cx="24" cy="41" rx="3.6" ry="2.8" fill="${c.cheek}"/>
+             <ellipse cx="76" cy="41" rx="3.6" ry="2.8" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="${c.dark}" opacity=".28">
+             <circle cx="18" cy="58" r="3.4"/><circle cx="26" cy="72" r="3"/><circle cx="36" cy="80" r="2.6"/>
+             <circle cx="52" cy="84" r="3.2"/><circle cx="68" cy="79" r="2.8"/><circle cx="80" cy="68" r="3.4"/>
+             <circle cx="84" cy="55" r="2.8"/><circle cx="72" cy="48" r="2.4"/><circle cx="20" cy="48" r="2.6"/></g>
+             <g fill="#fff" opacity=".5">
+             <circle cx="30" cy="52" r="4"/><circle cx="40" cy="46" r="3"/><circle cx="62" cy="52" r="3.4"/></g>`,
+    face:{x:50,y:60,s:.84}, feet:1, tail:0},
+
+  /* 🍞 카스텔라 — 표시는 <b>네모 반듯한 몸</b>과 <b>위아래로 진하게 구운 껍질</b>이다.
+     ⚠️ 브라우니도 네모다 — 이쪽은 <b>위아래 두 줄</b>이 다 있고 훨씬 밝다. 헷갈리게 만들지 마라. */
+  castella:{name:'카스텔라', w:35, top:26,
+    body:f=>`<rect x="19" y="34" width="62" height="56" rx="7" ${f}/>`,
+    ears:c=>`<rect x="25" y="23" width="16" height="13" rx="4" fill="${c.base}"/>
+             <rect x="59" y="23" width="16" height="13" rx="4" fill="${c.base}"/>
+             <rect x="29" y="27" width="8" height="5.5" rx="2.7" fill="${c.cheek}"/>
+             <rect x="63" y="27" width="8" height="5.5" rx="2.7" fill="${c.cheek}"/>`,
+    deco:()=>`<path d="M19 42 v-1 q0 -7 7 -7 h48 q7 0 7 7 v1 z" fill="#b9822f" opacity=".9"/>
+              <path d="M19 82 h62 v1 q0 7 -7 7 h-48 q-7 0 -7 -7 z" fill="#b9822f" opacity=".9"/>
+              <g fill="#fff" opacity=".45">
+              <circle cx="32" cy="58" r="2.2"/><circle cx="44" cy="66" r="1.8"/><circle cx="68" cy="56" r="2"/>
+              <circle cx="60" cy="72" r="1.6"/><circle cx="26" cy="70" r="1.7"/></g>`,
+    face:{x:50,y:60,s:.86}, feet:1, tail:1},
+
+  /* 🪵 바움쿠헨 — 표시는 <b>가운데가 뚫린 나이테</b>다.
+     ⚠️ 가운데 구멍은 <b>얼굴 아래(y78)</b>에 둔다 — 얼굴 자리에 두면 얼굴에 구멍이 뚫린다. */
+  baum:{name:'바움쿠헨', w:34, top:22,
+    body:f=>`<circle cx="50" cy="60" r="32" ${f}/>`,
+    ears:c=>`<ellipse cx="30" cy="30" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="70" cy="30" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="30" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="2" opacity=".38">
+             <circle cx="50" cy="60" r="26"/><circle cx="50" cy="60" r="20"/></g>
+             <circle cx="50" cy="78" r="5" fill="${c.dark}" opacity=".3"/>
+             <circle cx="50" cy="78" r="5" fill="#fff" opacity=".35"/>
+             <path d="M28 44 q9 -9 20 -10" stroke="#fff" stroke-width="3.4" fill="none"
+             stroke-linecap="round" opacity=".4"/>`,
+    face:{x:50,y:56,s:.84}, feet:1, tail:1},
+
+  /* 🥤 밀크쉐이크 — 표시는 <b>잔</b>과 <b>위로 소복한 크림</b>, 그리고 <b>빨대</b>다.
+     ⚠️ 빨대는 크림 위로 삐져나온다 — 몸을 뚫고 지나가게 그리지 않는다. */
+  shake:{name:'밀크쉐이크', w:31, top:6,
+    body:f=>`<path d="M28 40 h44 l-5 44 q-1 8 -9 8 h-16 q-8 0 -9 -8 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="34" cy="31" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="66" cy="31" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="34" cy="32" rx="3.4" ry="2.8" fill="${c.cheek}"/>
+             <ellipse cx="66" cy="32" rx="3.4" ry="2.8" fill="${c.cheek}"/>`,
+    deco:()=>`<rect x="62" y="6" width="6" height="26" rx="3" fill="#ff7fa3"
+              transform="rotate(13 65 19)"/>
+              <rect x="62" y="6" width="2.4" height="26" rx="1.2" fill="#ffc2d4"
+              transform="rotate(13 65 19)"/>
+              <path d="M26 40 q4 -12 12 -9 q3 -11 12 -8 q4 -10 12 -5 q10 -3 12 9 q2 8 -6 13 z"
+              fill="#fffaf2"/>
+              <path d="M28 41 q5 -9 11 -7 q4 -9 11 -6 q5 -8 12 -4 q9 -2 10 8 z" fill="#fff"/>
+              <circle cx="41" cy="30" r="3.2" fill="#ff5f7a"/>
+              <ellipse cx="36" cy="56" rx="5" ry="9" fill="#fff" opacity=".32"/>`,
+    face:{x:50,y:62,s:.78}, feet:1, tail:1},
+
+  /* ---- 🆕 새 모양 열두 가지 (Lv.113~124) — 136 → 148가지 ----
+     ⚠️ 이미 있는 164가지와 <b>실루엣이 겹치지 않게</b> 골랐다. 그리고 나서
+        전부 나란히 그려 눈으로 확인했다 — 숫자만 보고는 겹치는 걸 못 잡는다. */
+
+  /* 🍞 호빵 — 표시는 <b>머리 위 꼭지</b>와 <b>봉긋한 몸</b>, 그리고 김 두 줄이다.
+     ⚠️ 꼭지와 김은 ears 에 그린다 — ears 는 몸보다 먼저 그리는 층이라
+        꼭지 아랫동이 몸에 묻혀서 붙어 보인다. */
+  hoppang:{name:'호빵', w:34, top:18,
+    body:f=>`<path d="M50 30 q32 4 32 30 v18 q0 10 -11 10 h-42 q-11 0 -11 -10 v-18 q0 -26 32 -30 z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="28" cy="34" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="72" cy="34" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="28" cy="35" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="72" cy="35" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <circle cx="50" cy="25" r="7" fill="${c.base}"/>
+             <circle cx="50" cy="23" r="3" fill="${c.light}"/>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="2.2" opacity=".24" stroke-linecap="round">
+             <path d="M30 50 q6 -14 20 -16"/><path d="M70 50 q-6 -14 -20 -16"/></g>
+             <ellipse cx="30" cy="50" rx="8" ry="4.6" fill="#fff" opacity=".42" transform="rotate(-22 30 50)"/>`,
+    face:{x:50,y:60,s:.88}, feet:1, tail:1},
+
+  /* 🥮 소보로빵 — 표시는 <b>울퉁불퉁한 겉</b>이다.
+     ⚠️ 울퉁불퉁함은 ears 에 <b>몸 색 동그라미</b>로 그려 실루엣을 삐죽삐죽하게 만든다 —
+        deco(몸 위)에 그리면 겉모습은 그냥 동그라미로 남는다. */
+  soboro:{name:'소보로빵', w:34, top:24,
+    body:f=>`<circle cx="50" cy="60" r="30" ${f}/>`,
+    ears:c=>`<ellipse cx="28" cy="35" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="72" cy="35" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="28" cy="36" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="72" cy="36" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <g fill="${c.base}">
+             <circle cx="50" cy="31" r="7"/><circle cx="38" cy="33" r="6"/><circle cx="62" cy="33" r="6"/>
+             <circle cx="24" cy="47" r="6.5"/><circle cx="76" cy="47" r="6.5"/>
+             <circle cx="21" cy="62" r="6"/><circle cx="79" cy="62" r="6"/>
+             <circle cx="27" cy="77" r="6"/><circle cx="73" cy="77" r="6"/>
+             <circle cx="50" cy="87" r="6.4"/></g>`,
+    deco:c=>`<g fill="${c.dark}" opacity=".3">
+             <circle cx="24" cy="50" r="3"/><circle cx="76" cy="50" r="3"/>
+             <circle cx="20" cy="64" r="2.6"/><circle cx="80" cy="64" r="2.6"/>
+             <circle cx="27" cy="78" r="2.8"/><circle cx="73" cy="78" r="2.8"/>
+             <circle cx="50" cy="35" r="3.2"/><circle cx="38" cy="31" r="2.4"/><circle cx="62" cy="31" r="2.4"/>
+             <circle cx="50" cy="87" r="3"/><circle cx="38" cy="86" r="2.2"/><circle cx="62" cy="86" r="2.2"/></g>
+             <g fill="#fff" opacity=".42">
+             <circle cx="30" cy="42" r="2.6"/><circle cx="22" cy="57" r="2.2"/><circle cx="70" cy="40" r="2.2"/></g>`,
+    face:{x:50,y:60,s:.86}, feet:1, tail:1},
+
+  /* 🥨 꽈배기 — 표시는 <b>허리가 두 번 조인 몸</b>과 설탕 알갱이다.
+     ⚠️ 프레첼과 헷갈리게 하지 마라 — 프레첼은 <b>매듭</b>이고 이쪽은 <b>비틀어 꼰 것</b>이다. */
+  kkwabaegi:{name:'꽈배기', w:28, top:16,
+    body:f=>`<path d="M50 24 q25 6 25 18 q0 7 -9 11 q9 4 9 11 q0 12 -25 18
+             q-25 -6 -25 -18 q0 -7 9 -11 q-9 -4 -9 -11 q0 -12 25 -18 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="34" cy="27" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="66" cy="27" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="34" cy="28" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="66" cy="28" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="2.4" opacity=".3" stroke-linecap="round">
+             <path d="M28 40 q5 7 4 14"/><path d="M72 40 q-5 7 -4 14"/>
+             <path d="M29 62 q5 7 4 12"/><path d="M71 62 q-5 7 -4 12"/></g>
+             <g fill="#fff" opacity=".62"><circle cx="40" cy="34" r="1.8"/><circle cx="60" cy="32" r="1.6"/>
+             <circle cx="50" cy="30" r="1.7"/><circle cx="36" cy="68" r="1.6"/><circle cx="64" cy="70" r="1.6"/>
+             <circle cx="32" cy="52" r="1.6"/><circle cx="68" cy="52" r="1.6"/>
+             <circle cx="45" cy="79" r="1.7"/><circle cx="57" cy="78" r="1.5"/></g>`,
+    face:{x:50,y:58,s:.78}, feet:1, tail:1},
+
+  /* 🥪 과일샌드 — 표시는 <b>세모난 몸</b>과 아래쪽에 보이는 <b>크림 한 줄·딸기</b>다.
+     ⚠️ 크림과 딸기는 <b>얼굴 아래(y74~)</b>다. 가운데 두면 얼굴을 가로지른다. */
+  fruitsand:{name:'과일샌드', w:36, top:28,
+    body:f=>`<path d="M50 26 l30 54 q4 8 -5 8 h-50 q-9 0 -5 -8 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="34" cy="32" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="66" cy="32" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="34" cy="33" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="66" cy="33" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    /* ⚠️ 처음엔 <b>세모난 딸기 셋</b>이었는데 입 아래에 나란히 놓이니 <b>이빨</b>로 보였다.
+       동그랗게 바꿨다. 입 아래에 세모를 줄 세우지 마라. */
+    deco:()=>`<path d="M27 80 h46" stroke="#fffdf7" stroke-width="9" stroke-linecap="round" fill="none"/>
+              <g fill="#f2607a"><circle cx="36" cy="80" r="4"/><circle cx="50" cy="81" r="4.6"/>
+              <circle cx="64" cy="80" r="4"/></g>
+              <path d="M30 62 q3 -10 8 -18" stroke="#fff" stroke-width="3.4" fill="none"
+              stroke-linecap="round" opacity=".38"/>`,
+    face:{x:50,y:56,s:.74}, feet:1, tail:1},
+
+  /* 🍚 백설기 — 표시는 <b>아래가 넓은 사다리꼴</b>과 위에 찍힌 <b>떡살 꽃무늬</b>다.
+     ⚠️ 카스텔라와 헷갈리게 하지 마라 — 카스텔라는 <b>네모 반듯</b>하고 위아래에 구운 껍질이 있다. */
+  seolgi:{name:'백설기', w:35, top:26,
+    body:f=>`<path d="M29 36 h42 l9 44 q1.5 9 -8 9 h-44 q-9.5 0 -8 -9 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="32" cy="30" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="68" cy="30" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="32" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="68" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    /* ⚠️ 처음엔 이마에 점을 뭉쳐 놨는데 <b>흉터</b>처럼 보였다 —
+       떡살 <b>꽃무늬 도장</b>으로 또렷하게 바꿨다. 뜻이 없는 점 뭉치는 얼룩이나 흉터로 읽힌다. */
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="1.8" opacity=".26">
+             <circle cx="50" cy="37" r="3.6"/>
+             <circle cx="50" cy="30" r="3.2"/><circle cx="56" cy="34.5" r="3.2"/>
+             <circle cx="53.7" cy="42" r="3.2"/><circle cx="46.3" cy="42" r="3.2"/><circle cx="44" cy="34.5" r="3.2"/></g>
+             <g fill="none" stroke="${c.dark}" stroke-width="1.8" opacity=".18" stroke-linecap="round">
+             <path d="M30 85 h40"/></g>
+             <g fill="#fff" opacity=".5"><circle cx="34" cy="52" r="2"/><circle cx="68" cy="58" r="1.8"/>
+             <circle cx="30" cy="72" r="1.8"/><circle cx="71" cy="76" r="2"/></g>`,
+    face:{x:50,y:62,s:.84}, feet:1, tail:1},
+
+  /* 🍮 곶감 — 표시는 <b>눌러 납작한 몸</b>과 <b>겉에 핀 흰 분</b>, 그리고 짧은 꼭지다.
+     ⚠️ 홍시와 헷갈리게 하지 마라 — 홍시는 위가 평평하고 <b>아래로 좁아지며 초록 꼭지</b>가 크다.
+        곶감은 <b>위 가운데가 살짝 들어가고</b> 꼭지는 마른 갈색으로 짧다. */
+  gotgam:{name:'곶감', w:34, top:28,
+    body:f=>`<path d="M50 42 q7 -4 15 -2 q17 4 17 22 q0 24 -32 24 q-32 0 -32 -24
+             q0 -18 17 -22 q8 -2 15 2 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="26" cy="44" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="74" cy="44" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="26" cy="45" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="74" cy="45" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <path d="M46 38 h8 q2 0 2 3 v4 h-12 v-4 q0 -3 2 -3 z" fill="#8c5a34"/>
+             <ellipse cx="50" cy="40" rx="9" ry="3.2" fill="#a9713f"/>`,
+    deco:c=>`<g fill="#fff" opacity=".5">
+             <ellipse cx="28" cy="52" rx="8" ry="5" transform="rotate(-20 28 52)"/>
+             <ellipse cx="72" cy="54" rx="7" ry="4.4" transform="rotate(20 72 54)"/>
+             <ellipse cx="50" cy="86" rx="12" ry="4"/>
+             <ellipse cx="24" cy="70" rx="5" ry="7"/><ellipse cx="77" cy="70" rx="4.4" ry="6"/></g>
+             <g fill="none" stroke="${c.dark}" stroke-width="1.8" opacity=".26" stroke-linecap="round">
+             <path d="M38 44 q12 -4 24 0"/></g>`,
+    face:{x:50,y:64,s:.84}, feet:1, tail:1},
+
+  /* 🥞 크레페 — 표시는 <b>나팔꼴로 말린 몸</b>과 위로 봉긋한 크림·딸기다.
+     ⚠️ 아래는 <b>뾰족하게</b> 좁혀야 「말아놓은 것」으로 보인다 — 컵처럼 평평하면 안 된다. */
+  crepe:{name:'크레페', w:32, top:14,
+    body:f=>`<path d="M22 36 h56 l-22 50 q-3 6 -6 6 q-3 0 -6 -6 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="32" cy="28" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="68" cy="28" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="32" cy="29" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="68" cy="29" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    deco:()=>`<path d="M22 37 q5 -12 14 -9 q4 -12 14 -8 q5 -11 14 -5 q11 -3 14 9 q1 6 -6 12 z"
+              fill="#fffaf2"/>
+              <path d="M25 38 q5 -9 12 -7 q4 -9 13 -6 q5 -8 12 -4 q9 -2 11 8 z" fill="#fff"/>
+              <circle cx="38" cy="27" r="3.4" fill="#f2607a"/>
+              <circle cx="62" cy="29" r="3" fill="#f2607a"/>
+              <path d="M40 74 q6 4 12 0" stroke="#fff" stroke-width="2.4" fill="none"
+              stroke-linecap="round" opacity=".4"/>`,
+    face:{x:50,y:58,s:.8}, feet:1, tail:1},
+
+  /* 🧈 스콘 — 표시는 <b>가로로 쩍 갈라진 금</b>이다. 위아래로 부풀어 오른 통 모양이다.
+     ⚠️ 갈라진 금은 <b>얼굴 아래(y80)</b>다 — 얼굴 가운데 두면 입이 둘이 된다. */
+  scone:{name:'스콘', w:35, top:26,
+    body:f=>`<path d="M24 44 q0 -10 26 -10 q26 0 26 10 v34 q0 12 -26 12 q-26 0 -26 -12 z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="31" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="70" cy="31" rx="8.5" ry="7.5" fill="${c.base}"/>
+             <ellipse cx="30" cy="32" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="32" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    /* ⚠️ 처음엔 곧은 가로줄 <b>둘</b>이었는데 <b>허리띠</b>처럼 보였다(잔 같기도 했다).
+       <b>지그재그 하나</b>로 바꾸고 입보다 아래로 내렸다 — 그래야 「쩍 갈라진 금」이 된다. */
+    deco:c=>`<path d="M25 81 l7 5 l8 -4 l9 5 l8 -5 l8 4 l8 -5" stroke="${c.dark}" stroke-width="3.8"
+             fill="none" opacity=".45" stroke-linejoin="round" stroke-linecap="round"/>
+             <g fill="${c.dark}" opacity=".22">
+             <circle cx="31" cy="40" r="2.4"/><circle cx="50" cy="37" r="2.8"/><circle cx="68" cy="40" r="2.4"/>
+             <circle cx="27" cy="60" r="2"/><circle cx="74" cy="62" r="2"/></g>
+             <ellipse cx="34" cy="48" rx="8" ry="4.4" fill="#fff" opacity=".4" transform="rotate(-16 34 48)"/>`,
+    face:{x:50,y:60,s:.84}, feet:1, tail:1},
+
+  /* 🧇 에그와플 — 표시는 <b>동글동글한 방울이 붙은 판</b>이다.
+     ⚠️ 와플과 헷갈리게 하지 마라 — 와플은 <b>네모 격자</b>이고 이쪽은 <b>둥근 방울</b>이다.
+     ⚠️ 방울 테두리는 ears 에 몸 색으로 그려서 <b>실루엣까지 방울지게</b> 만든다. */
+  eggwaffle:{name:'에그와플', w:36, top:26,
+    body:f=>`<rect x="20" y="36" width="60" height="52" rx="16" ${f}/>`,
+    ears:c=>`<ellipse cx="28" cy="32" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="72" cy="32" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="28" cy="33" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="72" cy="33" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <g fill="${c.base}">
+             <circle cx="50" cy="34" r="7"/><circle cx="19" cy="50" r="7"/><circle cx="81" cy="50" r="7"/>
+             <circle cx="18" cy="68" r="6.4"/><circle cx="82" cy="68" r="6.4"/>
+             <circle cx="36" cy="88" r="6.4"/><circle cx="64" cy="88" r="6.4"/>
+             <circle cx="50" cy="90" r="6"/></g>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="2" opacity=".3">
+             <circle cx="28" cy="48" r="7"/><circle cx="72" cy="48" r="7"/>
+             <circle cx="26" cy="68" r="6.4"/><circle cx="74" cy="68" r="6.4"/>
+             <circle cx="36" cy="84" r="6"/><circle cx="64" cy="84" r="6"/><circle cx="50" cy="88" r="5.4"/>
+             <circle cx="50" cy="38" r="6"/><circle cx="36" cy="40" r="5.4"/><circle cx="64" cy="40" r="5.4"/></g>
+             <g fill="#fff" opacity=".4">
+             <circle cx="30" cy="46" r="2.4"/><circle cx="70" cy="46" r="2.4"/><circle cx="28" cy="66" r="2"/></g>`,
+    face:{x:50,y:62,s:.8}, feet:1, tail:1},
+
+  /* 🌰 몽블랑 — 표시는 <b>가늘게 짜 올린 밤 국수</b>와 머리 위 <b>밤 한 톨</b>이다.
+     ⚠️ 국수 줄은 <b>세로</b>로 촘촘히 — 가로로 그으면 바움쿠헨 나이테처럼 보인다. */
+  montblanc:{name:'몽블랑', w:32, top:12,
+    body:f=>`<path d="M50 28 q30 6 30 36 q0 20 -12 24 h-36 q-12 -4 -12 -24 q0 -30 30 -36 z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="30" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="70" cy="30" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="30" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="50" cy="22" rx="8.5" ry="7" fill="#8c5f34"/>
+             <path d="M41.5 22 q8.5 5 17 0 q-8.5 4 -17 0 z" fill="#e8d6b8"/>
+             <ellipse cx="47" cy="19" rx="3" ry="2" fill="#a87a49" opacity=".8"/>`,
+    deco:c=>`<g fill="none" stroke="${c.dark}" stroke-width="1.8" opacity=".3" stroke-linecap="round">
+             <path d="M26 56 q2 18 4 30"/><path d="M32 46 q-2 20 -1 34"/>
+             <path d="M68 46 q2 20 1 34"/><path d="M74 56 q-2 18 -4 30"/>
+             <path d="M42 34 q-2 6 -2 10"/><path d="M58 34 q2 6 2 10"/></g>
+             <g fill="#fff" opacity=".4"><ellipse cx="34" cy="52" rx="4" ry="8" transform="rotate(10 34 52)"/></g>`,
+    face:{x:50,y:62,s:.82}, feet:1, tail:1},
+
+  /* 🍧 젤라또 — 표시는 <b>주걱으로 뜬 넓적한 한 덩이</b>와 아래 <b>종이컵</b>이다.
+     ⚠️ 파르페·빙수와 헷갈리게 하지 마라 — 파르페는 <b>굽 달린 유리잔</b>,
+        빙수는 <b>사발에 소복한 눈</b>이다. 이쪽은 아래로 좁아지는 종이컵이다. */
+  gelato:{name:'젤라또', w:33, top:16,
+    body:f=>`<path d="M20 52 q4 -18 30 -18 q26 0 30 18 l-6 30 q-2 8 -10 8 h-28 q-8 0 -10 -8 z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="30" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="70" cy="30" rx="8" ry="7" fill="${c.base}"/>
+             <ellipse cx="30" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="31" rx="3.8" ry="3.2" fill="${c.cheek}"/>`,
+    /* ⚠️ 처음엔 위 덩이에 <b>밝은색 판</b>을 얹어 나누려 했는데 몸 색과 너무 닮아서
+       그냥 분홍 컵 하나로 보였다. 두 부분을 나눠 보이려면 <b>둘 중 하나를 아주 다른 색</b>으로
+       칠해야 한다 — 종이컵을 흰색으로 칠하고 사이에 테두리 선을 그었다.
+       ⚠️ 얼굴은 <b>컵 위(y68)</b>에 앉힌다 — 밀크쉐이크와 같은 방식이다. */
+    deco:c=>`<path d="M20 53 h60 l-6 29 q-2 8 -10 8 h-28 q-8 0 -10 -8 z" fill="#fffdf8"/>
+             <ellipse cx="50" cy="53" rx="30" ry="3.6" fill="${c.dark}" opacity=".28"/>
+             <g fill="none" stroke="#e6dccd" stroke-width="1.8" opacity=".8">
+             <path d="M30 60 v26"/><path d="M50 60 v29"/><path d="M70 60 v26"/></g>
+             <ellipse cx="34" cy="44" rx="7" ry="3.6" fill="#fff" opacity=".5" transform="rotate(-14 34 44)"/>`,
+    face:{x:50,y:68,s:.76}, feet:1, tail:1},
+
+  /* 🥛 바나나우유 — 표시는 <b>목이 좁은 단지병</b>과 은박 뚜껑이다.
+     ⚠️ 뚜껑과 목은 ears 에 그린다 — 몸보다 먼저 그려야 목 아랫동이 몸에 묻힌다. */
+  bnmilk:{name:'바나나우유', w:28, top:8,
+    body:f=>`<path d="M50 34 q30 4 30 30 q0 22 -30 26 q-30 -4 -30 -26 q0 -26 30 -30 z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="30" cy="32" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="70" cy="32" rx="7.5" ry="6.5" fill="${c.base}"/>
+             <ellipse cx="30" cy="33" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="33" rx="3.8" ry="3.2" fill="${c.cheek}"/>
+             <rect x="41" y="16" width="18" height="14" rx="3" fill="${c.base}"/>
+             <rect x="38" y="13" width="24" height="7" rx="3.5" fill="#d9dee4"/>
+             <rect x="38" y="13" width="24" height="3" rx="1.5" fill="#f0f3f6"/>`,
+    deco:c=>`<g fill="#fff" opacity=".45">
+             <ellipse cx="30" cy="52" rx="6" ry="10" transform="rotate(14 30 52)"/></g>
+             <g fill="none" stroke="${c.dark}" stroke-width="2" opacity=".24" stroke-linecap="round">
+             <path d="M26 74 q24 8 48 0"/></g>
+             <g fill="${c.dark}" opacity=".2"><circle cx="24" cy="62" r="2.4"/><circle cx="77" cy="60" r="2.4"/></g>`,
+    face:{x:50,y:60,s:.82}, feet:1, tail:1},
+
+  /* ==================================================================
      🤝 콜라보 친구 모양 — 준 그림을 <b>보고 새로 그린 것</b>이다(그림 파일은 넣지 않는다).
      ⚠️ 이 둘은 통(FLAVORS)에 안 붙는다 — COLLAB 이 따로 쓴다.
   ================================================================== */
@@ -2408,6 +3197,90 @@ const SHAPES={
         stroke="#1c1c1c" stroke-width="${2.4*s}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
     },
     face:{x:50,y:43,s:1}, feet:0, tail:0, nomz:1},
+
+  /* 🎀 헬로키티 — 원본은 <b>귀까지 이어진 굵은 검은 선 하나</b>로 그린 그림이다.
+     ⚠️ 그래서 ears 를 비우고 <b>귀와 머리를 한 path 로</b> 그린다.
+        귀를 따로 붙이면 「고양이 귀 달린 햄쮜」가 되지 원본이 되지 않는다(한 번 그렇게 했다).
+     ⚠️ <b>입이 없는 것</b>이 이 아이의 표시다 — mouth 에서 노란 코만 그린다.
+     ⚠️ 리본은 <b>오른쪽 귀에만</b>. 눈은 <b>작은 세로 타원</b>이고 눈 사이가 아주 넓다
+        (원본에서 잰 값: 머리 폭의 22% 와 75% 자리). */
+  kitty:{name:'헬로키티', w:34, top:10,
+    body:f=>`<path d="M17 20 L43 32 Q50 29 57 31 L80 16 Q87 31 87 48
+             Q90 64 77 74 Q65 81 50 81 Q35 81 23 74 Q10 64 13 48 Q13 31 17 20 Z"
+             ${f} stroke-linejoin="round"/>`,
+    ears:c=>``,
+    /* 굵은 검은 선으로 덧그리기 + 수염 세 가닥씩 + 오른쪽 귀의 빨간 리본 */
+    deco:()=>`<path d="M17 20 L43 32 Q50 29 57 31 L80 16 Q87 31 87 48
+              Q90 64 77 74 Q65 81 50 81 Q35 81 23 74 Q10 64 13 48 Q13 31 17 20 Z"
+              fill="none" stroke="#1c1c1c" stroke-width="3.2" stroke-linejoin="round"/>
+              <g stroke="#1c1c1c" stroke-width="2.6" stroke-linecap="round" fill="none">
+              <path d="M13 52 L2 47"/><path d="M11 59 L1 58"/><path d="M13 66 L2 71"/>
+              <path d="M87 52 L98 47"/><path d="M89 59 L99 58"/><path d="M87 66 L98 71"/></g>
+              <path d="M69 31 C61 22 56 24 56 32 C56 40 62 42 69 37 Z"
+              fill="#e8213f" stroke="#1c1c1c" stroke-width="2.6" stroke-linejoin="round"/>
+              <path d="M79 31 C87 22 92 24 92 32 C92 40 86 42 79 37 Z"
+              fill="#e8213f" stroke="#1c1c1c" stroke-width="2.6" stroke-linejoin="round"/>
+              <circle cx="62" cy="33" r="2.3" fill="none" stroke="#1c1c1c" stroke-width="1.7"/>
+              <circle cx="86" cy="33" r="2.3" fill="none" stroke="#1c1c1c" stroke-width="1.7"/>
+              <circle cx="74" cy="33" r="6.5" fill="#e8213f" stroke="#1c1c1c" stroke-width="2.6"/>`,
+    /* 작은 세로 타원 둘 — 흰 점을 넣지 않는다(원본에 없다) */
+    eye:(c,fx,fy,s,m)=>{
+      if(m==='sleep') return `<g stroke="#1c1c1c" stroke-width="${2.6*s}" fill="none" stroke-linecap="round">
+        <path d="M${fx-22*s} ${fy} q${4*s} ${5*s} ${8*s} 0"/><path d="M${fx+14*s} ${fy} q${4*s} ${5*s} ${8*s} 0"/></g>`;
+      return `<ellipse cx="${fx-18*s}" cy="${fy}" rx="${2.9*s}" ry="${4.3*s}" fill="#1c1c1c"/>
+              <ellipse cx="${fx+18*s}" cy="${fy}" rx="${2.9*s}" ry="${4.3*s}" fill="#1c1c1c"/>`;
+    },
+    /* 🟡 노란 코 하나뿐 — <b>입은 그리지 않는다</b> */
+    mouth:(c,fx,fy,s,m)=>`<ellipse cx="${fx}" cy="${fy+7*s}" rx="${3.1*s}" ry="${2.2*s}"
+      fill="#f5d800" stroke="#1c1c1c" stroke-width="${1.4*s}"/>`,
+    face:{x:50,y:59,s:1}, feet:0, tail:0, nomz:1},
+
+  /* 🐱 냐니 — 아이가 연필로 그린 사진에서 <b>자로 재서</b> 옮긴 것이다.
+     ⚠️ 선은 <b>가늘다</b>(1.5). 원본은 연필 스케치다 — 사진에서 선 굵기가 머리폭의 2% 였다.
+        굵게 그리면 딱딱한 벡터 고양이가 된다(3.0 으로 그렸다가 딴 그림이 됐다).
+     ⚠️ 눈은 <b>가로가 더 넓은</b> 타원이다(원본 67x60). 세로로 길게 그리면 그 멍한 눈이 안 된다.
+     ⚠️ 눈은 <b>바깥쪽이 내려가게</b> 기울인다 — ︿ 입과 함께 시무룩해 보이는 까닭이다.
+        반대로(안쪽을 내려) 기울이면 째려보는 눈이 된다.
+     ⚠️ 눈동자는 <b>둘 다 눈의 왼쪽 끝에 붙어</b> 있고 위아래도 꽉 찬다 —
+        흰자는 <b>오른쪽에 초승달로만</b> 남는다. 눈동자 둘레에 흰자가 빙 두르면 딴 눈이 된다.
+        삐져나가지 않게 clipPath 로 눈 안에 가둔다. 흰 반짝이는 <b>넣지 않는다</b> — 원본에 없다.
+     ⚠️ 귀는 <b>넓고</b>(머리폭의 35%) <b>귀끝이 가장 바깥</b>이다 —
+        볼이 귀끝보다 밖으로 나가면 귀가 안으로 누워 보인다.
+     ⚠️ 턱은 <b>넓적하다</b> — 사진에서 턱 모서리 너비가 머리폭의 41% 나 된다.
+        좁히면 하트 모양이 되어 딴 고양이가 된다(29% 로 그렸다가 그랬다).
+     ⚠️ 귀와 머리는 <b>한 선</b>이다(ears 를 비운다). 귀를 따로 붙이면 「고양이 귀 달린 햄쮜」가 된다.
+     ⚠️ <b>몸(어깨선)은 그리지 않는다</b> — 아이가 지워달라고 했다. 얼굴만 있는 아이다.
+     ⚠️ nyaniw 의 dark 를 연필색으로 맞춰놨다 — 밝은 회색으로 되돌리면 선이 두 겹으로 번진다. */
+  nyani:{name:'냐니', w:30, top:11,
+    body:f=>`<path d="M13 16 L38 28 Q50 26.5 62 28 L87 16 Q88 34 86 53 Q84.5 68 77 75 Q67 80.5 50 81 Q33 80.5 23 75 Q15.5 68 14 53 Q12 34 13 16 Z" ${f} stroke-linejoin="round"/>`,
+    deco:()=>`<path d="M13 16 L38 28 Q50 26.5 62 28 L87 16 Q88 34 86 53 Q84.5 68 77 75 Q67 80.5 50 81 Q33 80.5 23 75 Q15.5 68 14 53 Q12 34 13 16 Z" fill="none" stroke="#3c3c3c" stroke-width="1.5"
+              stroke-linejoin="round" stroke-linecap="round"/>`,
+    ears:c=>``,
+    /* 👀 가로로 넓은 큰 눈 — 바깥쪽이 내려가게 12도 기울고, 눈동자는 왼쪽으로 쏠린다 */
+    eye:(c,fx,fy,s,m)=>{
+      if(m==='sleep') return `<g stroke="#3c3c3c" stroke-width="${2*s}" fill="none" stroke-linecap="round">
+        <path d="M${fx-27*s} ${fy} q${10*s} ${8.5*s} ${20*s} 0"/><path d="M${fx+7*s} ${fy} q${10*s} ${8.5*s} ${20*s} 0"/></g>`;
+      /* ⚠️ clipPath 로 <b>눈 안에 가둔다</b> — 안 그러면 왼쪽으로 민 눈동자가
+         눈 밖으로 삐져나와 초승달이 된다(한 번 그랬다).
+         id 는 두 눈이 늘 같은 모양이라 겹쳐도 탈이 없다. */
+      const eye=(ex,tilt,id)=>`<g transform="rotate(${tilt} ${ex} ${fy})">
+        <clipPath id="${id}"><ellipse cx="${ex}" cy="${fy}" rx="${11.8*s}" ry="${10.2*s}"/></clipPath>
+        <ellipse cx="${ex}" cy="${fy}" rx="${11.8*s}" ry="${10.2*s}" fill="#ffffff"/>
+        <ellipse cx="${ex-4.1*s}" cy="${fy}" rx="${7.6*s}" ry="${10.2*s}" fill="#2b2b2b" clip-path="url(#${id})"/>
+        <ellipse cx="${ex}" cy="${fy}" rx="${11.8*s}" ry="${10.2*s}" fill="none"
+          stroke="#3c3c3c" stroke-width="${1.5*s}"/></g>`;
+      return eye(fx-17*s,-8,'nyEa')+eye(fx+17*s,8,'nyEb');
+    },
+    /* ︿ 시무룩한 입 하나 — 코는 그리지 않는다. 눈 가운데에서 16칸 아래다 */
+    mouth:(c,fx,fy,s,m)=>{
+      if(m==='sleep') return `<ellipse cx="${fx}" cy="${fy+17*s}" rx="${2.2*s}" ry="${2.6*s}"
+        fill="#3c3c3c" opacity=".5"/>`;
+      const d=(m==='happy'||m==='yum')?-1:1;   /* 기분 좋으면 ∨ 로 뒤집힌다 */
+      return `<path d="M${fx-6.2*s} ${fy+17*s} L${fx} ${fy+(17-5*d)*s} L${fx+6.2*s} ${fy+17*s}"
+        stroke="#3c3c3c" stroke-width="${1.8*s}" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"/>`;
+    },
+    face:{x:50,y:49,s:1}, feet:0, tail:0, nomz:1},
   /* ⭐ 별의커비 — 원본은 <b>동그라미 하나에 눈·볼·입</b>이 전부다.
      자리를 직접 재서 옮겼다: 눈 사이 15 · 눈 크기 8.8×16 · 볼은 눈보다 조금 아래 · 입은 얇은 미소.
      ⚠️ 발과 윤기는 넣지 않는다 — 원본에 없다.
@@ -2632,6 +3505,60 @@ const SHAPES={
              <g fill="#ddd6cb" opacity=".55"><circle cx="35" cy="89" r="2"/><circle cx="50" cy="91" r="2.2"/><circle cx="65" cy="89" r="2"/></g>
              ${_star(11,32,5.2,'#ffe07a','#e0ac2c')}${_star(90,38,4.2,'#ffe07a','#e0ac2c')}${_star(88,20,3,'#fff6cf','none')}`,
     face:{x:50,y:64,s:.99}, feet:1, tail:1},
+
+  /* 💋 볼뽀뽀 — 몸은 <b>동글한 햄쮜</b>다. 뽀뽀는 몸 모양이 아니라 <b>얼굴과 자세</b>로 말한다.
+     ⚠️ 하트 몸통으로 그렸더니 아이가 「딸기쮜 같다」고 했다 — 아래로 뾰족한 분홍 덩이는
+        하트가 아니라 딸기로 읽힌다. 몸으로 뜻을 말하려 하지 말 것. */
+  kiss:{name:'볼뽀뽀', w:32, top:18, grp:1,
+    body:f=>`<g ${f}><ellipse cx="50" cy="60" rx="30" ry="28"/>
+             <ellipse cx="21" cy="54" rx="9" ry="7.5" transform="rotate(-24 21 54)"/>
+             <ellipse cx="79" cy="54" rx="9" ry="7.5" transform="rotate(24 79 54)"/></g>`,
+    ears:c=>`<circle cx="28" cy="31" r="11.5" fill="${c.base}"/>
+             <circle cx="72" cy="31" r="11.5" fill="${c.base}"/>
+             <circle cx="28" cy="31" r="5.6" fill="${c.cheek}"/>
+             <circle cx="72" cy="31" r="5.6" fill="${c.cheek}"/>`,
+    /* 💗 옆으로 퐁퐁 떠오르는 하트 — 얼굴칸(x31~69) 밖에만 둔다 */
+    deco:()=>`<g>
+              <path d="M15 40 c-3.6 -2.6 -5.4 -5 -5.4 -6.9 c0 -2.4 2 -3.7 3.5 -3.7
+                       c1.2 0 1.7 .7 1.9 1.3 c.2 -.6 .8 -1.3 1.9 -1.3 c1.5 0 3.5 1.3 3.5 3.7
+                       c0 1.9 -1.8 4.3 -5.4 6.9 z" fill="#ff8fb2"/>
+              <path d="M86 33 c-2.7 -2 -4 -3.7 -4 -5.2 c0 -1.8 1.5 -2.8 2.6 -2.8
+                       c.9 0 1.3 .5 1.4 1 c.1 -.5 .5 -1 1.4 -1 c1.1 0 2.6 1 2.6 2.8
+                       c0 1.5 -1.3 3.2 -4 5.2 z" fill="#ffb3cb"/>
+              <path d="M89 44 c-2 -1.4 -2.9 -2.7 -2.9 -3.8 c0 -1.3 1.1 -2 1.9 -2
+                       c.6 0 1 .4 1 .7 c.1 -.3 .4 -.7 1 -.7 c.8 0 1.9 .7 1.9 2
+                       c0 1.1 -.9 2.4 -2.9 3.8 z" fill="#ffd0e0"/></g>`,
+    /* 😙 늘 감고 웃는 눈 — 뽀뽀하려고 눈을 감은 얼굴이 이 아이의 기본이다 */
+    eye:(c,fx,fy,s,m)=>{
+      const er=4.8*s, ex=10.5*s;
+      const arc=(cx,dy,down)=>`<path d="M${cx-er} ${fy+dy} q${er} ${down?er*1.25:-er*1.4} ${er*2} 0"/>`;
+      const g=`stroke="#3d3450" stroke-width="${2.3*s}" fill="none" stroke-linecap="round"`;
+      if(m==='sleep') return `<g ${g}>${arc(fx-ex,0,true)}${arc(fx+ex,0,true)}</g>`;
+      return `<g ${g}>${arc(fx-ex,er*0.55,false)}${arc(fx+ex,er*0.55,false)}</g>`;
+    },
+    /* 💋 오므린 입술 · 볼에 찍힌 뽀뽀 자국 · 입 앞으로 퐁 나오는 하트.
+       ⚠️ 볼 자국은 여기서 그려야 한다 — deco 는 볼보다 먼저라 덮인다. */
+    mouth:(c,fx,fy,s,m)=>{
+      const nose=`<ellipse cx="${fx}" cy="${fy+6*s}" rx="${3*s}" ry="${2.3*s}" fill="#d98a9c"/>`;
+      /* 볼 자국은 자든 깨든 남아 있다 — 이 아이의 표시라서 */
+      const mark=`<g transform="translate(${fx-20*s},${fy+7.5*s}) rotate(-12) scale(${s})" opacity=".85">
+        <path d="M0 -1.6 q-1.5 -2.4 -3.2 -.9 q-1.6 1.4 .2 3.1 L0 3.4 L3 .6 q1.8 -1.7 .2 -3.1 q-1.7 -1.5 -3.2 .9 z"
+          fill="#e0567a"/>
+        <path d="M-3 -.2 q3 1.2 6 0" stroke="#f4a0b6" stroke-width=".7" fill="none"/></g>`;
+      if(m==='sleep') return nose+mark
+        +`<ellipse cx="${fx}" cy="${fy+12*s}" rx="${2.6*s}" ry="${3.2*s}" fill="#c9556e" opacity=".5"/>`;
+      const lips=`<g><ellipse cx="${fx-2.8*s}" cy="${fy+11.6*s}" rx="${4*s}" ry="${3.4*s}" fill="#e2607e"/>
+        <ellipse cx="${fx+2.8*s}" cy="${fy+11.6*s}" rx="${4*s}" ry="${3.4*s}" fill="#e2607e"/>
+        <ellipse cx="${fx}" cy="${fy+10.4*s}" rx="${2.3*s}" ry="${1.7*s}" fill="#f5a2b6" opacity=".85"/>
+        <path d="M${fx} ${fy+8.4*s} v${6*s}" stroke="#b8465f" stroke-width="${1*s}" stroke-linecap="round"/></g>`;
+      /* 쪽— 하고 입에서 나오는 작은 하트 */
+      const puff=`<path d="M${fx+12*s} ${fy+16*s} c${-2.6*s} ${-1.9*s} ${-3.9*s} ${-3.6*s} ${-3.9*s} ${-5*s}
+        c0 ${-1.7*s} ${1.4*s} ${-2.7*s} ${2.5*s} ${-2.7*s} c${0.9*s} 0 ${1.3*s} ${0.5*s} ${1.4*s} ${0.9*s}
+        c${0.1*s} ${-0.4*s} ${0.5*s} ${-0.9*s} ${1.4*s} ${-0.9*s} c${1.1*s} 0 ${2.5*s} ${1*s} ${2.5*s} ${2.7*s}
+        c0 ${1.4*s} ${-1.3*s} ${3.1*s} ${-3.9*s} ${5*s} z" fill="#ff7ba6" opacity=".95"/>`;
+      return nose+mark+lips+puff;
+    },
+    face:{x:50,y:55,s:.9}, feet:1, tail:1},
 };
 const COLORS={
   cream :{name:'크림',   base:'#f4d9a8', light:'#fbeccb', dark:'#d3a061', cheek:'#f7b7c6'},
@@ -2659,6 +3586,32 @@ const COLORS={
   /* 🍡 버터떡은 <b>흰 떡이 아니라 노릇하게 구운 빵</b>이다(아이가 사진을 보내줬다).
      🍯달고나(#dc9c43)보다 붉고 진하게 — 안 그러면 둘이 구별이 안 된다. */
   baked :{name:'구운빵', base:'#cf8446', light:'#e9b57f', dark:'#93532a', cheek:'#f0a0ae'},
+  /* 🆕 새 통 열둘을 위해 만든 색 다섯.
+     🍡탕후루는 딸기색이 물러서 <b>사탕처럼 반들거리는 빨강</b>이 필요했고,
+     🥖츄러스는 계피가루라 모래색보다 붉어야 했고,
+     🍶식혜는 꿀색이 너무 진해서 <b>맑은 호박빛</b>으로,
+     🪵바움쿠헨은 나이테가 보여야 해서 모래색보다 연하게,
+     🍞카스텔라는 버터색이면 푸딩과 같은 색이 되어 버렸다. */
+  tang  :{name:'탕후루', base:'#e8384e', light:'#ff8f9d', dark:'#a81e30', cheek:'#ffb3c0'},
+  cinna :{name:'계피',   base:'#e0a464', light:'#f6d5a8', dark:'#a86b30', cheek:'#f0a0ae'},
+  sikhb :{name:'식혜',   base:'#f0d59a', light:'#fbeed0', dark:'#c3a163', cheek:'#f2aab8'},
+  baumt :{name:'나이테', base:'#e2c69c', light:'#f6e7cd', dark:'#b3946a', cheek:'#f0a0ae'},
+  castel:{name:'카스텔라',base:'#f6e0a2', light:'#fdf3d6', dark:'#cbaa58', cheek:'#f2aab8'},
+  /* 🆕 특별 햄쮜 여섯을 위한 색 셋. 있는 색으로는 그 동물이 안 됐다 —
+     🦊여우는 복숭아색이 너무 옅고, 🐧펭귄은 검정이 필요했고, 🦋나비는 라벤더가
+     이미 셋(유니콘·꿈나라·황제)이라 헷갈렸다. */
+  foxo  :{name:'여우',   base:'#e8925a', light:'#f8c49c', dark:'#b45f27', cheek:'#f4a0a8'},
+  /* ⚠️ 처음엔 짙은 남색(#5d6a80)이었다 — 그 위에 검은 두건을 씌웠더니 얼굴 둘레가
+     캄캄해져서 <b>가면처럼 무서웠다</b>. 몸은 밝게 두고 검은 것은 모자·날개로만 얹는다. */
+  pengb :{name:'펭귄',   base:'#eaf0f7', light:'#ffffff', dark:'#9fb0c4', cheek:'#f7b0be'},
+  /* ---- 🆕 Lv.113~124 통에 쓰는 색 여섯 ---- */
+  hoppw :{name:'호빵',   base:'#f4ece0', light:'#fffaf3', dark:'#c9bba6', cheek:'#f4aeb6'},
+  sobor :{name:'소보로', base:'#e0b273', light:'#f6dcae', dark:'#b3853f', cheek:'#f2a3ad'},
+  gotg  :{name:'곶감',   base:'#d2763f', light:'#efa974', dark:'#98481d', cheek:'#f6a8a8'},
+  montb :{name:'몽블랑', base:'#d8ac74', light:'#f2d9b4', dark:'#a3763f', cheek:'#f2a3ad'},
+  gelatp:{name:'젤라또', base:'#f5c3d2', light:'#ffe6ee', dark:'#c4869a', cheek:'#f2879f'},
+  bnyel :{name:'바나나우유', base:'#f7e29a', light:'#fdf6d2', dark:'#c9ab5c', cheek:'#f4a6b4'},
+  bfly  :{name:'나비',   base:'#c9a0e8', light:'#e8d5f7', dark:'#8f63b5', cheek:'#f4a6c8'},
   /* 🆕 새 통 열여섯을 위해 만든 색 넷. 있는 색으로는 그것처럼 안 보였다 —
      🍨메론소다는 풀잎색이 누렇고, 🫐블루레몬은 하늘색이 너무 옅고,
      🧁레드벨벳은 딸기색이 분홍이고, 🧋흑당은 코코아색이 밝다. */
@@ -2666,6 +3619,15 @@ const COLORS={
   bluel :{name:'블루레몬', base:'#74aef5', light:'#c3ddfd', dark:'#3e73c4', cheek:'#f4a6b8'},
   velvet:{name:'레드벨벳', base:'#c9505f', light:'#e79aa4', dark:'#8c2836', cheek:'#f2a3ad'},
   darkbr:{name:'흑당',     base:'#96684a', light:'#c39472', dark:'#5c3a25', cheek:'#e2879b'},
+  /* 🆕 Lv.89~100 통에 쓰는 색 넷 */
+  tira  :{name:'티라미수', base:'#e6d3b6', light:'#f8ecd8', dark:'#b99b74', cheek:'#f2a3ad'},
+  slushb:{name:'슬러시',   base:'#8fd2ee', light:'#cdeefb', dark:'#559fc4', cheek:'#f4a6b8'},
+  hoji  :{name:'호지차',   base:'#c08f5f', light:'#e6c49a', dark:'#8a5e34', cheek:'#e6889b'},
+  pnut  :{name:'땅콩',     base:'#e0b070', light:'#f5daae', dark:'#ac7c40', cheek:'#f2a3ad'},
+  /* 🎀🐱 헬로키쮜·냐니쮜 — 새하얀 몸이라 볼터치를 흰색으로 둬서 <b>안 보이게</b> 한다.
+     원본에 볼터치가 없는데 분홍 점이 찍히면 다른 그림이 된다. */
+  kittyw:{name:'헬로키티', base:'#ffffff', light:'#ffffff', dark:'#dcd7cf', cheek:'#ffffff'},
+  nyaniw:{name:'냐니',     base:'#fdfdfc', light:'#ffffff', dark:'#3c3c3c', cheek:'#fdfdfc'},
   /* 🤝 콜라보 친구들의 색. ⚠️ 통 햄쮜는 이 색을 쓰지 않는다 — 콜라보 전용이다.
      가나쮜는 <b>하얀 몸에 굵은 검은 선</b>이 전부라, dark 를 새까맣게 두고
      테두리는 deco 에서 따로 굵게 덧그린다(기본 테두리는 opacity .4 라 회색이다). */
@@ -2892,6 +3854,14 @@ const WEAR={
         <circle cx="0" cy="-6" r="4" fill="#ff9fc0" stroke="#e5799f" stroke-width="1"/>
         <circle cx="0" cy="0" r="2.8" fill="#ffe07a" stroke="#e0ac2c" stroke-width="1"/></g>
       <path d="M-12 -3 q-4 8 -1 14" stroke="#7fc47a" stroke-width="2" fill="none" stroke-linecap="round"/>`},
+    /* 🆕 Lv.89~100 과 함께 여는 소품 */
+    chef:{name:'요리사 모자', em:'👨‍🍳', coin:2600, d:()=>`
+      <path d="M-11 -2 L-11 -11 Q-11 -14 -8 -14 Q-9 -22 0 -22 Q9 -22 8 -14 Q11 -14 11 -11 L11 -2 Z"
+        fill="#fffdf8" stroke="#ddd3c4" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M-11 -6 h22" stroke="#ddd3c4" stroke-width="1.2"/>
+      <circle cx="-6" cy="-16" r="4.2" fill="#fffdf8" stroke="#ddd3c4" stroke-width="1.1"/>
+      <circle cx="6" cy="-16" r="4.2" fill="#fffdf8" stroke="#ddd3c4" stroke-width="1.1"/>
+      <circle cx="0" cy="-19" r="4.6" fill="#fffdf8" stroke="#ddd3c4" stroke-width="1.1"/>`},
     hband:{name:'운동회 머리띠', em:'🎽', top:12, d:()=>`
       <path d="M-15 -1 q15 -12 30 0" stroke="#f2688f" stroke-width="3.4" fill="none" stroke-linecap="round"/>
       <path d="M12.5 -7.5 l10 -5.5 l-1.4 6.6 z" fill="#ff9fc0" stroke="#e5799f" stroke-width="1" stroke-linejoin="round"/>
@@ -2924,7 +3894,30 @@ const WEAR={
             stroke="#7fb0e0" stroke-width="2.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
       <circle cx="${x.toFixed(1)}" cy="${(y+10).toFixed(1)}" r="5.4" fill="#ffd75e" stroke="#e0ac2c" stroke-width="1.3"/>
       ${_star(x, y+10, 3.3, '#fff6d2', '#e0ac2c')}`},
-    lei:{name:'꽃 목걸이', em:'🌸', coin:800, d:(x,y,w)=>{
+    /* 🦸 망토 — 천은 <b>뒷장</b>, 목의 잠금쇠만 앞장이다.
+       ⚠️ 천을 d 에 그리면 몸을 덮어버린다(아이가 바로 알아봤다). */
+    cape:{name:'반짝 망토', em:'🦸', coin:3400,
+      back:(x,y,w)=>`
+      <path d="M${x-w*0.5} ${y-4} q${-w*0.7} ${w*0.4} ${-w*0.92} ${w*1.9}
+               q${w*0.35} ${w*0.5} ${w*1.42} ${w*0.62}
+               q${w*1.07} ${-w*0.12} ${w*1.42} ${-w*0.62}
+               q${-w*0.22} ${-w*1.5} ${-w*0.92} ${-w*1.9} z"
+        fill="#b578d8" stroke="#8a52aa" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M${x-w*0.5} ${y-4} q${-w*0.7} ${w*0.4} ${-w*0.92} ${w*1.9}
+               q${w*0.3} ${w*0.22} ${w*0.7} ${w*0.32}
+               q${-w*0.1} ${-w*1.4} ${w*0.22} ${-w*2.22} z"
+        fill="#cd97e8" opacity=".85"/>
+      <g fill="#ffe9a8" opacity=".8">
+        <circle cx="${x-w*0.72}" cy="${y+w*0.95}" r="1.5"/>
+        <circle cx="${x+w*0.66}" cy="${y+w*1.25}" r="1.7"/>
+        <circle cx="${x+w*0.1}" cy="${y+w*1.62}" r="1.3"/></g>`,
+      d:(x,y,w)=>`
+      <path d="M${x-w*0.52} ${y-4} q${w*0.52} ${w*0.3} ${w*1.04} 0
+               l${-w*0.14} ${w*0.3} q${-w*0.38} ${w*0.2} ${-w*0.76} 0 z"
+        fill="#b578d8" stroke="#8a52aa" stroke-width="1.2" stroke-linejoin="round"/>
+      <circle cx="${x}" cy="${y-1}" r="3.2" fill="#ffe07a" stroke="#e0ac2c" stroke-width="1.1"/>`},
+    /* 💐 🌸는 hat/flower(꽃 머리핀)가 쓰고 있다 — 상점에서 둘이 같은 그림이면 헷갈린다 */
+    lei:{name:'꽃 목걸이', em:'💐', coin:800, d:(x,y,w)=>{
       let s=`<path d="M${x-w*0.85} ${y-2} q${w*0.85} 12 ${w*1.7} 0" stroke="#7fc47a" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
       for(let i=-2;i<=2;i++){
         const cx=(x+i*w*0.38).toFixed(1), cy=(y+4+(2-Math.abs(i))*1.7).toFixed(1);
@@ -2951,7 +3944,9 @@ const WEAR={
       <circle cx="${x-6}" cy="${y-15}" r="1.9" fill="#fff" opacity=".85"/>
       <circle cx="${x+1}" cy="${y-19}" r="1.6" fill="#fff" opacity=".85"/>
       <circle cx="${x+7}" cy="${y-15}" r="1.9" fill="#fff" opacity=".85"/>`},
-    rainbowumb:{name:'무지개 우산', em:'🌈', coin:900, d:(x,y)=>`
+    /* 🌂 🌈는 cone/crain(무지개콘)이, ☂️는 hand/umbrella(그냥 우산)가 쓰고 있다.
+       ⚠️ 우산이 셋이라(umbrella·rainumb·rainbowumb) 이모지를 셋 다 달리 줘야 한다. */
+    rainbowumb:{name:'무지개 우산', em:'🌂', coin:900, d:(x,y)=>`
       <path d="M${x} ${y+5} v-17" stroke="#8a6a44" stroke-width="2" stroke-linecap="round"/>
       <path d="M${x} ${y+5} q4 3 0 5" stroke="#8a6a44" stroke-width="2" fill="none" stroke-linecap="round"/>
       <path d="M${x-13} ${y-12} a13 11 0 0 1 26 0 z" fill="#8fc2f0"/>
@@ -2990,6 +3985,13 @@ const WEAR={
       <path d="M${x+1} ${y-21} q13.5 3.6 13.5 7.6 q0 4 -13.5 7.6 z"
             fill="#ff9fc0" stroke="#e5799f" stroke-width="1.2" stroke-linejoin="round"/>
       ${_star(x+7, y-13.4, 3.4, '#fffdfb', '#e5799f')}`},
+    fan:{name:'부채', em:'🪭', coin:1800, d:(x,y)=>`
+      <g transform="translate(${x},${y})">
+        <path d="M0 6 L-11 -8 A14 14 0 0 1 11 -8 Z" fill="#ffd7e4" stroke="#e07a99"
+          stroke-width="1.2" stroke-linejoin="round"/>
+        <g stroke="#e07a99" stroke-width=".9" opacity=".8">
+          <path d="M0 6 L-6 -8"/><path d="M0 6 L0 -10"/><path d="M0 6 L6 -8"/></g>
+        <circle cx="0" cy="6" r="1.8" fill="#e07a99"/></g>`},
     teddy:{name:'곰인형', em:'🧸', coin:1000, d:(x,y)=>`
       <circle cx="${x-7.5}" cy="${y-18}" r="3.2" fill="#c99a68" stroke="#a67c4e" stroke-width="1"/>
       <circle cx="${x+7.5}" cy="${y-18}" r="3.2" fill="#c99a68" stroke="#a67c4e" stroke-width="1"/>
@@ -3037,6 +4039,16 @@ const WEAR={
       <ellipse cx="50" cy="61" rx="30" ry="6.4" fill="#fff6fa" stroke="#e58aae" stroke-width="2.2"/>
       <ellipse cx="50" cy="59.6" rx="24" ry="4" fill="${c}" opacity=".45"/>`},
     /* 🍨 굽 달린 유리 파르페 컵 — 콘 대신 컵에 앉는다 */
+    /* 🥇 황금콘 — ⚠️ 콘은 art(c)·hy·hs 로 만든다(d() 가 아니다). */
+    /* 🏆 🥇는 neck/medal(금메달)이 쓰고 있다 */
+    cgold:{name:'황금콘', em:'🏆', top:40, hy:33, hs:.74, art:c=>`
+      <path d="M20 61 L50 99 L80 61 Z" fill="#f0c95e" stroke="#c39a26" stroke-width="2.4" stroke-linejoin="round"/>
+      <g stroke="#c39a26" stroke-width="1.4" opacity=".7" fill="none">
+        <path d="M30 61 L50 87 M40 61 L50 74 M60 61 L50 74 M70 61 L50 87"/></g>
+      <path d="M27 68 q10 -4 18 2" stroke="#fff6cf" stroke-width="2.6" fill="none"
+        stroke-linecap="round" opacity=".8"/>
+      <ellipse cx="50" cy="61" rx="30" ry="6.4" fill="#ffe89a" stroke="#c39a26" stroke-width="2.2"/>
+      <ellipse cx="50" cy="59.6" rx="24" ry="4" fill="${c}" opacity=".5"/>`},
     ccup:{name:'예쁜 컵', em:'🍨', top:24, hy:32, hs:.7, art:c=>`
       <ellipse cx="50" cy="96" rx="17" ry="4.4" fill="#f0b6d2"/>
       <ellipse cx="50" cy="94.6" rx="17" ry="4.4" fill="#fff2f8" stroke="#e07fb0" stroke-width="2"/>
@@ -3053,17 +4065,26 @@ function wearCount(k){ const w=wearOf(k); return WEAR_SLOTS.filter(s=>w[s]).leng
 function isFullSet(k){ return ['hat','neck','hand'].every(s=>wearOf(k)[s]); }
 function dressedCount(){ return Object.keys(S.dex).filter(k=>wearCount(k)>0).length; }
 /* 소품 그림 조각 */
-function wearSVG(h,w){
+/* 소품을 두 층으로 그린다.
+   layer==='back' 이면 <b>몸을 그리기 전</b>에 들어가는 것만(망토처럼 등에 두르는 것),
+   아니면 <b>몸 위</b>에 얹히는 것만(리본·목걸이·사탕 …).
+   ⚠️ 등에 두르는 것을 d() 에 그리면 몸을 덮어버린다 — 그럴 때는 back() 을 쓴다.
+   ⚠️ 한 소품이 두 층에 걸쳐도 된다 — 망토는 천이 back, 목의 잠금쇠가 d 다. */
+function wearSVG(h,w,layer){
   if(!w) return '';
   const sh=SHAPES[h.shape], F=sh.face, A=ANCHOR[h.shape]||{}; let g='';
-  if(w.neck && WEAR.neck.items[w.neck]) g+=WEAR.neck.items[w.neck].d(F.x, F.y+23*F.s, Math.min(sh.w,24));
+  const back=layer==='back';
+  if(w.neck && WEAR.neck.items[w.neck]){
+    const it=WEAR.neck.items[w.neck], f=back?it.back:it.d;
+    if(f) g+=f(F.x, F.y+23*F.s, Math.min(sh.w,24));
+  }
   if(w.hand && WEAR.hand.items[w.hand]){
-    const a=A.hand||{x:80,y:74};
-    g+=WEAR.hand.items[w.hand].d(a.x,a.y);
+    const a=A.hand||{x:80,y:74}, it=WEAR.hand.items[w.hand], f=back?it.back:it.d;
+    if(f) g+=f(a.x,a.y);
   }
   if(w.hat && WEAR.hat.items[w.hat]){
-    const a=A.hat||{x:F.x,y:sh.top};
-    g+=`<g transform="translate(${a.x},${a.y})${a.s?` scale(${a.s})`:''}">${WEAR.hat.items[w.hat].d()}</g>`;
+    const a=A.hat||{x:F.x,y:sh.top}, it=WEAR.hat.items[w.hat], f=back?it.back:it.d;
+    if(f) g+=`<g transform="translate(${a.x},${a.y})${a.s?` scale(${a.s})`:''}">${f()}</g>`;
   }
   /* 🍨 콘은 여기서 그리지 않는다 — 햄쮜가 콘 「위에 올라타는」 것이라 buildHamSVG 에서 몸 전체를 올려놓는다 */
   return g;
@@ -3090,6 +4111,49 @@ function hamSVG(h){
   }
   return v;
 }
+/* 🪱 꼬리를 <b>몸에 붙이려고</b> 몸의 오른쪽 아래 가장자리 한 점을 찾는다.
+   ⚠️ <b>상자(bbox)로는 안 된다.</b> 🥕당근처럼 아래로 좁아지는 모양은 상자의 오른쪽 아래가
+      <b>빈 공간</b>이라, 거기 뿌리를 두면 꼬리가 몸 밖으로 나와 <b>몸 앞에 있는 것처럼</b> 보이고
+      뿌리부터 다 보여서 <b>곧은 막대</b>가 된다. 실제로 그렇게 만들었다가 되돌렸다.
+   ✅ isPointInFill 로 「이 점이 몸 안인가」를 물어보고 이분 탐색으로 진짜 끝을 찾는다.
+   ⚠️ 모양마다 <b>한 번만</b> 재고 적어둔다 — 도감처럼 수십 개를 그리는 곳이 느려진다.
+   ⚠️ 못 재면 옛 자리(82,78)로 돌아간다 — 그림이 아예 안 나오는 것보다 낫다. */
+const _tailAt={};
+function tailAnchor(shk){
+  if(_tailAt[shk]) return _tailAt[shk];
+  let a={x:82, y:78};
+  try{
+    const sh=SHAPES[shk];
+    const sv=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    sv.setAttribute('viewBox','0 0 100 100');
+    sv.style.cssText='position:absolute;left:-9999px;top:-9999px;width:100px;height:100px';
+    sv.innerHTML=sh.body('fill="#000"');
+    document.body.appendChild(sv);
+    const box=sv.getBBox();
+    const els=[].slice.call(sv.querySelectorAll('path,ellipse,circle,rect,polygon,polyline'));
+    const inside=(x,y)=>{
+      const pt=(typeof DOMPoint!=='undefined')?new DOMPoint(x,y):sv.createSVGPoint();
+      if(pt.x===undefined||typeof DOMPoint==='undefined'){ pt.x=x; pt.y=y; }
+      return els.some(e=>{ try{ return e.isPointInFill(pt); }catch(_){ return false; } });
+    };
+    if(box && box.width>1){
+      const cx=box.x+box.width/2;
+      /* 몸 높이의 <b>65% 자리</b>에서 오른쪽 끝을 찾는다 — 너무 아래면 발에 가려지고
+         너무 위면 꼬리가 등에서 나온 것처럼 보인다 */
+      let best=null;
+      for(const f of [0.65, 0.58, 0.72, 0.5]){
+        const y=box.y+box.height*f;
+        if(!inside(cx,y)) continue;
+        let lo=cx, hi=box.x+box.width+2;
+        for(let i=0;i<22;i++){ const mid=(lo+hi)/2; if(inside(mid,y)) lo=mid; else hi=mid; }
+        best={x:lo, y:y}; break;
+      }
+      if(best) a=best;
+    }
+    sv.remove();
+  }catch(e){}
+  return _tailAt[shk]=a;
+}
 function buildHamSVG(h){
   const sh=SHAPES[h.shape], c=h.colorObj||COLORS[h.color], F=sh.face;
   const id='hc'+(++_uid);
@@ -3100,8 +4164,23 @@ function buildHamSVG(h){
   if(h.grade===4) g+=`<circle cx="50" cy="54" r="46" fill="#ffe9a8" opacity=".45"/>`;
   if(h.grade>=3) g+=`<circle cx="50" cy="54" r="44" fill="${c.light}" opacity=".35"/>`;
 
-  if(sh.tail) g+=`<path d="M82 78 q10 1 8 9" stroke="${c.dark}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+  /* 🪱 꼬리 — 모양은 <b>옛날 그대로의 갈고리</b>(q10 1 8 9)이고, <b>자리만</b> 몸에 맞춘다.
+     ⚠️ 예전에는 모양과 상관없이 늘 (82,78)이라 몸이 좁은 아이는 꼬리가 <b>허공에 떠</b> 있었다.
+     ⚠️ 뿌리를 <b>가장자리에서 4만</b> 안으로 넣는다 — 깊이 넣으면 뿌리까지 보이는 모양(막대)이
+        되기 쉽고, 안 넣으면 다시 떨어져 보인다.
+     ⚠️ 꼬리는 <b>몸보다 먼저</b> 그린다 — 뿌리가 몸 안이면 가려져서 자연스럽게 붙는다. */
+  if(sh.tail){
+    const a=tailAnchor(h.shape);
+    const x0=a.x-4, y0=a.y;
+    const qx=Math.min(x0+10, 95), qy=y0+1;
+    const x1=Math.min(x0+8, 94),  y1=Math.min(y0+9, 95);
+    g+=`<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} Q${qx.toFixed(1)} ${qy.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}"
+        stroke="${c.dark}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+  }
   if(sh.feet) g+=`<ellipse cx="${fx-15}" cy="87" rx="8" ry="5" fill="${c.dark}" opacity=".55"/><ellipse cx="${fx+15}" cy="87" rx="8" ry="5" fill="${c.dark}" opacity=".55"/>`;
+
+  /* 🦸 등에 두르는 소품 — <b>몸보다 먼저</b>. 꼬리와 발보다는 뒤에 온다 */
+  g+=wearSVG(h,h.wear,'back');
 
   /* 여러 도형을 합친 모양(구름)은 확대 복사본을 뒤에 깔아 윤곽선을 만든다 */
   if(sh.grp) g+=`<g transform="translate(50,58) scale(1.05) translate(-50,-58)" opacity=".34">${sh.body(`fill="${c.dark}"`)}</g>`;
@@ -3338,9 +4417,54 @@ const FLAVORS=[
  {k:'chips', n:'감자칩', c:'#ecc46a', c2:'#faeabb', lv:83,shape:'chips', color:'butter', hn:'감자칩쮜'},
  {k:'crunky', n:'크런키', c:'#6f4630', c2:'#b18b6e', lv:84,shape:'crunky', color:'cocoa', hn:'크런키쮜'},
  {k:'sakura', n:'벚꽃라떼', c:'#f2a8c4', c2:'#ffdcea', lv:85,shape:'sakura', color:'rose', hn:'벚꽃라떼쮜'},
- {k:'coconutw', n:'코코넛', c:'#cdb79c', c2:'#f3ece0', lv:86,shape:'coconutw', color:'snow', hn:'코코넛쮜'},
+  /* 🥥 <b>코코넛(Lv.9)과 이름이 겹쳐</b> 있었다 — 둘 다 「코코넛쮜」라 도감에 같은 이름이 둘 떴다.
+     모양 이름은 처음부터 「코코넛워터」였다. 통 이름만 안 고쳐진 것이라 맞춰준다. */
+ {k:'coconutw', n:'코코넛워터', c:'#cdb79c', c2:'#f3ece0', lv:86,shape:'coconutw', color:'snow', hn:'코코넛워터쮜'},
  {k:'kkultteok', n:'꿀떡', c:'#f0c887', c2:'#fdf0d4', lv:87,shape:'kkultteok', color:'cream', hn:'꿀떡쮜'},
  {k:'redvelvet', n:'레드벨벳', c:'#c4505f', c2:'#f0b3bb', lv:88,shape:'redvelvet', color:'velvet', hn:'레드벨벳쮜'}
+,
+  /* ---- 🆕 통 열두 가지 더 (Lv.89~100) — 여기서 Lv.100 을 찍는다 ---- */
+  {k:'yakgwa',    n:'약과',        c:'#c9903f', c2:'#f0d18a', lv:89, shape:'yakgwa',    color:'honey',  hn:'약과쮜'},
+  {k:'tiramisu',  n:'티라미수',    c:'#8a6640', c2:'#e6d3b6', lv:90, shape:'tiramisu',  color:'tira',   hn:'티라미수쮜'},
+  {k:'eggtart',   n:'에그타르트',  c:'#e0ac4a', c2:'#ffe08a', lv:91, shape:'eggtart',   color:'gold',   hn:'에그타르트쮜'},
+  {k:'pancake',   n:'팬케이크',    c:'#d2a05c', c2:'#f7dcae', lv:92, shape:'pancake',   color:'butter', hn:'팬케이크쮜'},
+  {k:'slush',     n:'슬러시',      c:'#5aa8cf', c2:'#bfe8f8', lv:93, shape:'slush',     color:'slushb', hn:'슬러시쮜'},
+  {k:'hojicha',   n:'호지차',      c:'#9a6a3c', c2:'#dcb98c', lv:94, shape:'hojicha',   color:'hoji',   hn:'호지차쮜'},
+  {k:'basque',    n:'바스크치즈',  c:'#7a4a24', c2:'#e8cfa6', lv:95, shape:'basque',    color:'baked',  hn:'바스크쮜'},
+  {k:'gummy',     n:'젤리곰',      c:'#e05070', c2:'#ffb3c6', lv:96, shape:'gummy',     color:'berry',  hn:'젤리곰쮜'},
+  {k:'peanut',    n:'땅콩버터',    c:'#c08a3e', c2:'#f0d6a0', lv:97, shape:'peanut',    color:'pnut',   hn:'땅콩버터쮜'},
+  {k:'yanggaeng', n:'밤양갱',      c:'#5c3a25', c2:'#c39472', lv:98, shape:'yanggaeng', color:'darkbr', hn:'밤양갱쮜'},
+  {k:'brownie',   n:'브라우니',    c:'#5b3a20', c2:'#a97a4e', lv:99, shape:'brownie',   color:'cocoa',  hn:'브라우니쮜'},
+  {k:'rollcake',  n:'롤케이크',    c:'#e08fa8', c2:'#ffdbe6', lv:100,shape:'rollcake',  color:'rose',   hn:'롤케이크쮜'},
+  /* ---- 🆕 통 열두 가지 더 (Lv.101~112) — 124 → 136가지 ----
+     ⚠️ 새 통은 <b>맨 뒤에만</b> 붙인다. 중간에 끼우면 PI_ORDER 에 없는 통들의 성격 번호가
+        밀려서 아이가 아는 아이가 딴 성격이 된다. */
+  {k:'tanghulu',  n:'탕후루',      c:'#e8384e', c2:'#ffb3c0', lv:101,shape:'tanghulu',  color:'tang',   hn:'탕후루쮜'},
+  {k:'eggbread',  n:'계란빵',      c:'#e8c45a', c2:'#fdf0c0', lv:102,shape:'eggbread',  color:'butter', hn:'계란빵쮜'},
+  {k:'croissant', n:'크루아상',    c:'#dda65a', c2:'#f7dcb0', lv:103,shape:'croissant', color:'honey',  hn:'크루아상쮜'},
+  {k:'churros',   n:'츄러스',      c:'#c98a52', c2:'#eec8a0', lv:104,shape:'churros',   color:'cinna',  hn:'츄러스쮜'},
+  {k:'hotteok',   n:'호떡',        c:'#cf8446', c2:'#f0c396', lv:105,shape:'hotteok',   color:'baked',  hn:'호떡쮜'},
+  {k:'hodu',      n:'호두과자',    c:'#c9a271', c2:'#f0dcc0', lv:106,shape:'hodu',      color:'sand',   hn:'호두과자쮜'},
+  {k:'chou',      n:'슈크림',      c:'#e8cf9a', c2:'#fbf2dc', lv:107,shape:'chou',      color:'cream',  hn:'슈크림쮜'},
+  {k:'sikhye',    n:'식혜',        c:'#e0bd7a', c2:'#f9ecc8', lv:108,shape:'sikhye',    color:'sikhb',  hn:'식혜쮜'},
+  {k:'ppeong',    n:'뻥튀기',      c:'#e6ded0', c2:'#fbf8f2', lv:109,shape:'ppeong',    color:'snow',   hn:'뻥튀기쮜'},
+  {k:'castella',  n:'카스텔라',    c:'#e5c063', c2:'#fbeec2', lv:110,shape:'castella',  color:'castel', hn:'카스텔라쮜'},
+  {k:'baum',      n:'바움쿠헨',    c:'#c9a377', c2:'#f0dfc4', lv:111,shape:'baum',      color:'baumt',  hn:'바움쿠헨쮜'},
+  {k:'shake',     n:'밀크쉐이크',  c:'#f28aa8', c2:'#ffdce6', lv:112,shape:'shake',     color:'rose',   hn:'밀크쉐이크쮜'},
+  /* ---- 🆕 통 열두 가지 더 (Lv.113~124) — 136 → 148가지 ----
+     ⚠️ 여기도 <b>맨 뒤</b>다. 중간에 끼우면 아이가 아는 아이들의 성격이 다 바뀐다. */
+  {k:'hoppang',   n:'호빵',        c:'#e8ddc9', c2:'#fffaf3', lv:113,shape:'hoppang',   color:'hoppw',  hn:'호빵쮜'},
+  {k:'soboro',    n:'소보로빵',    c:'#c98f4a', c2:'#f0d3a2', lv:114,shape:'soboro',    color:'sobor',  hn:'소보로쮜'},
+  {k:'kkwabaegi', n:'꽈배기',      c:'#d8964f', c2:'#f3d3a6', lv:115,shape:'kkwabaegi', color:'cinna',  hn:'꽈배기쮜'},
+  {k:'fruitsand', n:'과일샌드',    c:'#f0919f', c2:'#ffe0e6', lv:116,shape:'fruitsand', color:'rose',   hn:'과일샌드쮜'},
+  {k:'seolgi',    n:'백설기',      c:'#e4e0d6', c2:'#fdfcf8', lv:117,shape:'seolgi',    color:'snow',   hn:'백설기쮜'},
+  {k:'gotgam',    n:'곶감',        c:'#c26234', c2:'#efa974', lv:118,shape:'gotgam',    color:'gotg',   hn:'곶감쮜'},
+  {k:'crepe',     n:'크레페',      c:'#e3c99c', c2:'#faf0dc', lv:119,shape:'crepe',     color:'cream',  hn:'크레페쮜'},
+  {k:'scone',     n:'스콘',        c:'#cfae7e', c2:'#f2e0c2', lv:120,shape:'scone',     color:'sand',   hn:'스콘쮜'},
+  {k:'eggwaffle', n:'에그와플',    c:'#e2b45e', c2:'#fbeec6', lv:121,shape:'eggwaffle', color:'butter', hn:'에그와플쮜'},
+  {k:'montblanc', n:'몽블랑',      c:'#b0803f', c2:'#eed6b0', lv:122,shape:'montblanc', color:'montb',  hn:'몽블랑쮜'},
+  {k:'gelato',    n:'젤라또',      c:'#eb9fb6', c2:'#ffe6ee', lv:123,shape:'gelato',    color:'gelatp', hn:'젤라또쮜'},
+  {k:'bnmilk',    n:'바나나우유',  c:'#e8c95e', c2:'#fdf6d2', lv:124,shape:'bnmilk',    color:'bnyel',  hn:'바나나우유쮜'}
 ];
 const FL={}; const FKEYS=[]; const NTUB=FLAVORS.length;
 /* 🍰 첫 진열장(Lv.20까지)이 몇 가지인지 — 「두 번째 진열장」 스티커의 기준이 된다.
@@ -3348,6 +4472,13 @@ const FL={}; const FKEYS=[]; const NTUB=FLAVORS.length;
 const NTUB1=FLAVORS.filter(f=>f.lv<=20).length;
 /* 🥕 두 번째 진열장까지가 몇 가지인지 — 「세 번째 진열장」 스티커의 기준 */
 const NTUB2=FLAVORS.filter(f=>f.lv<=40).length;
+/* 🥐 세 번째 진열장의 절반 — 🏅「또 절반」 뱃지가 쓴다.
+   ⚠️ 숫자로 박아두면 통이 늘 때마다 절반이 아니게 된다(13가지로 박혀 있었다). */
+const T3HALF=Math.round((FLAVORS.length-NTUB2)/2);
+/* 🏅 「거의 다 모은」 자리 — 👑통 부자·🏆햄쮜 부자 뱃지가 쓴다.
+   ⚠️ 이 둘은 원래 <b>다 모으기</b>여서 t3all·d3all 과 조건이 똑같았다 —
+      같은 일로 뱃지를 둘씩 받고 있었다. 앞 계단으로 내려 이어준다. */
+const T3Q=NTUB2+Math.round((FLAVORS.length-NTUB2)*0.75);
 {
   /* 통 값은 순서(index) 대신 「열리는 레벨 + 그 레벨에서 몇 번째인지」로 정한다.
      이러면 통을 새로 끼워 넣어도 이미 있던 통의 값이 흔들리지 않는다.
@@ -3365,7 +4496,9 @@ const NTUB2=FLAVORS.filter(f=>f.lv<=40).length;
         벌이는 (1+레벨*0.08) 로 완만하게만 늘어난다. 이러면 <b>끝값은 그대로</b>다 —
         Lv.65 통 7,590만 → 8,628만. 싸진 건 앞쪽뿐이었으니 앞쪽만 올린다. */
   base=30000000;
-  for(let lv=41; lv<=95; lv++){ baseAt[lv]=base; stepAt[lv]=1.045; base*=stepAt[lv]; }
+  /* ⚠️ 통이 Lv.100 까지 늘었다. 곡선을 <b>통보다 넉넉히 앞서</b> 깔아둔다 —
+     곡선이 끊긴 레벨에 통을 놓으면 baseAt 이 undefined 가 되어 상점에 「🪙 NaN」이 뜬다. */
+  for(let lv=41; lv<=130; lv++){ baseAt[lv]=base; stepAt[lv]=1.045; base*=stepAt[lv]; }
   /* 🔒 성격·좋아하는 놀이용 통 번호 — <b>오늘 순서로 얼려둔다</b>.
      이걸 안 하고 f.i(줄 세운 자리)를 쓰면, 통을 하나만 옮겨도 뒤쪽 통 번호가 전부 밀려서
      <b>이미 만난 햄쮜들 성격과 좋아하는 놀이가 다 바뀐다</b>. 아이가 아는 그 아이가 아니게 된다.
@@ -3401,7 +4534,8 @@ function scoopCost(f){ return Math.max(6, Math.round(f.scoop*(1-upgLv('spoon')*0
 const UPG={
   spoon:{name:'큰 스쿱',    em:'🥄', max:8,  base:600,   mul:2.20, desc:'한 번 뜨는 값이 싸져요'},
   luck :{name:'요정 스쿱',  em:'🍀', max:8,  base:900,   mul:2.45, desc:'⭐가 많은 햄쮜가 더 잘 나와요'},
-  charm:{name:'인기 가게',  em:'🎀', max:10, base:500,   mul:2.05, desc:'놀아줄 때 코인을 더 줘요'},
+  /* 💖 🎀는 box(선물 리본)가 쓰고 있다 — 리본은 그쪽이 어울린다 */
+  charm:{name:'인기 가게',  em:'💖', max:10, base:500,   mul:2.05, desc:'놀아줄 때 코인을 더 줘요'},
   seat :{name:'자리 늘리기',em:'🪑', max:3,  base:1200,  mul:2.80, desc:'모든 방의 자리가 하나 늘어요'},
   regul:{name:'단골 손님',  em:'⏰', max:8,  base:1500,  mul:2.55, desc:'저절로 모이는 코인이 늘어요'},
   bell :{name:'주문 종',    em:'🔔', max:6,  base:2400,  mul:2.50, desc:'주문 놀이에서 코인을 더 받아요'},
@@ -3442,7 +4576,21 @@ const UPG={
   jewel:{name:'보석 진열대',em:'💎', max:6, base:40000000, mul:2.20, lv:80,
          desc:'놀아줄 때 코인이 <b>훨씬</b> 늘어요 (+30%/칸)'},
   moon :{name:'달빛 조명',  em:'🌝', max:5, base:90000000, mul:2.30, lv:90,
-         desc:'놀아줄 때 하트가 <b>훨씬</b> 빨리 차요 (+40%/칸)'}
+         desc:'놀아줄 때 하트가 <b>훨씬</b> 빨리 차요 (+40%/칸)'},
+  /* ---- Lv.89~100 통(2.5억~4억)을 살 수 있게 벌이를 같이 올리는 둘.
+     ⚠️ 아래 autoIncome · playMul 에도 <b>같이 넣어야</b> 산 보람이 있다. ---- */
+  truck:{name:'아이스크림 트럭', em:'🚚', max:8, base:150000000, mul:2.15, lv:89,
+         desc:'저절로 모이는 코인이 <b>아주 많이</b> 늘어요 (+70%/칸)'},
+  market:{name:'주말 시장', em:'🏬', max:6, base:260000000, mul:2.25, lv:96,
+         desc:'놀아줄 때 코인이 <b>아주 많이</b> 늘어요 (+45%/칸)'},
+  /* ---- Lv.101~112 통(4.2억~6.8억)을 살 수 있게 하나 더.
+     ⚠️ 아래 autoIncome 에도 <b>같이 넣어야</b> 산 보람이 있다. ---- */
+  factory:{name:'아이스크림 공장', em:'🏭', max:8, base:420000000, mul:2.20, lv:103,
+         desc:'저절로 모이는 코인이 <b>어마어마하게</b> 늘어요 (+85%/칸)'},
+  /* ---- Lv.113~124 통(7.1억~11.6억)을 살 수 있게 하나 더.
+     ⚠️ 아래 playMul 에도 <b>같이 넣었다</b> — UPG 에만 넣으면 사도 아무 일이 안 일어난다. ---- */
+  fest:{name:'달콤 축제', em:'🎪', max:6, base:900000000, mul:2.25, lv:115,
+         desc:'놀아줄 때 코인이 <b>어마어마하게</b> 늘어요 (+60%/칸)'}
 };
 /* 그 업그레이드를 아직 못 여는 레벨이면 상점에 「Lv.N 부터」로 보인다 */
 function upgOpen(k){ const u=UPG[k]; return !u.lv || S.lv>=u.lv; }
@@ -3480,7 +4628,16 @@ const ROOMS=[
   {dn:'여덟째 방', lv:55},
   /* Lv.55 뒤로 열릴 방이 없어서 레벨이 올라도 심심했다. 둘을 더 뒤에 붙인다. */
   {dn:'아홉째 방', lv:68},
-  {dn:'열째 방',   lv:82}
+  {dn:'열째 방',   lv:82},
+  /* 통이 Lv.100 까지 늘면서 방도 둘 더. ⚠️ 여기도 <b>맨 뒤</b>다. */
+  {dn:'열한째 방', lv:92},
+  {dn:'열두째 방', lv:100},
+  /* 통이 Lv.112 까지 늘면서 또 둘. ⚠️ 역시 <b>맨 뒤</b>다 — 번호로 저장하기 때문이다. */
+  {dn:'열셋째 방', lv:106},
+  {dn:'열넷째 방', lv:112},
+  /* 통이 Lv.124 까지 늘면서 또 둘. ⚠️ 여기도 <b>맨 뒤</b>다. */
+  {dn:'열다섯째 방', lv:118},
+  {dn:'열여섯째 방', lv:124}
 ];
 function isYard(i){ if(i===undefined) i=S.room|0; return !!(ROOMS[i]&&ROOMS[i].yard); }
 /* 🌳🧊 마당·뒷마당·냉장고처럼 결이 다른 방. 방 고르는 줄에서는 뒤로 몰아둔다 —
@@ -3599,7 +4756,7 @@ function openWxPlace(){
 }
 /* 🌇 저녁에는 손님이 몰려서 놀아줄 때 받는 코인이 는다 */
 /* 🍨 간판에 건 메뉴는 코인 벌이를 조금 올린다 — 놀아서 버는 것도, 저절로 버는 것도 */
-function playMul(){ return (1+upgLv('charm')*0.15+upgLv('jewel')*0.30)*(1+S.lv*0.05)*dayPart().coin*traitOf().coin*menuMul(); }
+function playMul(){ return (1+upgLv('charm')*0.15+upgLv('jewel')*0.30+upgLv('market')*0.45+upgLv('fest')*0.60)*(1+S.lv*0.05)*dayPart().coin*traitOf().coin*menuMul(); }
 function gradeW(){
   /* 🍀요정 스쿱은 ★3 이상을, 🌟별가루 스쿱은 그중에서도 ★4·★5 를 끌어올린다 */
   const bonus=upgLv('luck')*2, glit=upgLv('glit')*1.5;
@@ -4516,7 +5673,7 @@ function autoIncome(noBuff){
   });
   const buff=(!noBuff && napLeft())?NAP_MUL:1;
   /* 🌙 밤에는 다들 자고 있어서 오히려 저절로 모이는 코인이 잘 는다 */
-  return c*(1+upgLv('regul')*0.25+upgLv('vault')*0.45+upgLv('royal')*0.55)*(1+S.lv*0.08)*buff*dayPart().auto*menuMul()*seasonMul('coin');
+  return c*(1+upgLv('regul')*0.25+upgLv('vault')*0.45+upgLv('royal')*0.55+upgLv('truck')*0.70+upgLv('factory')*0.85)*(1+S.lv*0.08)*buff*dayPart().auto*menuMul()*seasonMul('coin');
 }
 /* ==================================================================
    🎁 특별 햄쮜 — 통에서 뜨는 아이들과 아주 다르게 생긴 친구들.
@@ -4567,7 +5724,25 @@ const SPECIAL={
            d:'나라에서 제일 맛있는 아이스크림을 찾아 직접 왔대요'},
   emperor:{hn:'황제쮜',  shape:'emperor', color:'lav',   c:'#ded0f7', star:345, g:5, em:'🫅', pers:'brave',
            bd:{m:2,d:26},
-           d:'온 나라 아이스크림을 다 먹어봤는데 여기가 제일이래요'}
+           d:'온 나라 아이스크림을 다 먹어봤는데 여기가 제일이래요'},
+  /* 💋 볼뽀뽀쮜 — 아이가 만들어달라고 한 아이. ⭐값은 앞의 간격을 이어 황제쮜 다음(+70)이다.
+     ⚠️ 새로 만드는 특별 햄쮜는 <b>맨 뒤</b>에 붙인다 — 중간에 끼우지 않는다. */
+  kiss   :{hn:'볼뽀뽀쮜',shape:'kiss',    color:'rose',  c:'#ffd0e2', star:415, g:5, em:'💋', pers:'shy',
+           d:'좋아하는 마음이 커지면 볼에 쪽— 하고 뽀뽀해주는 아이예요'},
+  /* ---- 🆕 「음식 말고 귀여운 것」으로 여섯 더(아이 요청) — 전부 동물이다.
+     ⭐값은 앞의 간격(+50~70)을 이어 붙였다. 여기도 <b>맨 뒤</b>다. ---- */
+  fox    :{hn:'여우쮜',  shape:'fox',     color:'foxo',  c:'#f7c49a', star:460, g:5, em:'🦊', pers:'foodie',
+           d:'꼬리가 아주 복슬복슬해요. 아이스크림을 꼬리 뒤에 숨겨두고 아껴 먹어요'},
+  penguin:{hn:'펭귄쮜',  shape:'penguin', color:'pengb', c:'#c2cede', star:520, g:5, em:'🐧', pers:'brave',
+           d:'추운 데서 왔대요. 아이스크림이 안 녹아서 제일 좋아하는 손님이에요'},
+  butterfly:{hn:'나비쮜',shape:'butterfly',color:'bfly', c:'#e8d5f7', star:585, g:5, em:'🦋', pers:'fancy',
+           d:'꽃밭을 지나 사뿐사뿐 날아왔어요. 앉을 때 날개를 살짝 접어요'},
+  mermaid:{hn:'인어쮜',  shape:'mermaid', color:'aqua',  c:'#cdf0f2', star:655, g:5, em:'🧜', pers:'dreamer',
+           d:'바다에서 올라온 친구예요. 소금 아이스크림을 제일 좋아한대요'},
+  whale  :{hn:'고래쮜',  shape:'whale',   color:'ocean', c:'#cbe9f3', star:730, g:5, em:'🐳', pers:'shy',
+           d:'아주 커다랗고 아주 조용해요. 기분이 좋으면 머리에서 물이 뿜어져 나와요'},
+  deer   :{hn:'사슴쮜',  shape:'deer',    color:'sand',  c:'#f3e2cb', star:810, g:5, em:'🦌', pers:'dreamer',
+           d:'숲에서 조심조심 걸어왔어요. 뿔에 나뭇잎이 하나 걸려 있었어요'}
 };
 const SP_KEYS=Object.keys(SPECIAL);
 function spId(k){ return 'sp_'+k; }
@@ -4770,7 +5945,9 @@ const BADGES=[
   {k:'d10',   em:'🍨', n:'열 친구',      d:'햄쮜 10마리를 모았어요',      ok:()=>dexCount()>=10, top:8},
   {k:'d20',   em:'🎂', n:'스무 친구',    d:'햄쮜 20마리를 모았어요',      ok:()=>dexCount()>=20, top:15},
   {k:'d31',   em:'🎊', n:'서른한 친구',  d:'햄쮜 31마리를 모았어요',      ok:()=>dexCount()>=31, top:25},
-  {k:'dall',  em:'🏆', n:'모두 모았어요',d:'통에 사는 햄쮜를 다 모았어요!',ok:()=>dexCount()>=NTUB, top:60},
+  /* ⚠️ d3all(햄쮜 다 모음)과 <b>조건이 똑같았다</b> — 여기도 앞 계단으로. */
+  {k:'dall',  em:'🏆', n:'햄쮜 부자',    d:`통 햄쮜를 ${T3Q}마리나 만났어요`,
+                                          ok:()=>dexCount()>=T3Q, top:60},
   {k:'s4',    em:'✨', n:'반짝 별넷',    d:'⭐4개 햄쮜를 처음 만났어요',   ok:()=>S.stats.best4>=1, top:5},
   {k:'s4x5',  em:'🌟', n:'별넷 다섯',    d:'⭐4개를 5번 만났어요',         ok:()=>S.stats.best4>=5, top:12},
   {k:'s5',    em:'💫', n:'별다섯 전설',  d:'⭐5개 햄쮜를 처음 만났어요',   ok:()=>(S.stats.best5||0)>=1, top:20},
@@ -4785,7 +5962,9 @@ const BADGES=[
   {k:'fn5',   em:'🪑', n:'가구 다섯',    d:'방 가구를 5가지 모았어요',    ok:()=>furnCount()>=5,  top:6},
   {k:'fnall', em:'🛋️', n:'가구 부자',    d:'방 가구를 다 모았어요',       ok:()=>furnCount()>=FURN_KEYS.length, top:45},
   {k:'rmdeco',em:'🎨', n:'꼬마 꾸미기왕',d:'열린 방을 빈틈없이 다 꾸몄어요',ok:()=>openRooms()>=2 && roomsDone()>=openRooms(), top:18},
-  {k:'tall',  em:'👑', n:'통 부자',      d:'아이스크림 통을 다 모았어요',  ok:()=>unlocked().length>=NTUB, top:50},
+  /* ⚠️ t3all(통 다 모음)과 <b>조건이 똑같았다</b> — 「거의 다 모은」 자리로 내린다. */
+  {k:'tall',  em:'👑', n:'통 부자',      d:`아이스크림 통을 ${T3Q}가지나 모았어요`,
+                                          ok:()=>unlocked().length>=T3Q, top:50},
   {k:'pet100',em:'🖐️', n:'쓰담 백번',   d:'쓰담쓰담을 100번 했어요',     ok:()=>S.stats.pet>=100, top:5},
   {k:'st7',   em:'📅', n:'도장 일곱',    d:'도장을 7개 모았어요',         ok:()=>(S.stamp.all||0)>=7, top:8},
   {k:'ph1',   em:'📸', n:'첫 사진',      d:'사진을 처음 찍었어요',        ok:()=>S.album.length>=1, top:3},
@@ -4799,7 +5978,9 @@ const BADGES=[
   {k:'rmfull',em:'🎡', n:'방마다 친구',    d:'열린 방을 모두 햄쮜로 채웠어요',
      ok:()=>openRooms()>=2 && ROOMS.every((r,i)=>!roomOk(i) || roomHams(i).length>0), top:12},
   {k:'mx1',   em:'💞', n:'첫 짝꿍',      d:'믹스쮜가 처음 태어났어요',    ok:()=>mixCount()>=1, top:5},
-  {k:'mx5',   em:'👨‍👩‍👧', n:'대가족',   d:'믹스쮜를 5마리 만들었어요',   ok:()=>mixCount()>=5, top:15},
+  /* ⚠️ 예전 이름이 「대가족」이라 bb3(아기 셋)과 <b>이름·이모지가 똑같았다</b>.
+     mx12(짝꿍 열둘)·mx30(짝꿍 서른)과 줄을 맞춘다. */
+  {k:'mx5',   em:'💞', n:'짝꿍 다섯',   d:'믹스쮜를 5마리 만들었어요',   ok:()=>mixCount()>=5, top:15},
   {k:'dnc',   em:'🎵', n:'댄스 파티',    d:'다 같이 10번 춤췄어요',       ok:()=>(S.stats.dance||0)>=10, top:8},
   {k:'ord10', em:'🔔', n:'친절한 사장님', d:'손님 10명에게 만들어 줬어요',  ok:()=>(S.ord.done||0)>=10, top:8},
   {k:'ordp5', em:'🍦', n:'주문 척척',    d:'주문을 딱 맞게 5번 만들었어요', ok:()=>(S.ord.perfect||0)>=5, top:12},
@@ -4809,7 +5990,11 @@ const BADGES=[
   {k:'star30',em:'⭐', n:'별 서른',      d:'⭐를 30개 모았어요',           ok:()=>(S.ord.star||0)>=30, top:12},
   {k:'sp1',   em:'🎁', n:'특별한 친구',   d:'특별 햄쮜가 처음 놀러 왔어요',  ok:()=>spCount()>=1, top:8},
   {k:'sp3',   em:'🎈', n:'특별 셋',      d:'특별 햄쮜 3마리를 만났어요',    ok:()=>spCount()>=3, top:18},
-  {k:'spall', em:'💎', n:'특별 다 모음',  d:'특별 햄쮜를 모두 만났어요!',   ok:()=>spCount()>=SP_KEYS.length, top:40},
+  /* ⚠️ sp13 과 <b>이름도 조건도 똑같았다</b> — 한 가지 일로 뱃지를 둘 받고 있었다.
+     지우면 이미 받은 아이의 뱃지가 사라지므로, <b>앞 계단</b>으로 내려 둘을 이어준다.
+     조건을 올려도 이미 받은 뱃지는 S.badge 에 남아 있어 없어지지 않는다. */
+  {k:'spall', em:'💎', n:'특별 절반',    d:`특별 햄쮜를 ${Math.ceil(SP_KEYS.length/2)}마리 모았어요`,
+                                          ok:()=>spCount()>=Math.ceil(SP_KEYS.length/2), top:40},
   {k:'cont1', em:'🏆', n:'대회 1등',     d:'꾸미기 대회에서 1등을 했어요',  ok:()=>(S.cont.win||0)>=1, top:10},
   {k:'cont5', em:'👑', n:'패션 스타',    d:'꾸미기 대회 1등을 5번 했어요',  ok:()=>(S.cont.win||0)>=5, top:20},
   {k:'wall',  em:'🛍️', n:'옷장 부자',    d:'꾸미기 소품을 다 모았어요',
@@ -4847,9 +6032,14 @@ const BADGES=[
      두 번째 진열장까지 다 모은 뒤에 새로 생기는 목표들. 여기서도 열쇠를 새로 만든다 —
      기준만 89로 바꾸면 이미 다 모은 아이는 받아둔 스티커가 도로 사라진 것처럼 보인다. */
   {k:'t3nd',  em:'🍎', n:'세 번째 진열장',  d:'세 번째 진열장 통을 처음 샀어요',    ok:()=>unlocked().length>=NTUB2+1, top:40},
-  {k:'t3half',em:'🥐', n:'또 절반',        d:'세 번째 진열장 통을 13가지 모았어요', ok:()=>unlocked().length>=NTUB2+13, top:80},
-  {k:'t3all', em:'🎠', n:'통 여든아홉',     d:`통 ${NTUB}가지를 모두 모았어요!`,    ok:()=>unlocked().length>=NTUB, top:150},
-  {k:'d3all', em:'🌌', n:'햄쮜 여든아홉',   d:`통 햄쮜 ${NTUB}마리를 다 만났어요!`,  ok:()=>dexCount()>=NTUB, top:150},
+  /* ⚠️ 뱃지 <b>이름에 숫자를 박지 않는다</b> — 통은 앞으로도 늘어난다.
+     「통 여든아홉」으로 박아뒀더니 통이 136가지가 된 뒤에도 그대로라,
+     「통 136가지를 모두 모았어요!」 밑에 「여든아홉」이 붙어 있었다.
+     ⚠️ 세 번째 진열장의 절반도 마찬가지다 — NTUB 에서 <b>계산해서</b> 쓴다. */
+  {k:'t3half',em:'🥐', n:'또 절반',        d:`세 번째 진열장 통을 ${T3HALF}가지 모았어요`,
+                                           ok:()=>unlocked().length>=NTUB2+T3HALF, top:80},
+  {k:'t3all', em:'🎠', n:'통 다 모음',      d:`통 ${NTUB}가지를 모두 모았어요!`,    ok:()=>unlocked().length>=NTUB, top:150},
+  {k:'d3all', em:'🌌', n:'햄쮜 다 모음',    d:`통 햄쮜 ${NTUB}마리를 다 만났어요!`,  ok:()=>dexCount()>=NTUB, top:150},
   {k:'lv50',  em:'🏯', n:'가게 쉰',        d:'가게가 Lv.50이 됐어요',             ok:()=>S.lv>=50, top:70},
   {k:'lv65',  em:'🗼', n:'가게 예순다섯',   d:'가게가 Lv.65가 됐어요',             ok:()=>S.lv>=65, top:140},
   {k:'lv80',  em:'🌇', n:'가게 여든',      d:'가게가 Lv.80이 됐어요',             ok:()=>S.lv>=80, top:200},
@@ -4946,7 +6136,10 @@ const BADGES=[
   {k:'wish10',em:'💫', n:'소원 열 개',   d:'별똥별에 소원을 열 번 빌었어요',   ok:()=>(S.stats.wish||0)>=10, top:40},
   {k:'dawn1', em:'🌅', n:'좋은 아침',    d:'아침에 햄쮜들에게 인사했어요',     ok:()=>!!S.hi, top:8},
   /* ---- 🎂 생일 스티커 ---- */
-  {k:'bd1',  em:'🎂', n:'첫 생일 파티',  d:'햄쮜 생일 파티를 처음 열어줬어요', ok:()=>(S.stats.party||0)>=1,  top:20},
+  /* ⚠️ 파티 뱃지가 <b>네 개인데 계단이 셋</b>이었다 — pt1(1) · pt5(5) · bd10(10) 에
+     bd1 이 1로 겹쳐 있었다(pt1 과 이름·이모지·조건이 다 똑같았다).
+     5로 옮겼더니 이번엔 pt5 와 부딪쳐서, <b>3</b>으로 놓아 1→3→5→10 계단을 만든다. */
+  {k:'bd1',  em:'🎈', n:'파티 세 번',   d:'햄쮜 생일 파티를 세 번 열어줬어요', ok:()=>(S.stats.party||0)>=3,  top:20},
   {k:'bd10', em:'🎉', n:'파티 열 번',    d:'생일 파티를 열 번 열어줬어요',     ok:()=>(S.stats.party||0)>=10, top:50},
   /* ---- 📖 오늘의 이야기 스티커 ---- */
   {k:'st1',  em:'📖', n:'첫 이야기',    d:'오늘의 이야기를 처음 골랐어요',   ok:()=>(S.stats.story||0)>=1,  top:12},
@@ -4961,7 +6154,9 @@ const BADGES=[
   {k:'re30',  em:'📬', n:'답장 서른 번',  d:'편지에 답장을 30번 했어요',         ok:()=>(S.stats.re||0)>=30,  top:40},
   {k:'refav', em:'💞', n:'마음을 아는 사이', d:'좋아하는 답장을 20마리한테서 알아냈어요',
      ok:()=>Object.keys(S.dex).filter(k=>S.dex[k]&&S.dex[k].reFav).length>=20, top:60},
-  {k:'sp13',  em:'🫅', n:'특별 다 모음',    d:'특별 햄쮜 <b>17마리</b>를 다 모았어요!', ok:()=>spCount()>=SP_KEYS.length, top:120},
+  /* ⚠️ 마릿수를 <b>박지 않는다</b> — 특별 햄쮜가 늘면 바로 거짓말이 된다(18로 박혀 있었다). */
+  {k:'sp13',  em:'🫅', n:'특별 다 모음',    d:`특별 햄쮜 <b>${SP_KEYS.length}마리</b>를 다 모았어요!`,
+                                            ok:()=>spCount()>=SP_KEYS.length, top:120},
   {k:'mx12',  em:'💕', n:'짝꿍 열둘',      d:'짝꿍 햄쮜를 12마리 만들었어요',      ok:()=>mixCount()>=12, top:45},
   {k:'mx30',  em:'🧬', n:'짝꿍 서른',      d:'짝꿍 햄쮜를 30마리 만들었어요',      ok:()=>mixCount()>=30, top:110}
 ];
@@ -5399,38 +6594,42 @@ function nbGo(k){
    ⚠️ 낮에는 열리지 않는다. 「밤에만 있는 것」이 하나쯤 있어야 밤에 켤 이유가 생긴다.
 ================================================================== */
 const DREAM_MAX=30;
+/* ⚠️ 여기에 낱말을 더할 때 <b>조사를 같이 적지 않는다</b> — 조사는 eul·ega·irang 이 붙인다.
+   받침이 있는 낱말(구름·우산·수박…)이 절반이라, 글자로 박아두면 그대로 틀린 말이 된다. */
 const DREAM_THING=['치즈','구름','미끄럼틀','장화','우산','풍선','도넛','기차','고래','달',
-                   '별사탕','목도리','종이배','우체통','눈사람','자전거','수박','전구'];
+                   '별사탕','목도리','종이배','우체통','눈사람','자전거','수박','전구',
+                   '무지개','솜사탕','달팽이','비눗방울','회전목마','호빵','펭귄','민들레',
+                   '리본','베개'];
 const DREAM_TPL={
   brave:[
     (t)=>`꿈에서 <b>${t}</b> 위에 올라갔어요! 하나도 안 무서웠어요!!`,
-    (t)=>`<b>${t}</b>랑 달리기 시합했는데 제가 이겼어요!! 진짜예요!!`,
-    (t)=>`제가 <b>${t}</b>를 번쩍 들었어요! 힘이 세졌나 봐요!!`
+    (t)=>`${irang(`<b>${t}</b>`)} 달리기 시합했는데 제가 이겼어요!! 진짜예요!!`,
+    (t)=>`제가 ${eul(`<b>${t}</b>`)} 번쩍 들었어요! 힘이 세졌나 봐요!!`
   ],
   shy:[
-    (t)=>`꿈에 <b>${t}</b>가 나왔는데요… 인사를 못 했어요…`,
+    (t)=>`꿈에 ${ega(`<b>${t}</b>`)} 나왔는데요… 인사를 못 했어요…`,
     (t)=>`<b>${t}</b> 뒤에 숨어 있었어요. 아무도 못 찾았어요… 좋았어요…`,
-    (t)=>`<b>${t}</b>가 저를 보고 웃었어요. 저도… 조금 웃었어요…`
+    (t)=>`${ega(`<b>${t}</b>`)} 저를 보고 웃었어요. 저도… 조금 웃었어요…`
   ],
   joker:[
-    (t)=>`꿈에서 <b>${t}</b>가 말을 했어요 ㅋㅋㅋ 근데 아무 말이나 했어요`,
-    (t)=>`<b>${t}</b>를 뒤집어썼는데요, 아무도 저인 줄 몰랐어요 😜`,
-    (t)=>`<b>${t}</b>가 저를 간지럽혔어요! 꿈에서도 간지러워요!`
+    (t)=>`꿈에서 ${ega(`<b>${t}</b>`)} 말을 했어요 ㅋㅋㅋ 근데 무슨 말인지 하나도 몰랐어요`,
+    (t)=>`${eul(`<b>${t}</b>`)} 뒤집어썼는데요, 아무도 저인 줄 몰랐어요 😜`,
+    (t)=>`${ega(`<b>${t}</b>`)} 저를 간지럽혔어요! 꿈에서도 간지러워요!`
   ],
   foodie:[
-    (t)=>`꿈에서 <b>${t}</b>를 먹었어요. 맛이 났어요. 진짜로요 😋`,
-    (t)=>`<b>${t}</b>가 아이스크림이었어요. 세 스쿱이었어요!`,
-    (t)=>`<b>${t}</b>를 한 입 먹으려는데 깼어요… 너무해요…`
+    (t)=>`꿈에서 ${eul(`<b>${t}</b>`)} 먹었어요. 진짜 맛있었어요 😋`,
+    (t)=>`${ega(`<b>${t}</b>`)} 아이스크림이었어요. 세 스쿱이었어요!`,
+    (t)=>`${eul(`<b>${t}</b>`)} 한 입 먹으려는데 깼어요… 너무해요…`
   ],
   dreamer:[
-    (t)=>`<b>${t}</b>가 둥둥 떠다녔어요 🌙 저도 같이 떠다녔어요`,
+    (t)=>`${ega(`<b>${t}</b>`)} 둥둥 떠다녔어요 🌙 저도 같이 떠다녔어요`,
     (t)=>`꿈이 온통 <b>${t}</b> 색깔이었어요. 아주 몽글몽글했어요`,
-    (t)=>`<b>${t}</b>가 노래를 불러줘서 다시 잠들었어요… 꿈에서요`
+    (t)=>`${ega(`<b>${t}</b>`)} 노래를 불러줘서 다시 잠들었어요… 꿈에서요`
   ],
   fancy:[
     (t)=>`꿈에서 <b>${t}</b>에 리본을 달았어요 🎀 아주 예뻤어요`,
-    (t)=>`<b>${t}</b>가 반짝반짝했어요! 사진 찍고 싶었어요`,
-    (t)=>`<b>${t}</b>랑 저랑 옷을 맞춰 입었어요. 딱 어울렸어요`
+    (t)=>`${ega(`<b>${t}</b>`)} 반짝반짝했어요! 사진 찍고 싶었어요`,
+    (t)=>`${irang(`<b>${t}</b>`)} 저랑 옷을 맞춰 입었어요. 딱 어울렸어요`
   ]
 };
 function dreamS(){
@@ -5544,7 +6743,11 @@ function addTicket(n, why){
   return n;
 }
 
-/* 🤝 놀러 오는 친구들. ⚠️ open 과 days 는 <b>아이가 정한다</b> — 여기 두 줄만 고치면 된다.
+/* 🤝 놀러 오는 친구들.
+   🗓️ <b>2026-09-02 ~ 09-08 로 확정되어 그 판이 아이에게 배포되었다.</b>
+   ⚠️ <b>open 을 이제 고치지 마라.</b> 아이가 이미 만난 뒤에 날짜를 옮기면
+      기간이 끝난 쪽으로 뒤바뀌어 남은 초대권을 못 받는다.
+      다음 콜라보는 <b>줄을 새로 추가</b>해서 연다 — 이 두 줄은 그대로 둔다.
    open  놀러 오는 첫날 (YYYY-MM-DD)
    days  며칠 동안 있나 (open 부터 이 날짜 수만큼)
    cost  한 번 뜨는 데 드는 🎟️초대권 수
@@ -5560,7 +6763,19 @@ const COLLAB={
     d:'말이 별로 없어요. 옆에 가만히 앉아 있는 걸 제일 좋아해요.'},
   kirby:{hn:'별의커쮜', em:'⭐', from:'별의커비', shape:'kirby', color:'kirbyp', c:'#ffd9e6',
     pers:'foodie', g:1, cost:1, open:'2026-09-02', days:7,
-    d:'뭐든지 한 입에 꿀꺽 삼켜요. 우리 아이스크림 통도 몰래 노리고 있어요.'}
+    d:'뭐든지 한 입에 꿀꺽 삼켜요. 우리 아이스크림 통도 몰래 노리고 있어요.'},
+  /* 🗓️ <b>2026-09-09 ~ 09-15</b> 로 정했다(아이 결정) — 둘이 <b>같이</b> 온다.
+     가나쮜·별의커쮜가 9/8 밤에 끝나므로 <b>빈 날 없이 바로 이어진다</b>.
+     ⚠️ 둘이 겹치는 것은 <b>일부러</b> 그런 것이다 — 앞의 둘도 같이 열려 있었다.
+        이레 동안 초대권은 일곱 장이고 ⭐5 는 다섯 장이라, 한 마리만 다 키울 수 있다.
+        <b>누구를 키울지 고르는 것</b>이 이 이벤트의 재미다. 여기 숫자를 늘리면 그 재미가 사라진다.
+     ⚠️ 아이에게 배포한 뒤에는 <b>open 을 고치지 마라</b> — 위 두 줄과 같은 이유다. */
+  kitty:{hn:'헬로키쮜', em:'🎀', from:'헬로키티', shape:'kitty', color:'kittyw', c:'#ffe3e9',
+    pers:'fancy', g:1, cost:1, open:'2026-09-09', days:7,
+    d:'리본을 매고 조용히 웃어요. 입이 없어서 마음으로 이야기한대요.'},
+  nyani:{hn:'냐니쮜', em:'🐱', from:'냐니', shape:'nyani', color:'nyaniw', c:'#eef0f2',
+    pers:'shy', g:1, cost:1, open:'2026-09-09', days:7,
+    d:'눈이 아주 커요. 시무룩해 보이지만 사실은 부끄러운 거래요.'}
 };
 const CB_KEYS=Object.keys(COLLAB);
 function cbId(k){ return 'cb_'+k; }
@@ -5575,11 +6790,16 @@ function cbDay(str){
   const a=String(str||'').split('-');
   return new Date(+a[0]||2026, (+a[1]||1)-1, +a[2]||1);
 }
+/* 🗓️ open 이 비어 있으면 <b>아직 날짜를 안 정한</b> 친구다 — 그림만 만들어둔 상태다.
+   ⚠️ 이걸 먼저 막지 않으면 cbDay('') 가 <b>2026-01-01(지난 날)</b>을 돌려줘서
+      cbGone 이 참이 되고, 도감에 「기간이 끝났어요 😢」로 거꾸로 뜬다. */
+function cbSched(k){ return !!(COLLAB[k]||{}).open; }
+function cbShownKeys(){ return CB_KEYS.filter(cbSched); }
 function cbFrom(k){ return cbDay((COLLAB[k]||{}).open); }
 function cbTo(k){ const d=cbFrom(k); d.setDate(d.getDate()+((COLLAB[k]||{}).days|0)); return d; }
-function cbLive(k){ const n=Date.now(); return n>=cbFrom(k).getTime() && n<cbTo(k).getTime(); }
-function cbSoon(k){ return Date.now()<cbFrom(k).getTime(); }
-function cbGone(k){ return Date.now()>=cbTo(k).getTime(); }
+function cbLive(k){ if(!cbSched(k)) return false; const n=Date.now(); return n>=cbFrom(k).getTime() && n<cbTo(k).getTime(); }
+function cbSoon(k){ return cbSched(k) && Date.now()<cbFrom(k).getTime(); }
+function cbGone(k){ return cbSched(k) && Date.now()>=cbTo(k).getTime(); }
 function cbLeftDays(k){ return Math.max(0, Math.ceil((cbTo(k).getTime()-Date.now())/86400000)); }
 function cbDateStr(k){
   const a=cbFrom(k), b=cbTo(k); b.setDate(b.getDate()-1);   /* 마지막 날은 하루 앞 */
@@ -5587,7 +6807,7 @@ function cbDateStr(k){
 }
 function cbLiveKeys(){ return CB_KEYS.filter(cbLive); }
 function cbHowStr(k){
-  const c=COLLAB[k]; if(!c) return '';
+  const c=COLLAB[k]; if(!c || !cbSched(k)) return '';
   if(cbSoon(k)) return `🗓️ <b>${cbDateStr(k)}</b> 에 놀러 와요 — 그때 만나요!`;
   if(cbGone(k)){
     const d=S.dex[cbId(k)];
@@ -5731,8 +6951,10 @@ function cbScoopHTML(){
     ${head}${tixBox}${tubs}</div>`;
 }
 function cbCardsHTML(){
-  if(!CB_KEYS.length) return '';
-  return CB_KEYS.map(k=>{
+  /* ⚠️ 날짜를 안 정한 친구는 <b>빼고</b> 그린다 — 언제 열릴지 모르는 ??? 칸이
+     계속 보이면 아이가 기다리기만 한다. */
+  const keys=cbShownKeys(); if(!keys.length) return '';
+  return keys.map(k=>{
     const c=COLLAB[k], id=cbId(k), d=S.dex[id], have=!!d, g=have?(d.g|0):0;
     const on=cbLive(k);
     const when=on?`${cbLeftDays(k)}일 남음`:(cbSoon(k)?'곧 와요':'기간이 끝났어요');
@@ -7085,6 +8307,21 @@ const MAIL_ACT_TPL={
             그래서 안 뛰고 사뿐사뿐 걸었는데요…<br>
             아까 딱 한 번 뛰었어요. 아이스크림 나올 때요 🏃💨`
   ],
+  /* 🦊 여우쮜가 막 도착해서 쓰는 편지.
+     ⚠️ 「인소 남주」 말투를 쓰지 마라 — <b>초등학교 저학년 아이</b>가 쓴 편지다.
+        어려운 말·멋 부린 말 없이, 겪은 일 하나를 그대로 말한다. */
+  fox:[
+    (k,m)=>`안녕하세요! 저 <b>여우</b>예요 🦊<br>
+            꼬리가 너무 커서 문에 끼일까 봐 걱정했는데요,<br>
+            다행히 안 끼였어요. 살짝 눌러서 들어왔어요 🤭`,
+    (k,m)=>{ const p=mailPalName(m);
+      return `아이스크림 냄새를 맡고 <b>산에서 내려왔어요</b>.<br>
+              ${p?`<b>${p}</b>가 한 입 나눠줬어요.`:'한 입만 몰래 먹어봤어요.'}<br>
+              너무 맛있어서 꼬리가 저절로 흔들렸어요 🍨`; },
+    (k,m)=>`제 꼬리 끝이 <b>하얀 거</b> 보셨어요?<br>
+            눈 오는 날 밖에서 놀다가 그렇게 된 거래요.<br>
+            …엄마가 그랬어요. 진짜인지는 저도 몰라요 🤍`
+  ],
   /* 🏡 이웃 가게에 같이 다녀온 아이가 쓴 편지 */
   neigh:[
     (k,m)=>`오늘 <b>골목</b>에 나갔다 왔어요 🐾<br>
@@ -7212,6 +8449,7 @@ const MAIL_WHY={
   gift :'🎫 찌돌이가 부쳐준 편지 꾸러미에 들어 있었어요',
   pongsil:'🫧 퐁실이가 햄쮜가 된 날 쓴 편지예요',
   lady :'👒 숙녀쮜가 처음 온 날 쓴 편지예요',
+  fox  :'🦊 여우쮜가 산에서 내려온 날 쓴 편지예요',
   busan:'🌊 부산에서 부친 엽서예요',
   bdayhi:'🎂 생일 축하 인사를 받고 기뻐서 쓴 편지예요',
   jar  :'🍯 토핑 항아리에 토핑을 모아다 주고 쓴 편지예요',
@@ -7539,7 +8777,20 @@ const COUPONS={
         쿠폰이 미리 줘버리면 여행을 갈 이유가 줄어든다. 여행에서만 온다. */
   '부산가는쮜돌':{em:'🌊', name:'부산가는 쮜돌', coin:4200, top:30,
                       wear:['neck_lei','cone_crain','hand_lolly'],
-                      tub:['salt','soda'], furn:['parasol','sandy']}
+                      tub:['salt','soda'], furn:['parasol','sandy']},
+  /* 「여우쮜야 놀러와!」 — 🦊동물 친구 여섯이 온 것을 기념하는 쿠폰.
+     제일 앞의 여우쮜가 바로 오고, 오자마자 편지를 한 통 쓴다.
+     ⚠️ 특별 햄쮜는 <b>하나만</b> 준다 — 여섯을 다 주면 ⭐로 모을 것이 없어진다. */
+  '여우쮜야놀러와':{em:'🦊', name:'여우쮜야 놀러와!', coin:4800, top:33,
+                      sp:['fox'], spMail:'fox',
+                      wear:['neck_cape','cone_cchoco'],
+                      tub:['chest'], furn:['plant','yarn']},
+  /* 「호빵이랑 꽈배기」 — 🫓새로 생긴 우리 간식 통들을 기념하는 쿠폰.
+     ⚠️ 호빵·꽈배기 통은 <b>안 준다</b> — Lv.113·115 라서 받아도 한 번을 못 뜬다.
+        대신 결이 같은 인절미·경단 통과 <b>분식집 꾸미기 한 벌</b>을 준다. */
+  '호빵이랑꽈배기':{em:'🫓', name:'호빵이랑 꽈배기', coin:5600, top:38,
+                      wear:['hat_chef','hand_fan','cone_cgold'],
+                      tub:['injeol','dango'], furn:['kitchen','neon'], mail:2}
 };
 function openCoupon(){
   const used=(S.coupon||[]).filter(c=>COUPONS[c]);
@@ -8060,7 +9311,7 @@ function onLevelUp(from, up){
   const got=[];
   const tubs=FLAVORS.filter(f=>nw(f.lv));
   if(tubs.length) got.push(`🍨 새 통 ${eul('<b>'+tubs.map(f=>f.n).join('·')+'</b>')} 상점에`);
-  ROOMS.forEach((r,i)=>{ if(nw(r.lv)) got.push(`🏠 <b>${r.dn}</b>이 열렸어요`); });
+  ROOMS.forEach((r,i)=>{ if(nw(r.lv)) got.push(`🏠 ${ega(`<b>${r.dn}</b>`)} 열렸어요`); });
   UPG_KEYS.forEach(k=>{ if(nw(UPG[k].lv)) got.push(`${UPG[k].em} <b>${UPG[k].name}</b> 를 살 수 있어요`); });
   Object.keys(THEMES).forEach(t=>{ if(nw(THEMES[t].lv)) got.push(`🖼️ 새 배경 <b>${THEMES[t].name}</b>`); });
   TRIPS.forEach(t=>{ if(nw(t.lv)) got.push(`${t.em} <b>${t.n}</b> 으로 소풍을 갈 수 있어요`); });
@@ -8603,6 +9854,12 @@ const FURN={
   merry  :{em:'🎠',  n:'회전목마',      kind:'ride', coin:18000, pay:44, tip:'빙글빙글 돌아요'},
   kite   :{em:'🪁',  n:'연날리기',      kind:'ride', coin:42000,  pay:70, tip:'바람 따라 달려요'},
   sandy  :{em:'🏖️',  n:'모래성',        kind:'ride', coin:90000,  pay:112,tip:'모래를 파닥파닥'},
+  /* 🆕 Lv.89~100 과 함께 여는 물건들 */
+  kitchen:{em:'🍳',  n:'미니 주방',     kind:'floor', coin:34000},
+  aqua   :{em:'🐠',  n:'어항',          kind:'floor', coin:46000},
+  jukebox:{em:'📻',  n:'전축',          kind:'floor', coin:88000},
+  neon   :{em:'🌃',  n:'네온 간판',     kind:'wall',  coin:31000},
+  train  :{em:'🚂',  n:'꼬마 기차',     kind:'ride',  coin:120000, pay:190, tip:'칙칙폭폭 달려요'},
   swingy :{em:'🎋',  n:'그네',          kind:'ride', top:40,     pay:150,tip:'앞뒤로 흔들흔들'}
 };
 const FURN_KEYS=Object.keys(FURN);
@@ -9784,8 +11041,8 @@ function renderDexTab(){
     <div class="dexgrid">${spCardsHTML()}</div>`}
   </div>
   <div class="card" style="margin-top:9px">
-    ${dexH3('cb', `🤝 콜라보쮜 <small>${cbCount()} / ${CB_KEYS.length}마리</small>`)}
-    ${dexFolded('cb') ? '' : (CB_KEYS.length
+    ${dexH3('cb', `🤝 콜라보쮜 <small>${cbCount()} / ${cbShownKeys().length}마리</small>`)}
+    ${dexFolded('cb') ? '' : (cbShownKeys().length
       ? `<div class="muted" style="margin-bottom:7px">다른 데서 놀러 온 친구와 햄쮜가 <b>합쳐진</b> 아이들이에요.
            눌러보면 어떻게 만나는지 알려줘요.</div>
          <div class="dexgrid">${cbCardsHTML()}</div>`
@@ -10232,7 +11489,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-09-02b';
+const NEWS_VER='2026-09-03';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
@@ -11649,7 +12906,7 @@ const REQT={
       `오늘 <b>${TOYS[v].name}</b> 한 번만 해주면 안 돼요?<br>딱 한 번만요. 진짜 한 번만요!`,
       `저 <b>${TOYS[v].name}</b> 되게 잘해요.<br>안 믿기면 한 번 해봐요 😤`
     ]),
-    how:(k,v)=>`🏠놀이방에서 다 같이 <b>${TOYS[v].name}</b>을 하거나, 📖도감에서 <b>${nameOf(k)}</b>하고만 놀아주세요`,
+    how:(k,v)=>`🏠놀이방에서 다 같이 ${eul(`<b>${TOYS[v].name}</b>`)} 하거나, 📖도감에서 <b>${nameOf(k)}</b>하고만 놀아주세요`,
     go:(k,v)=>`closeModal();go('play')`, goN:'🏠 놀이방으로',
     do:r=>{ playOne(r.k, r.v); return true; },
     /* ⚠️ >= 여야 한다 — 부탁이 생긴 그 밀리초에 놀아주면 > 로는 안 잡힌다.
@@ -11688,10 +12945,10 @@ const REQT={
     },
     say:(k,v)=>pick([
       `<b>${THEMES[v].em} ${THEMES[v].name}</b>에 앉아보고 싶어요.<br>거기 진짜 예쁘대요!`,
-      `친구가 <b>${THEMES[v].name}</b>가 최고라고 했어요.<br>저도 한 번만 가보면 안 돼요?`,
+      `친구가 ${ega(`<b>${THEMES[v].name}</b>`)} 최고라고 했어요.<br>저도 한 번만 가보면 안 돼요?`,
       `오늘은 <b>${THEMES[v].name}</b>에서 지내고 싶어요.<br>기분을 좀 바꿔보려고요 😌`
     ]),
-    how:(k,v)=>`🎨<b>방 꾸미기</b>에서 배경을 <b>${THEMES[v].em} ${THEMES[v].name}</b>으로 바꾸고, 그 방에 <b>${nameOf(k)}</b>를 앉혀주세요`,
+    how:(k,v)=>`🎨<b>방 꾸미기</b>에서 배경을 ${euro(`<b>${THEMES[v].em} ${THEMES[v].name}</b>`)} 바꾸고, 그 방에 <b>${nameOf(k)}</b>를 앉혀주세요`,
     go:(k,v)=>`closeModal();go('play')`, goN:'🏠 놀이방으로',
     do:r=>{ const at=whereSeated(r.k); if(!at) return false;
       room(at.r).theme=r.v; applyTheme(); return true; },
@@ -11729,7 +12986,7 @@ const REQT={
       `소풍 갈 때 저도 데려가면 안 돼요?<br><b>${t.n}</b>요. 꼭 <b>${t.n}</b>요!`,
       `가방도 다 쌌어요.<br><b>${t.n}</b>… 언제 가요? 😳`
     ]); },
-    how:(k,v)=>`🎮놀이터의 <b>🎒소풍 보내기</b>에서 <b>${tripOf(v).em} ${tripOf(v).n}</b>을 고르고 <b>${nameOf(k)}</b>를 넣어주세요`,
+    how:(k,v)=>`🎮놀이터의 <b>🎒소풍 보내기</b>에서 ${eul(`<b>${tripOf(v).em} ${tripOf(v).n}</b>`)} 고르고 <b>${nameOf(k)}</b>를 넣어주세요`,
     go:(k,v)=>`closeModal();openTrip()`, goN:'🎒 소풍 보내기',
     ok:r=>trips().some(t=>t.k===r.v && (t.who||[]).indexOf(r.k)>=0)
   },
@@ -13435,7 +14692,7 @@ function renderOrderTab(){
     /* 🙈 기억 손님이면 주문서를 감췄다 보여줬다 한다 */
     const order=`안녕! <b>${CONES[w.cn].em}${CONES[w.cn].n}</b>에<br>
           <b style="color:var(--acc)">${FL[w.fl].n}</b> 맛을 담고
-          <b>${TOPS[w.tp].em}${TOPS[w.tp].n}</b>를 올려주세요!`;
+          ${eul(`<b>${TOPS[w.tp].em}${TOPS[w.tp].n}</b>`)} 올려주세요!`;
     const bub = c.memo
       ? (c.hid
         ? `<div class="bub memo hid">🙈 주문서를 감췄어요!<br><b>기억해서</b> 만들어 주세요
