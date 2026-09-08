@@ -227,6 +227,38 @@ header{margin-bottom:7px}
 #stage .pity .lab{font-size:11.5px;font-weight:700;margin-bottom:4px;line-height:1.35}
 #stage .pity .bar{height:10px;background:#f4cfdb}
 #stage .pity .bar>div{background:linear-gradient(90deg,#ffe07a,#ffb14a)}
+/* 🫥 그림자 놀이 — 그림을 따로 그리지 않고 <b>색만 지운다</b>.
+   ⚠️ brightness(0) 은 흰 부분까지 검게 만든다 — 그게 실루엣이다.
+      그러니 <b>바탕은 밝은 쪽으로 고정</b>한다. 어두운 테마에서 바탕까지 어두우면
+      검은 그림자가 검은 배경에 묻혀서 아무것도 안 보인다. */
+.shd{width:170px;max-width:64%;margin:0 auto;padding:7px;
+     background:#fdf6ff;border-radius:18px}
+.shd svg{width:100%;height:auto;display:block;filter:brightness(0)}
+.shdpick{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.shdpick .btn{width:100%}
+.shdpick .btn.off{opacity:.42;text-decoration:line-through}
+
+/* 🎲 오늘의 특별한 일 띠 — 만들기 화면 맨 위. 눌러도 되고 안 눌러도 된다 */
+.funbar{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  margin:0 0 9px;padding:8px 11px;border-radius:14px;
+  background:linear-gradient(100deg,#fff3d6,#ffe4ef);
+  border:2px solid #ffd3a8;box-shadow:0 2px 0 rgba(180,120,90,.14);
+  line-height:1.4
+}
+.funbar .e{font-size:23px;flex:none}
+.funbar .t{font-size:12.5px;color:#6b4f45}
+.funbar .t b{color:#d2447a}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .funbar{
+    background:linear-gradient(100deg,#3c3120,#3d2530);border-color:#6b4d33}
+  :root:not([data-theme="light"]) .funbar .t{color:#f0dccf}
+  :root:not([data-theme="light"]) .funbar .t b{color:#ff9ec0}
+}
+:root[data-theme="dark"] .funbar{
+  background:linear-gradient(100deg,#3c3120,#3d2530);border-color:#6b4d33}
+:root[data-theme="dark"] .funbar .t{color:#f0dccf}
+:root[data-theme="dark"] .funbar .t b{color:#ff9ec0}
 #tubbig{width:206px;max-width:78%;margin:0 auto;position:relative}
 #tubbig svg{width:100%;height:auto;display:block;overflow:visible}
 #tubbig.dig{animation:dig .5s ease-in-out}
@@ -1175,6 +1207,9 @@ function ega (s){ return s+(jong(s)?'이':'가'); }
 function ya     (s){ return s+(jong(s)?'아':'야'); }
 function iyeyo  (s){ return s+(jong(s)?'이에요':'예요'); }
 function irae   (s){ return s+(jong(s)?'이래요':'래요'); }
+/* ⚠️ 아이가 지은 이름(방 이름·햄쮜 이름·메뉴 이름)을 인용할 때 쓴다 —
+   손으로 「이라고」를 쓰면 「무지개이라고」가 된다. 아이가 무슨 이름을 지을지 모른다. */
+function irago  (s){ return s+(jong(s)?'이라고':'라고'); }
 function iyeoss (s){ return s+(jong(s)?'이었어요':'였어요'); }
 /* 으로/로 만 규칙이 하나 더 있다 — ㄹ 받침은 「로」 (하늘로, 서울로) */
 function wagwa(s){ return s+(jong(s)?'과':'와'); }
@@ -6909,10 +6944,11 @@ function openWxPlace(){
 }
 /* 🌇 저녁에는 손님이 몰려서 놀아줄 때 받는 코인이 는다 */
 /* 🍨 간판에 건 메뉴는 코인 벌이를 조금 올린다 — 놀아서 버는 것도, 저절로 버는 것도 */
-function playMul(){ return (1+upgLv('charm')*0.15+upgLv('jewel')*0.30+upgLv('market')*0.45+upgLv('fest')*0.60)*latePlay()*(1+S.lv*0.05)*dayPart().coin*traitOf().coin*menuMul()*snackMul('coin'); }
+function playMul(){ return (1+upgLv('charm')*0.15+upgLv('jewel')*0.30+upgLv('market')*0.45+upgLv('fest')*0.60)*latePlay()*(1+S.lv*0.05)*dayPart().coin*traitOf().coin*menuMul()*snackMul('coin')*funMul('coin'); }
 function gradeW(){
   /* 🍀요정 스쿱은 ★3 이상을, 🌟별가루 스쿱은 그중에서도 ★4·★5 를 끌어올린다 */
-  const bonus=upgLv('luck')*2, glit=upgLv('glit')*1.5;
+  /* 🎲 🌈무지개 날에는 별가루를 네 칸 더 뿌린 셈으로 둔다 — ⭐4가 눈에 보이게 는다 */
+  const bonus=upgLv('luck')*2, glit=upgLv('glit')*1.5+(funGrade()?4:0);
   return {1:Math.max(20,58.4-bonus-glit), 2:28,
           3:11+bonus*0.72, 4:2.2+bonus*0.24+glit*0.72, 5:0.4+bonus*0.04+glit*0.28};
 }
@@ -7348,6 +7384,270 @@ function season(){
 function seasonId(){ const d=new Date(); return season().k+'/'+(d.getMonth()<=1?d.getFullYear()-1:d.getFullYear()); }
 function seasonMul(w){ return season()[w]||1; }
 function seasonNew(){ return String(S.seas||'')!==seasonId(); }
+
+/* ==================================================================
+   🎲 오늘의 특별한 일 — <b>하루에 하나, 매일 다른 날</b>이 열린다.
+   아이 말(2026-09-08): 「게임이 점점 고이고있는거같은데 좀 신선하게 재미있게 해줄 수
+   잇는거 없을까? 아이가 요즘은 좀 재미에 익숙해진거같아」
+
+   재보고 골랐다 — <b>콘텐츠가 마른 게 아니었다.</b> Lv.100 에서 통이 124/225 열려 있고
+   다음 통이 Lv.101 이다. 그런데 「오늘 할 일」 스물네 갈래 중 <b>열 개가 매일 똑같이</b>
+   켜지고, 오늘을 어제와 다르게 만드는 것은 날씨·때·계절·콜라보뿐인데 <b>전부 배수</b>라
+   아이 눈에 하나도 안 보였다. 그래서 <b>보이는 「오늘」</b>을 만든다.
+
+   ⚠️ <b>이것은 할 일이 아니다.</b> 받으러 갈 것도, 눌러야 할 것도 없다 —
+      이미 있는 것의 규칙이 하루 동안 바뀔 뿐이다. <b>「오늘 할 일」 칸에 줄을 더하지 않는다</b>
+      ([[no-busywork-currency]] · 「해야 하는 것이냐, 받는 것이냐」).
+   ⚠️ <b>나쁜 날은 없다.</b> 이 게임은 지는 법이 없다 — 배수를 1 아래로 두지 마라.
+      「손님이 덜 와요」 같은 날을 만들면 아이가 그날 게임을 안 켠다.
+   ⚠️ 배수는 <b>2.0 을 넘기지 않는다.</b> 계절·때·방 성격·재주·간식·장비가 이미 겹쳐 있다.
+   ⚠️ <b>뜨는 값(scoopCost)은 건드리지 않는다.</b> 아이가 정한 규칙이다
+      (「기존에 들어가있던 뜨는값을 낮추는건 안돼」 — [[hamskin-economy-lesson]]).
+================================================================== */
+/* 🎲 오늘의 특별한 일 — 날마다 하나씩.
+   ⚠️ 2026-09-08 에 <b>스무 가지를 다시 짰다.</b> 처음 판은 절반이 하트·🍒토핑·코인 배수였는데
+      아이가 「결국 하트가 빨리차거나 이런건 별로 도움이 안되지않아?」라고 짚었고, 재보니 맞았다:
+        💗하트 하나=20, 간식 한 번=12 → 1.5배(18)도 <b>여전히 두 번</b>. 터치 수가 안 줄어든다.
+        🍒토핑 2,154개 있는데 소품 <b>전부</b>가 232개 → 남는 걸 더 남게 한다.
+        🪙코인 저절로 222억/일인데 다음 통이 4.5억 → 48초를 32초로 줄이는 일이었다.
+   ⇒ <b>화면에 숫자로 나타나는 것만</b> 배수를 건다:
+      ⭐별 · 쉬는 시간(cd) · 편지(mailAdd) · ⭐등급(grade) · 경험치(exp) · 손님(guest) ·
+      🫥그림자 판 수(shdAdd).  bond·top·coin·auto 는 <b>어느 날도 쓰지 않는다</b>
+      (호출부는 남겨 뒀다 — 하트 칸이 늘거나 코인이 모자라지면 되살릴 지렛대다).
+   ⚠️ <b>지렛대마다 「남은 날수」를 재고 나서 몇 날에 얹을지 정한다.</b> Lv.100 에서 재본 값:
+        ⭐별   마지막 🌅새벽쮜가 <b>⭐1,180</b> 이고(별은 쓰이지 않고 <b>쌓이는 누적 문턱</b>이라
+               남은 것을 더하면 안 된다) 하루 어림 59개 → <b>20일</b>. 병목이 아니다.
+        📚레벨 마지막 통이 <b>Lv.201</b>, 경험치 <b>1,686,795</b>, 한 판 54 →
+               하루 50판을 놀아도 <b>625일</b>. <b>이게 제일 긴 병목이다.</b>
+        🌈⭐등급 225통 × ⭐5 — <b>끝이 없다.</b>
+      ⇒ 별은 <b>넷</b>(평균 1.14배)까지만. 경험치·⭐등급에 더 얹는 편이 값이 크다.
+      ⚠️ 별 날을 늘리지 마라 — 특별햄쮜 스물일곱 마리가 그만큼 빨리 끝나 버린다.
+   ⚠️ <b>나쁜 날은 만들지 않는다.</b> 배수가 1 아래인 것은 cd 뿐이고 그건 짧아지는 게 좋은 것이다. */
+const TODAY_FUN=[
+  {k:'rainbow', em:'🌈', n:'무지개 날',   grade:1,
+   d:'⭐가 많은 햄쮜가 <b>더 잘 나와요</b>'},
+  {k:'cozy',    em:'⭐', n:'별똥별 날',   star:2,
+   d:'⭐별이 <b>두 배</b>로 나와요 — 새 친구가 빨리 와요!'},
+  {k:'berry',   em:'⚡', n:'번개 날',     cd:0.35,
+   d:'놀이 <b>쉬는 시간이 3분의 1</b>이에요'},
+  {k:'circus',  em:'🎪', n:'서커스 날',   cd:0.5,
+   d:'놀이 <b>쉬는 시간이 반</b>이에요'},
+  {k:'vip',     em:'👑', n:'귀한 손님 날', guest:1.6,
+   d:'손님이 <b>훨씬 자주</b> 와요'},
+  {k:'chatty',  em:'🐹', n:'수다 날',     mailAdd:3,
+   d:'편지가 <b>세 통 더</b> 와요'},
+  {k:'jackpot', em:'📮', n:'집배원이 두 번 오는 날', mailAdd:5,
+   d:'편지가 <b>다섯 통 더</b> 와요 — 우체통이 꽉!'},
+  {k:'homey',   em:'🫥', n:'그림자 날',   shdAdd:3, star:1.5,
+   d:'그림자 놀이를 <b>여섯 판</b> 하고 ⭐별도 <b>50% 더</b>예요'},
+  {k:'study',   em:'📚', n:'공부 날',     exp:2,
+   d:'경험치가 <b>두 배</b>예요 — 레벨이 쑥!'},
+  {k:'party',   em:'🌱', n:'쑥쑥 자라는 날', exp:3,
+   d:'경험치가 <b>세 배</b>예요 — 새 통이 빨리 열려요!'},
+  {k:'lucky',   em:'🌟', n:'운수 좋은 날', grade:1, star:1.5,
+   d:'⭐가 잘 나오고 ⭐별도 <b>50% 더</b>예요'},
+  {k:'rainy',   em:'🍀', n:'네잎클로버 날', grade:1, guest:1.4,
+   d:'운이 좋아서 <b>⭐가 많은 햄쮜</b>도, <b>손님</b>도 잘 와요'},
+  {k:'gifty',   em:'🎁', n:'선물 날',     mailAdd:2, grade:1,
+   d:'편지가 <b>두 통 더</b> 오고 <b>⭐가 많은 햄쮜</b>도 잘 나와요'},
+  {k:'icecream',em:'🍨', n:'아이스크림 날', grade:1, cd:0.7,
+   d:'⭐가 잘 나오고 쉬는 시간도 <b>30% 짧아요</b>'},
+  {k:'playgnd', em:'🎠', n:'놀이터 날',   cd:0.7, guest:1.3,
+   d:'쉬는 시간이 <b>30% 짧고</b> 손님도 <b>자주</b> 와요'},
+  {k:'busy',    em:'🏪', n:'손님 많은 날', guest:1.5, exp:2,
+   d:'손님을 많이 맞아서 <b>경험치가 두 배</b>예요'},
+  {k:'postman', em:'💌', n:'우체부 날',   mailAdd:4,
+   d:'편지가 <b>네 통 더</b> 와요!'},
+  {k:'night',   em:'🌙', n:'별 보는 밤',  star:1.75, mailAdd:1,
+   d:'⭐별이 <b>75% 더</b> 나오고 편지도 <b>한 통 더</b> 와요'},
+  {k:'balloon', em:'🎈', n:'풍선 날',     exp:1.5, shdAdd:2,
+   d:'경험치가 <b>50% 더</b>, 그림자 놀이도 <b>다섯 판</b>이에요'},
+  {k:'champ',   em:'🥇', n:'챔피언 날',   exp:2, cd:0.7, mailAdd:1,
+   d:'<b>경험치 두 배</b>, 쉬는 시간은 <b>짧고</b>, 편지도 <b>한 통 더</b>!'}
+];
+/* ⚠️ 날짜를 <b>섞기만</b> 하면 어제 것이 또 나올 수 있다(스무 가지면 하루에 5%).
+   「어제랑 똑같네」 한 번이면 이 기능은 그 자리에서 죽는다. 그래서 <b>날 수를 세어</b>
+   미리 정한 순서대로 돌린다 — <b>스무 날 동안 하나도 안 겹치고</b>, 스무 날마다
+   시작점이 한 칸 밀려서 같은 순서가 되풀이되지도 않는다.
+   ⚠️ 저장에 <b>적어두지 않는다</b> — 날짜만 보고 셈한다. 그래서 폰을 바꿔도 같은 날이다. */
+const FUN_ORDER=[7,0,13,4,18,9,2,15,11,6,19,1,16,8,3,12,5,17,10,14];
+/* 2026-01-01 을 0일로 센다. ⚠️ 그 지역 자정 기준 — todayKey() 와 같은 눈금이어야
+   「자고 일어나면 바뀐다」가 맞는다. UTC 로 세면 밤 9시에 날이 바뀐다. */
+function funDayN(){
+  const d=new Date();
+  return Math.floor((new Date(d.getFullYear(), d.getMonth(), d.getDate())
+                     - new Date(2026, 0, 1)) / 86400000);
+}
+function funNow(){
+  const L=TODAY_FUN.length, n=funDayN();
+  const c=Math.floor(n/L), i=((n%L)+L)%L;
+  return TODAY_FUN[FUN_ORDER[(((i+c)%L)+L)%L]];
+}
+/* ⚠️ 이 함수는 autoIncome·playMul·addBond 안에서 <b>자주</b> 불린다 — 무거우면 안 된다
+   (snackMul 과 같은 규칙이다). */
+function funMul(w){ const f=funNow(); return (f && f[w]) || 1; }
+function funGrade(){ return !!funNow().grade; }
+function funS(){
+  if(!S.fun || typeof S.fun!=='object') S.fun={d:''};
+  return S.fun;
+}
+/* 오늘 것을 아직 안 봤나 — 켤 때 한 번만 알려준다 */
+function funNew(){ return String(funS().d||'')!==todayKey(); }
+let funReport=null;
+function showFunDay(){
+  const f=funNow();
+  funS().d=todayKey(); save();
+  sfx('star4'); vib([0,20,45,20]);
+  openModal(`<h2>🎲 오늘의 특별한 일<span class="x" onclick="nextModal()">닫기</span></h2>
+    <div class="card" style="margin:0;text-align:center;line-height:1.9">
+      <div style="font-size:54px;line-height:1.1">${f.em}</div>
+      <div style="font-family:'Jua',sans-serif;font-size:23px;margin-top:2px">
+        오늘은 <b style="color:var(--acc)">${f.n}</b>이에요!</div>
+      <div style="margin-top:5px">${f.d}</div>
+    </div>
+    <div class="muted" style="text-align:center;margin-top:9px;line-height:1.7">
+      🎲 <b>날마다 달라져요</b> — 스무 가지가 있어요.<br>
+      따로 할 일은 <b>하나도 없어요</b>. 오늘 하루만 이렇게 돼요 😊</div>
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn" onclick="nextModal()">좋아요!</button></div>`);
+}
+/* 🍨만들기 화면 맨 위에 붙는 한 줄 — 오늘이 무슨 날인지 늘 보이게 */
+function funBarHTML(){
+  const f=funNow();
+  return `<div class="funbar" onclick="showFunAgain()">
+    <span class="e">${f.em}</span>
+    <span class="t">오늘은 <b>${f.n}</b>이에요 — ${f.d}</span></div>`;
+}
+function showFunAgain(){ sfx('tap'); showFunDay(); }
+
+/* ==================================================================
+   🌙 밤새 일어난 일 — 아침에 켜면 <b>아이가 안 한 일</b>이 생겨 있다.
+   아이 말(2026-09-08): 「게임이 점점 고이고있는거같은데… 재미에 익숙해진거같아」
+   🎲오늘의 특별한 일이 「오늘이 어제와 다르다」를 맡고, 이쪽은 <b>놀라움</b>을 맡는다.
+
+   ⚠️⚠️ <b>아이가 해둔 것을 절대 지우지 않는다.</b> 이게 이 기능의 목숨줄이다.
+      아이는 방을 며칠씩 꾸미고 소품을 골라 입힌다. 밤새 그게 바뀌어 있으면
+      「놀라움」이 아니라 <b>도둑</b>이다([[over-correction]] · 「물건은 있어야 할 자리에」).
+      그래서 바꾸는 것은 딱 둘뿐이고, <b>둘 다 되돌리는 단추가 붙는다</b>:
+        ① 🪑 두 마리가 <b>자리를 바꿔</b> 앉았다 (자리표만 바뀐다)
+        ② 🎀 한 마리가 <b>빈 칸에만</b> 소품을 하나 꺼내 입었다
+           — 이미 입고 있는 칸은 <b>건드리지 않는다</b>. 벗기는 일은 절대 없다.
+      나머지 여덟 가지는 <b>아무것도 안 바뀌는 이야기</b>다. 그게 대부분이어야 한다.
+   ⚠️ 하루에 한 번이다(`S.night.d`). 켤 때마다 뜨면 그 순간 귀찮은 것이 된다.
+   ⚠️ 「해야 하는 것」이 아니다 — <b>「오늘 할 일」 칸에 줄을 더하지 않는다.</b>
+      그냥 아침에 한 번 알려준다.
+================================================================== */
+const NIGHT_TALE=[
+  {em:'😴', t:'다 같이 자고 있었어요',
+   d:k=>`${ega(nameOf(k))} 통 앞에서 자고 있었어요.<br>깨우니까 아무 일도 없었다는 듯이 일어났어요`},
+  {em:'🪟', t:'창밖을 보고 있었어요',
+   d:k=>`아침 일찍 ${ega(nameOf(k))} 창가에 앉아 있었어요.<br>뭘 봤냐고 물으니 「그냥요」 했어요`},
+  {em:'🍒', t:'토핑이 하나 없어졌어요',
+   d:k=>`🍒토핑이 하나 없어졌는데요,<br>${ega(nameOf(k))} 입가에 조금 묻어 있었어요.<br>모른 척했어요 😌`},
+  {em:'✏️', t:'낙서가 있었어요',
+   d:k=>`바닥에 삐뚤삐뚤한 낙서가 있었어요.<br>${ega(nameOf(k))} 「제가 안 했어요」 했는데<br>발에 색이 묻어 있었어요`},
+  {em:'🧺', t:'옷장을 열어봤나 봐요',
+   d:k=>`옷장이 살짝 열려 있었어요.<br>${ega(nameOf(k))} 그 앞에서 서 있다가<br>저를 보고 후다닥 도망갔어요`},
+  {em:'🎵', t:'노래가 들렸어요',
+   d:k=>`밤에 작게 노래하는 소리가 났어요.<br>${ega(nameOf(k))} 부른 것 같은데<br>물어보면 아니라고 해요`},
+  {em:'🧦', t:'다들 한데 뭉쳐 있었어요',
+   d:k=>`햄쮜들이 한 자리에 뭉쳐서 자고 있었어요.<br>${ega(nameOf(k))} 제일 안쪽에 있었어요.<br>거기가 제일 따뜻하대요`},
+  {em:'🚪', t:'문 앞에서 기다렸나 봐요',
+   d:k=>`${ega(nameOf(k))} 문 앞에 앉아 있었어요.<br>언제부터 있었냐고 물으니<br>「조금 전부터요」 했어요. 정말일까요?`}
+];
+function nightS(){
+  if(!S.night || typeof S.night!=='object') S.night={d:'', kind:'', a:'', b:'', slot:'', item:'', tale:0, k:''};
+  return S.night;
+}
+function nightNew(){ return String(nightS().d||'')!==todayKey(); }
+/* 🎀 빈 칸에만 넣을 수 있는 것 — 옷장에 있고, 그 아이의 그 칸이 비어 있을 때만.
+   ⚠️ 이미 입은 것을 바꾸거나 벗기는 일은 <b>절대 없다</b>. */
+function nightWearPick(k){
+  const d=S.dex[k]; if(!d) return null;
+  const w=d.w||{}, out=[];
+  WEAR_SLOTS.forEach(sl=>{
+    if(w[sl]) return;                                  /* 이미 입었으면 건드리지 않는다 */
+    Object.keys(WEAR[sl].items).forEach(key=>{ if(ownWear(sl,key)) out.push([sl,key]); });
+  });
+  return out.length?pick(out):null;
+}
+let nightReport=null;
+/* 아침에 한 번 셈한다 — 무엇이 일어났는지 저장에 적어두고(되돌리기 때문에) 창을 예약한다 */
+function nightRoll(){
+  if(!nightNew()) return;
+  const g=nightS();
+  g.d=todayKey(); g.kind=''; g.a=''; g.b=''; g.slot=''; g.item=''; g.k='';
+  const here=roomHams(S.room|0);
+  const all=Object.keys(S.dex);
+  g.tale=ri(0, NIGHT_TALE.length-1);
+  g.k=here.length?pick(here):(all.length?pick(all):'');
+  /* 열 번에 셋쯤만 <b>진짜로 바뀐다</b> — 나머지는 이야기만 */
+  const roll=Math.random();
+  if(roll<0.16 && here.length>=2){
+    const st=room(S.room|0).seat, idx=[];
+    st.forEach((x,i)=>{ if(x && S.dex[x]) idx.push(i); });
+    if(idx.length>=2){
+      const i0=pick(idx), rest=idx.filter(x=>x!==i0);
+      const i1=pick(rest);
+      const t=st[i0]; st[i0]=st[i1]; st[i1]=t;
+      g.kind='swap'; g.a=String(i0); g.b=String(i1);
+    }
+  }else if(roll<0.32 && g.k){
+    const p=nightWearPick(g.k);
+    if(p){
+      const d=S.dex[g.k]; if(!d.w) d.w={hat:null,neck:null,hand:null,cone:null};
+      d.w[p[0]]=p[1];
+      g.kind='wear'; g.slot=p[0]; g.item=p[1];
+    }
+  }
+  nightReport=1;
+  save();
+}
+/* ↩️ 되돌리기 — 아이가 「원래대로」를 누르면 그대로 돌려놓는다 */
+function nightUndo(){
+  const g=nightS();
+  if(g.kind==='swap'){
+    const st=room(S.room|0).seat, i0=g.a|0, i1=g.b|0;
+    const t=st[i0]; st[i0]=st[i1]; st[i1]=t;
+  }else if(g.kind==='wear'){
+    const d=S.dex[g.k];
+    /* ⚠️ 그 사이에 아이가 딴 것을 입혔으면 <b>손대지 않는다</b> — 아이 것이 우선이다 */
+    if(d && d.w && d.w[g.slot]===g.item) d.w[g.slot]=null;
+  }
+  g.kind=''; sfx('tap'); save(); renderView();
+  toast('↩️ 원래대로 돌려놨어요');
+  closeModal();
+}
+function showNight(){
+  nightReport=null;
+  const g=nightS(), k=g.k;
+  if(!k || !S.dex[k]){ nextModal(); return; }
+  let body='', undo='';
+  if(g.kind==='swap'){
+    const st=room(S.room|0).seat, a=st[g.b|0], b=st[g.a|0];   /* 이미 바뀐 뒤라 거꾸로 읽는다 */
+    body=`${wagwa(`<b>${nameOf(a)}</b>`)} ${ega(`<b>${nameOf(b)}</b>`)} 자리를 바꿔 앉아 있었어요!<br>
+          누가 먼저 옮겼는지는 둘 다 모른대요 🪑`;
+    undo=`<button class="btn w sm" onclick="nightUndo()">↩️ 자리 원래대로</button>`;
+  }else if(g.kind==='wear'){
+    const it=WEAR[g.slot] && WEAR[g.slot].items[g.item];
+    body=`${ega(nameOf(k))} 옷장에서 ${eul(`<b>${it?it.em+' '+it.name:'소품'}</b>`)} 꺼내 입고 있었어요!<br>
+          거울 앞에서 한참 봤대요 🪞<br>
+          <span class="muted">비어 있던 자리에만 꺼내 입었어요 — 사장님이 입혀둔 건 그대로예요</span>`;
+    undo=`<button class="btn w sm" onclick="nightUndo()">↩️ 벗겨 주기</button>`;
+  }else{
+    const t=NIGHT_TALE[clamp(g.tale|0,0,NIGHT_TALE.length-1)];
+    body=`${t.em} <b>${t.t}</b><br>${t.d(k)}`;
+  }
+  sfx('gift'); vib(18);
+  openModal(`<h2>🌙 밤새 일어난 일<span class="x" onclick="nextModal()">닫기</span></h2>
+    <div class="card" style="margin:0;display:flex;gap:10px;align-items:center;line-height:1.85">
+      <span style="flex:none;width:64px">${hamSVG(hamOf(k))}</span>
+      <div style="flex:1;font-size:13px">${body}</div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:11px">
+      ${undo}<button class="btn" onclick="nextModal()">${undo?'그대로 둘래요':'그랬구나!'}</button></div>`);
+}
+
 /* 방 위로 날리는 것 — 손가락이 닿지 않게(pointer-events:none) 놓는다 */
 function seasonFallHTML(){
   const S1=season(), out=[];
@@ -8185,7 +8485,7 @@ function autoIncome(noBuff){
   });
   const buff=(!noBuff && napLeft())?NAP_MUL:1;
   /* 🌙 밤에는 다들 자고 있어서 오히려 저절로 모이는 코인이 잘 는다 */
-  return c*(1+upgLv('regul')*0.25+upgLv('deliv')*0.40+upgLv('vault')*0.45+upgLv('royal')*0.55+upgLv('truck')*0.70+upgLv('factory')*0.85)*lateAuto()*(1+S.lv*0.08)*buff*dayPart().auto*menuMul()*seasonMul('coin')*snackMul('auto')*frontAuto();
+  return c*(1+upgLv('regul')*0.25+upgLv('deliv')*0.40+upgLv('vault')*0.45+upgLv('royal')*0.55+upgLv('truck')*0.70+upgLv('factory')*0.85)*lateAuto()*(1+S.lv*0.08)*funMul('auto')*buff*dayPart().auto*menuMul()*seasonMul('coin')*snackMul('auto')*frontAuto();
 }
 /* ==================================================================
    🎁 특별 햄쮜 — 통에서 뜨는 아이들과 아주 다르게 생긴 친구들.
@@ -8466,6 +8766,9 @@ function freshState(){
           <b>따로 손댈 것이 없다</b>. frontS() 가 한 번 더 다듬는다. */
     front:{till:'', kit:'', hall:'', show:[]},
     hv:4, stkP:[], toyTry:[],                         // 💗 하트 칸 판(4 = 다섯 칸으로 되돌린 판). load 의 넘겨받기가 이걸 본다
+    fun:{d:''},                                       // 🎲 오늘의 특별한 일을 <b>알려준 날</b>. 무슨 날인지는 날짜로 셈하므로 안 적는다
+    night:{d:'', kind:'', a:'', b:'', slot:'', item:'', tale:0, k:''},   // 🌙 밤새 일어난 일. kind 는 <b>되돌리기</b> 때문에 적어둔다
+    shd:{d:'', n:0, win:0, all:0},                    // 🫥 그림자 놀이 (하루 판수 · 한 번에 맞힌 수 · 통틀어)
     mixDay:'',                    // 💞 짝꿍을 마지막으로 만든 날 (하루 한 마리)
     mail:[], mailD:'', mailN:0, mailA:0, mailT:0, mailR:'mid', tix:0, tixD:'', ui:{},
                                   // 💌 받은 편지 · 마지막으로 센 날 · 오늘 온 배달 편지 수 · 마음 편지 수 · 마지막 편지 시각
@@ -10555,7 +10858,8 @@ const MAIL_RATE={
 };
 const MAIL_RATE_KEYS=Object.keys(MAIL_RATE);
 function mailRate(){ return MAIL_RATE[S&&S.mailR] || MAIL_RATE.mid; }
-function mailDayMax(){ return mailRate().day+upgLv('post'); }
+/* 🎲 🐹수다 날·💌우체부 날에는 하루 통수가 는다 */
+function mailDayMax(){ return mailRate().day+upgLv('post')+(funNow().mailAdd|0); }
 function mailActMax(){ return mailRate().act; }
 function mailGap(){ return mailRate().gap*60*1000; }
 function setMailRate(r){
@@ -10854,7 +11158,66 @@ const MAIL_TPL=[
           근데 그냥 좋았어요.<br>아무 일 없는 날도 좋은 날인가 봐요 💗`
 ];
 /* 💗 마음 편지 — 방금 있었던 일이 그대로 담긴다 */
+/* ==================================================================
+   💬 햄쮜가 <b>나를 기억해요</b> — 2026-09-08.
+   아이 말: 「게임이 점점 고이고있는거같은데… 아이가 요즘은 좀 재미에 익숙해진거같아」
+
+   재보니 <b>아이가 만든 것에 게임이 아무 말도 안 하고 있었다</b> —
+   지어준 이름(`d.name`)·쓴 메모(`d.me`)·찍은 사진·들은 꿈·지은 방 이름·만든 메뉴가
+   전부 <b>화면에 표시만</b> 되고 있었다(「불러줘서」라는 말이 게임 전체에 한 군데뿐).
+   [[pick-fun-by-empty-category]] 의 둘째 규칙 그대로다 —
+   <b>새 놀이를 만드는 것보다 이미 쌓아둔 것에 반응을 붙이는 쪽이 값이 크다.</b>
+
+   ⚠️ 조건이 맞을 때만 보낸다(`rememPick`). 이름을 안 지어준 아이가
+      「이름 불러주셔서 고마워요」라고 하면 그 자리에서 거짓말이 된다.
+   ⚠️ 메모는 <b>아이가 쓴 글</b>이다 — `saveMemo` 가 이미 `<>&"'\`` 를 걸러 두었다.
+      그 걸러내기를 지우면 여기가 <b>바로 구멍</b>이 된다.
+   ⚠️ 값 뒤에 조사를 손으로 쓰지 마라 — `euro`·`eul`·`ega` 를 쓴다
+      ([[korean-particles-must-use-helpers]]).
+================================================================== */
 const MAIL_ACT_TPL={
+  /* 💬 아이가 지어준 이름 */
+  rmName:[
+    (k,m)=>`제 이름을 ${euro(`<b>${S.dex[k].name}</b>`)} 지어주셨죠?<br>
+            그날부터 저는 그게 제 이름이라고 생각했어요.<br>다른 애들한테도 그렇게 말했어요 😊`,
+    (k,m)=>`아까 <b>${S.dex[k].name}</b> 하고 부르셨을 때요,<br>
+            저 말고 다른 애가 먼저 돌아봤어요.<br>제 이름인데요! 다음엔 제가 먼저 갈게요`
+  ],
+  /* 💬 아이가 도감에 써둔 메모 */
+  rmMemo:[
+    (k,m)=>`제 카드에 사장님이 쓴 글이 있었어요.<br>
+            「${memoOf(k)}」<br>저 그거 세 번 읽었어요. 진짜로 세 번이요 😊`,
+    (k,m)=>`「${memoOf(k)}」<br>
+            이거 사장님이 쓴 거 맞죠?<br>글씨 예뻤어요. 저는 아직 글씨를 못 써요 ✏️`
+  ],
+  /* 💬 아이가 찍은 사진에 그 아이가 들어 있을 때 */
+  rmPhoto:[
+    (k,m)=>`사진첩에서 제 사진을 봤어요.<br>
+            그때 저 눈 감은 것 같았는데요,<br>안 감았더라고요! 다행이에요 📸`,
+    (k,m)=>`사진 찍을 때 제가 제일 앞에 섰죠?<br>
+            일부러 그런 거예요.<br>다음에도 앞에 서도 돼요? 🥰`
+  ],
+  /* 💬 아이가 꿈 공책에 적어둔 그 아이의 꿈 */
+  rmDream:[
+    (k,m)=>`제가 꿨던 꿈을 공책에 적어두셨죠?<br>
+            어제 그 쪽을 봤어요.<br>제 꿈이 책에 있는 게 신기해요 📓`,
+    (k,m)=>`꿈 공책에 제 이야기가 있어서요,<br>
+            자기 전에 한 번 더 읽었어요.<br>그랬더니 또 비슷한 꿈을 꿨어요 💤`
+  ],
+  /* 💬 아이가 지은 방 이름 */
+  rmRoom:[
+    (k,m)=>`우리 방 이름 있잖아요. <b>${roomName(m.rm|0)}</b>.<br>
+            저 그 이름 마음에 들어요.<br>누가 지었냐고 물어보면 사장님이라고 해요 🏠`,
+    (k,m)=>`손님이 우리 방 이름을 읽고 갔어요.<br>
+            ${irago(`<b>${roomName(m.rm|0)}</b>`)} 또박또박 읽었어요.<br>제가 옆에서 다 들었어요 😊`
+  ],
+  /* 💬 아이가 만들어 간판에 건 메뉴 */
+  rmMenu:[
+    (k,m)=>`간판에 걸린 <b>${rmMenuName()}</b> 있잖아요.<br>
+            손님이 그거 보고 들어와요.<br>사장님이 만든 거 맞죠? 🪧`,
+    (k,m)=>`아까 손님이 <b>${rmMenuName()}</b> 달라고 했어요.<br>
+            제가 만드는 건 아니지만요,<br>왠지 제가 칭찬받은 것 같았어요 🍨`
+  ],
   /* 🧩 짝 맞추기를 한 날 */
   mem:[
     (k,m)=>`카드 속에 제 얼굴이 있었어요!<br>
@@ -11431,6 +11794,13 @@ function friendPair(){
 }
 /* 편지가 왜 왔는지 한 줄로 — 아이가 「내가 한 일 때문에 왔구나」를 알아채게 */
 const MAIL_WHY={
+  /* 💬 아이가 만든 것을 두고 쓴 편지 — 조건이 맞을 때만 온다(rememPick) */
+  rmName :'💬 지어준 이름 이야기를 하고 싶었대요',
+  rmMemo :'💬 카드에 써둔 글을 읽고 썼대요',
+  rmPhoto:'📸 사진첩에서 자기 사진을 보고 썼대요',
+  rmDream:'📓 꿈 공책에 적힌 자기 꿈을 보고 썼대요',
+  rmRoom :'🏠 지어준 방 이름 이야기래요',
+  rmMenu :'🪧 간판에 걸린 아이스크림 이야기래요',
   heart:'💗 더 친해져서 기뻐서 썼대요',
   fav  :'💕 좋아하는 놀이를 해줘서 신났대요',
   favw :'🎀 제일 좋아하는 소품을 입혀줘서 신났대요',
@@ -11506,6 +11876,48 @@ function mailIdx(pool,r){
   for(let i=0;i<pool.length;i++) if(recent.indexOf(i)<0) free.push(i);
   return pick(free.length?free:pool.map((_,i)=>i));
 }
+/* 💬 이 아이가 <b>기억을 꺼낼 수 있나</b> — 조건이 맞는 갈래 하나를 고른다.
+   ⚠️ 조건을 안 보고 보내면 「이름 불러주셔서 고마워요」가 <b>이름을 안 지어준 아이</b>
+      한테서 온다. 그 한 통이 「이 게임은 나를 모른다」를 증명해 버린다.
+   ⚠️ 같은 갈래가 이어 오지 않게 <b>우체통에 이미 있는 것</b>은 뺀다 — mailIdx 는
+      글 번호만 흩어 주고 <b>갈래</b>는 안 본다. */
+/* ⚠️ 편지를 쓴 뒤에 아이가 <b>간판을 바꾸면</b> menuOn() 이 딴 것이 되거나 없어진다.
+   그때 menuName(null) 은 「이름 없는 아이스크림」을 돌려주는데, 그 말이 편지에 나오면
+   아이가 지은 이름을 게임이 잊은 것처럼 읽힌다. 편지에서만 쓰는 안전한 이름을 둔다. */
+function rmMenuName(){ const m=menuOn(); return (m&&m.n) ? m.n : '우리 아이스크림'; }
+/* ⚠️ 간판과 방 이름은 <b>모든 햄쮜에게 통하는 것</b>이고, 지어준 이름·메모·사진·꿈은
+   <b>그 아이에게만</b> 있는 것이다. 그냥 고르면 재본 대로 rmMenu 가 85, rmName 이 0 이
+   된다 — 그런데 <b>드문 쪽이 아이가 제일 좋아할 편지</b>다. 그래서 세 번 넣는다. */
+function rememOK(k){
+  const d=S.dex[k]; if(!d) return [];
+  const out=[], mine=r=>{ out.push(r,r,r); };            /* 그 아이만의 것은 세 배 */
+  if(typeof d.name==='string' && d.name) mine('rmName');
+  if(memoOf(k)) mine('rmMemo');
+  if((S.album||[]).some(p=>(p.hams||[]).some(h=>h&&h.k===k))) mine('rmPhoto');
+  if(dreamS().list.some(x=>x&&x.k===k)) mine('rmDream');
+  /* 🏠 편지에는 <b>mailPush 가 찍는 방</b>이 적힌다(앉은 방, 아니면 지금 보는 방) —
+     여기서도 그 방을 봐야 편지에 적힌 이름과 어긋나지 않는다 */
+  const at=whereSeated(k), ri=at?at.r:(S.room|0);
+  if(room(ri).name) out.push('rmRoom');                   /* 가게 것은 한 번 */
+  /* 🪧 간판 이야기는 <b>맨 나중</b>이다 — 모든 햄쮜에게 똑같이 통하는 것이라 그냥 두면
+     이것만 온다(재보니 123 대 5 였다). 아이는 통이 124가지인데 <b>자리는 여섯</b>이라,
+     편지를 쓸 수 있는 아이 대부분이 방에 없다. 그 아이만의 것이 없을 때만 쓴다. */
+  if(!out.length && menuOn()) out.push('rmMenu');
+  return out;
+}
+function rememPick(k){
+  const can=rememOK(k);
+  if(!can.length) return null;
+  /* 우체통 맨 앞 여섯 통에 이미 있는 갈래는 뺀다 — mailIdx 는 글 번호만 흩어 주고
+     <b>갈래</b>는 안 보므로, 이걸 안 하면 같은 이야기가 이어서 온다 */
+  const have={};
+  S.mail.slice(0,6).forEach(m=>{ have[m.r||'']=1; });
+  const free=can.filter(r=>!have[r]);
+  /* ⚠️ 남은 게 없으면 <b>아예 안 보낸다</b> — 보통 편지가 대신 온다.
+     여기서 억지로 하나 골라 보내면 같은 이야기가 계속 이어서 온다. */
+  return free.length ? pick(free) : null;
+}
+
 /* 편지 한 통을 우체통에 넣는다. r 이 있으면 「마음 편지」 */
 function mailPush(k,r,palOv){
   if(!k||!S.dex[k]) return false;
@@ -11541,6 +11953,13 @@ function mailCheck(force){
     if(pr && mailPush(pr[0],'friend',pr[1])){
       S.mailN=(S.mailN|0)+1; save(); return true;
     }
+  }
+  /* 💬 다섯 번에 한 번쯤은 <b>아이가 만든 것</b>을 두고 쓴 편지가 온다.
+     ⚠️ 나에게 오는 보통 편지를 <b>덜 오게</b> 만들면 안 된다 — 아이가 제일 좋아하는 것이다.
+        그래서 20% 만, 그리고 꺼낼 기억이 있을 때만이다. */
+  if(Math.random()<0.20){
+    const rk=mailWho(), rr=rk?rememPick(rk):null;
+    if(rr && mailPush(rk, rr)){ S.mailN=(S.mailN|0)+1; save(); return true; }
   }
   const k=mailWho(); if(!k) return false;
   /* 답장을 받았으면 그 이야기부터 쓴다 */
@@ -12074,6 +12493,7 @@ function load(){
     if(!cityOf(S.wx.city)) S.wx.city='seoul';
     if(S.wx.mode!=='city' && S.wx.mode!=='gps') S.wx.mode='gps';
     if(!S.det ||typeof S.det !=='object') S.det={d:'',n:0,win:0,all:0};
+    if(!S.shd ||typeof S.shd !=='object') S.shd={d:'',n:0,win:0,all:0};   /* 🫥 그림자 놀이 */
     if(!S.stats) S.stats={scoop:0,pet:0,best4:0,best5:0};
     if(S.stats.best5===undefined) S.stats.best5=0;
     if(!Array.isArray(S.closet)) S.closet=[];
@@ -12085,6 +12505,11 @@ function load(){
     Object.keys(S.dex).forEach(k=>{ const w=S.dex[k]&&S.dex[k].w; if(!w) return;
       WEAR_SLOTS.forEach(sl=>{ if(w[sl] && !WEAR[sl].items[w[sl]]) w[sl]=null; }); });
     if(!Array.isArray(S.badge)) S.badge=[];
+    /* ⚠️ 없앤 스티커 열쇠가 남아 있으면 `S.badge.length` 가 부풀어서
+       🏅스티커 구간 상 문턱이 <b>일찍</b> 열린다(2026-09-07 에 ✨스티커 셋을 없앴다).
+       모르는 열쇠는 걸러낸다 — 스티커는 조건을 다시 재면 되받으므로 잃는 것이 없다. */
+    { const _bk={}; BADGES.forEach(b=>{ _bk[b.k]=1; });
+      S.badge=S.badge.filter(b=>_bk[b]); }
     if(!Array.isArray(S.coupon)) S.coupon=[];
     if(!S.stamp||typeof S.stamp!=='object') S.stamp={d:'',n:0,all:0};
     if(S.stamp.all==null) S.stamp.all=0;
@@ -12101,6 +12526,9 @@ function load(){
                 hams:(Array.isArray(x.hams)?x.hams:[]).filter(k=>S.dex[k])}))
       .slice(0,DIARY_MAX);
     if(!S.today||typeof S.today!=='object') S.today={d:'',scoop:0,play:0};
+    if(!S.fun||typeof S.fun!=='object') S.fun={d:''};      /* 🎲 오늘의 특별한 일 */
+    if(!S.night||typeof S.night!=='object')                /* 🌙 밤새 일어난 일 */
+      S.night={d:'', kind:'', a:'', b:'', slot:'', item:'', tale:0, k:''};
     if(!S.rank ||typeof S.rank !=='object') S.rank={w:'',sc:0,best:7,last:0,wins:0,won:0,paid:0};
     if(!S.menuSold||typeof S.menuSold!=='object') S.menuSold={d:'',n:0};
     if(typeof S.menuAll!=='number') S.menuAll=0;
@@ -12465,7 +12893,7 @@ function addExp(v){
    ⚠️ 고정값으로 두면 Lv.40 쯤부터는 하루치 놀이를 다 해도 눈금 한 칸을 못 채운다.
    ⚠️ 새 놀이를 만들 때는 코인·토핑만 주지 말고 <b>여기도 꼭</b> 부른다 —
       아이가 제일 많이 하는 놀이가 경험치를 안 주면 레벨이 멈춘 것처럼 보인다. */
-function playExp(base){ return Math.max(1, Math.round(base*(1+S.lv*0.05))); }
+function playExp(base){ return Math.max(1, Math.round(base*(1+S.lv*0.05)*funMul('exp'))); }
 /* ⚠️ 한 번에 <b>여러 레벨</b>이 오를 수 있다 — 큰 놀이를 끝냈을 때, 그리고
    필요 경험치를 낮춘 날 처음 켰을 때. 그때 S.lv 하나만 보면 <b>지나친 레벨</b>에서
    열린 통·방·장비가 조용히 넘어가 버린다. 그래서 from~S.lv 구간을 다 훑는다. */
@@ -12857,6 +13285,7 @@ function renderScoopTab(){
         <span class="dome"></span><span class="nm">🔒</span><span class="pr">상점</span></button>`).join('')}</div>`}`;
 
   $('#view').innerHTML=`
+  ${funBarHTML()}
   <div id="stage">
     <div class="stripe"></div>
     <span class="spoon">🥄</span>
@@ -13356,6 +13785,7 @@ function addBond(k,v,kind){
   if(favWearOn(k)) v*=2;
   v*=dayPart().bond;                    /* 🌅 아침에는 하트가 잘 오른다 */
   v*=seasonMul('bond');                 /* 🍂 봄·겨울에는 더 잘 친해진다 */
+  v*=funMul('bond');                    /* 🎲 오늘이 💗사이좋은 날·☔비 오는 날이면 더 */
   if(hasSk(k,'bond')) v*=1.25;          /* 🌟 학교에서 배운 재주 */
   const _tr=traitFor(k);
   v*=_tr.bond;                          /* 🏡 방 성격 — 🌙밤하늘 방은 하트가 잘 오른다 */
@@ -13374,7 +13804,7 @@ function addBond(k,v,kind){
   if(over>0){
     d.over=(d.over||0)+over;
     /* ❄️눈나라 방은 넘치는 하트가 토핑으로 더 빨리 바뀐다 */
-    const per=Math.max(5, OVERFLOW_TOP/((_tr.top||1)*seasonMul('top')*(hasSk(k,'top')?1.35:1)));
+    const per=Math.max(5, OVERFLOW_TOP/((_tr.top||1)*seasonMul('top')*funMul('top')*(hasSk(k,'top')?1.35:1)));
     while(d.over>=per){ d.over-=per; S.top+=1; got++; }
   }
   const up=hearts(k)>b0;
@@ -13660,7 +14090,7 @@ function toyRw(kind,list){
 function toyCD(kind, i){
   const t=TOYS[kind]; if(!t||!t.cd) return 0;
   /* ⏳모래시계 한 칸에 6%씩 짧아진다 — 다 올리면 64%까지 줄어든다 */
-  return Math.round(t.cd*traitOf(i).cd*(1-upgLv('sand')*0.06));
+  return Math.round(t.cd*traitOf(i).cd*funMul('cd')*(1-upgLv('sand')*0.06));
 }
 function oneLeft(k,kind){
   const d=S.dex[k]; if(!d) return 0;
@@ -15615,7 +16045,10 @@ const ERR=[
   {k:'ride',  em:'🛝', n:3,  s:'놀이기구 3번',d:'뒷마당 놀이기구 3번 타기',      go:()=>{goRoom(YARD_I); go('play');},
    ok:()=>roomOk(YARD_I) && YSPOT_KEYS.some(sk=>furnAt(sk,YARD_I)) && roomHams(YARD_I).length>0},
   {k:'det',   em:'🕵️', n:1,  s:'탐정 1판',    d:'햄쮜 탐정에서 범인 맞히기',       go:()=>openDet(),
-   ok:()=>Object.keys(S.dex).length>=4 && detLeft()>0}
+   ok:()=>Object.keys(S.dex).length>=4 && detLeft()>0},
+  /* ⚠️ 심부름 열쇠는 <b>맨 뒤</b>에만 더한다 — 저장에 열쇠가 적혀 있다(errToday) */
+  {k:'shd',   em:'🫥', n:1,  s:'그림자 1판',  d:'그림자 놀이에서 누구인지 맞히기', go:()=>openShadow(),
+   ok:()=>Object.keys(S.dex).length>=4 && shdLeft()>0}
 ];
 const ERR_N=3;
 function errOf(k){ return ERR.find(e=>e.k===k); }
@@ -15916,6 +16349,114 @@ function pickSnack(k){
   toast(`${sn.em} ${eul(`<b>${sn.n}</b>`)} 나눠줬어요! ${sn.d.replace(/<[^>]+>/g,'')}`);
   openSnack();
 }
+/* ==================================================================
+   🫥 그림자 놀이 — 하루에 세 판. <b>매일 문제가 다르다.</b>
+   아이 말(2026-09-08): 「게임이 점점 고이고있는거같은데… 재미에 익숙해진거같아」
+   재보니 「실력」 갈래가 🕵️탐정 하나뿐이었다.
+
+   왜 그림자인가 — 「모양은 <b>실루엣</b>이 말해야 한다」가 이 게임 그림의 규칙이다
+   ([[hamskin-shape-review]]). 색을 지워도 알아볼 수 있게 그려 왔으니
+   <b>색을 지워서 맞히는 놀이</b>가 그대로 성립한다. 새 그림이 한 장도 필요 없다.
+
+   ⚠️ <b>지는 법이 없다.</b> 틀리면 그 단추만 흐려지고 다시 고르면 된다 —
+      판이 끝나거나 상을 뺏기는 일은 없다(README: 「이 게임은 지는 법이 없습니다」).
+   ⚠️ 상은 <b>한 번에 맞혔나</b>로만 갈린다. 두 번째에 맞혀도 <b>반은 받는다.</b>
+   ⚠️ 문제는 <b>아이가 만난 햄쮜</b>에서만 뽑는다 — 모르는 아이를 물으면 찍기가 된다.
+   ⚠️ 그림자는 CSS `filter:brightness(0)` 하나로 만든다. 그림을 따로 그리지 않는다 —
+      따로 그리면 통이 늘어날 때마다 그림자도 같이 그려야 한다(지금 225장!).
+   ⚠️ 「오늘 할 일」에 <b>줄을 더하지 않았다</b> — 이미 스물네 갈래다.
+      🕵️탐정과 똑같이 🎮놀이터의 「언제든 하는 놀이」와 🎯심부름에만 둔다.
+================================================================== */
+const SHD_N=3;                       /* 하루 세 판 */
+function shdS(){
+  if(!S.shd || typeof S.shd!=='object') S.shd={d:'', n:0, win:0, all:0};
+  if(S.shd.d!==todayKey()){ S.shd.d=todayKey(); S.shd.n=0; S.shd.win=0; }
+  return S.shd;
+}
+/* 🎲 그림자 날에는 판이 더 있다. ⚠️ 남은 판만 늘리고 <b>표시(N/최대)</b>를 안 고치면
+   「3/3 남음」 같은 말이 나온다 — 최대치를 헬퍼로 두고 표시도 그것을 쓴다. */
+function shdMax(){ return SHD_N+(funNow().shdAdd|0); }
+function shdLeft(){ return Math.max(0, shdMax()-(shdS().n|0)); }
+let sg=null;                         /* 지금 판 {who, pool, bad:[], first} */
+function shdMake(){
+  const own=Object.keys(S.dex).filter(k=>S.dex[k]);
+  if(own.length<4) return null;
+  const pool=[], bag=own.slice();
+  for(let i=0;i<4 && bag.length;i++) pool.push(bag.splice(ri(0,bag.length-1),1)[0]);
+  return {who:pick(pool), pool, bad:[], first:1};
+}
+function openShadow(){
+  if(Object.keys(S.dex).length<4){
+    sfx('boo'); toast('🫥 햄쮜가 <b>네 마리</b>는 있어야 그림자 놀이를 할 수 있어요 🍨'); return;
+  }
+  if(!shdLeft() && !sg){
+    sfx('boo'); toast(`🫥 오늘 그림자 놀이는 다 했어요 — 내일 또 와요! (하루 ${SHD_N}판)`); return;
+  }
+  /* 저장을 넘겨받으면서 문제의 아이가 없어질 수 있다 — 그대로 그리면 창이 안 뜬다 */
+  if(sg && (!S.dex[sg.who] || sg.pool.some(k=>!S.dex[k]))) sg=null;
+  if(!sg){
+    let g=null;
+    for(let t=0;t<20 && !g;t++) g=shdMake();
+    if(!g){ sfx('boo'); toast('🫥 지금은 문제를 못 만들었어요 — 햄쮜를 더 만나볼까요? 🍨'); return; }
+    sg=g; shdS().n++; save();
+  }
+  sfx('tap'); drawShadow();
+}
+function drawShadow(){
+  if(!sg) return;
+  const g=sg;
+  openModal(`<h2>🫥 그림자 놀이<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="line-height:1.7;margin-bottom:8px">
+      불을 껐어요 🌑 <b>누구의 그림자</b>일까요?<br>
+      틀려도 괜찮아요 — 다시 고르면 돼요 😊</div>
+    <div class="card" style="margin:0;text-align:center">
+      <div class="shd">${hamSVG(hamOf(g.who))}</div>
+    </div>
+    <div class="shdpick">
+      ${g.pool.map(k=>`<button class="btn ${g.bad.indexOf(k)>=0?'w off':'g'} sm"
+        ${g.bad.indexOf(k)>=0?'disabled':''} onclick="shdGuess('${k}')">${nameOf(k)}</button>`).join('')}
+    </div>
+    <div class="muted" style="text-align:center;margin-top:9px;font-size:11.5px">
+      오늘 남은 판 <b>${shdLeft()}</b> / ${shdMax()} · 한 번에 맞힌 것 <b>${shdS().win}</b>번</div>`);
+}
+function shdGuess(k){
+  if(!sg || !S.dex[k]) return;
+  const g=sg;
+  if(k!==g.who){
+    if(g.bad.indexOf(k)<0) g.bad.push(k);
+    g.first=0;
+    sfx('boo'); vib(12);
+    toast(`🫥 ${ega(nameOf(k))} 아니에요 — 다시 골라볼까요?`);
+    drawShadow(); return;
+  }
+  /* 맞혔다 — 한 번에 맞힌 판만 win 으로 센다. 상은 어느 쪽이든 받는다 */
+  const one=!!g.first;
+  if(one) shdS().win++;
+  shdS().all=(shdS().all|0)+1;
+  const coin=Math.max(30+S.lv*6, payMin(one?1.4:0.7));
+  const top=one?3:1;
+  S.coin+=coin; S.top+=top;
+  addExp(playExp(one?9:5));
+  addBond(g.who, one?7:4, 'shadow');
+  sg=null;
+  sfx(one?'star4':'gift'); vib([0,22,40,22]);
+  errBump('shd'); checkBadges(); save(); renderHUD(); renderView();
+  const more=shdLeft()>0;
+  openModal(`<h2>🫥 맞혔어요!<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="card" style="margin:0;display:flex;gap:10px;align-items:center;line-height:1.8">
+      <span style="flex:none;width:70px">${hamSVG(hamOf(g.who))}</span>
+      <div style="flex:1;font-size:13px">
+        ${iyeyo(`<b>${nameOf(g.who)}</b>`)}!<br>
+        ${one?'💡 <b>한 번에</b> 맞혔어요 — 대단해요!'
+             :'😊 두 번째에 맞혔어요 — 그래도 잘했어요!'}
+        <div class="muted" style="margin-top:3px">🪙${fmt(coin)} · 🍒${top} · 💗하트도 조금</div>
+      </div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:11px">
+      ${more?`<button class="btn g" onclick="closeModal();openShadow()">🫥 한 판 더 (${shdLeft()})</button>`
+            :`<div class="muted" style="font-size:12px">오늘 그림자 놀이는 다 했어요 — 내일 또 해요! 🌙</div>`}
+      <button class="btn w" onclick="closeModal()">닫기</button></div>`);
+}
 function openDet(){
   if(Object.keys(S.dex).length<4){
     sfx('boo'); toast('🕵️ 햄쮜가 <b>네 마리</b>는 있어야 탐정 놀이를 할 수 있어요 🍨'); return;
@@ -16024,6 +16565,11 @@ function drawDet(pay){
 function addStar(n, why){
   n=Math.max(0, Math.round(n||0));
   if(!n) return 0;
+  /* 🎲 별 날에는 더 나온다. ⚠️ 별은 <b>한 번에 1~2개</b>씩 주는 곳이 많아서
+     그냥 반올림하면 1×1.5=1.5→2 아니면 1 로 <b>튄다</b>. 소수점은 확률로 처리해
+     여러 판을 놀았을 때 평균이 정확히 배수가 되게 한다. */
+  const _sm=funMul('star');
+  if(_sm!==1){ const v=n*_sm; n=Math.floor(v)+(Math.random()<(v%1)?1:0); if(!n) return 0; }
   S.ord.star=(S.ord.star||0)+n;
   if(why && n>=3) toast(`⭐ ${why} — 별 <b>+${n}</b> (모은 별 ${fmt(S.ord.star)}개)`);
   /* ⚠️ 별이 다 찼으면 <b>그 자리에서</b> 새 친구가 온다.
@@ -18789,7 +19335,7 @@ function guestChance(){
   /* 🍰손님 방석 한 칸에 4%씩 더 자주 온다.
      ⚠️ 상한도 같이 올려야 한다 — 상한이 0.5로 고정이면 열일곱 판만 해도 이미 상한이라
      방석을 아무리 사도 아무 일이 안 일어난다(처음에 그렇게 만들었다가 고쳤다). */
-  const g=upgLv('guest'), sm=snackMul('guest');
+  const g=upgLv('guest'), sm=snackMul('guest')*funMul('guest');
   /* ⚠️ 상한에도 같이 곱한다 — 상한이 그대로면 🧃주스를 골라도 아무 일이 안 난다 */
   return Math.min(0.9, Math.min(0.5+g*0.04, 0.2+r*0.03+g*0.04)*sm);
 }
@@ -19000,7 +19546,10 @@ function openGuests(){
 function finishRound(){
   clearTimeout(memoTimer); memoTimer=null;
   og.done=true; og.cur=null;
-  const st=ordStars(og.sc), m=1+S.lv*0.2;
+  let st=ordStars(og.sc); const m=1+S.lv*0.2;
+  /* 🎲 별 날 — 아래에서 `S.ord.star` 에 직접 더하므로 addStar 의 배수를 안 탄다 */
+  { const _sm=funMul('star');
+    if(_sm!==1){ const v=st*_sm; st=Math.floor(v)+(Math.random()<(v%1)?1:0); } }
   const coin=Math.ceil(((70+og.sc*34)*m*(1+upgLv('bell')*0.22)+payMin(4+og.sc*0.7))*(1+skSeatN('order')*0.10));
   const tops = og.sc>=9 ? ri(2,4) : (og.sc>=7 ? ri(0,1) : 0);
   S.ord.star=(S.ord.star||0)+st;
@@ -19298,9 +19847,12 @@ function renderOrderTab(){
         🕵️ 햄쮜 탐정${detLeft()?` (오늘 ${detLeft()}판 남음)`:' (내일 또)'}</button>
       <button class="btn ${memBonusLeft()?'g':'w'} sm" onclick="openMem()">
         🧩 짝 맞추기${memBonusLeft()?' (오늘 첫 판 세 배!)':''}</button>
+      <button class="btn ${shdLeft()?'g':'w'} sm" style="grid-column:1/-1" onclick="openShadow()">
+        🫥 그림자 놀이${shdLeft()?` (오늘 ${shdLeft()}판 남음)`:' (내일 또)'}</button>
     </div>
     <div class="muted" style="margin-top:7px;line-height:1.6">
-      🏆 대회와 🕵️ 탐정은 <b>하루에 정해진 만큼</b>, 🙈 숨바꼭질은 <b>조금 쉬었다가</b> 또 할 수 있어요.<br>
+      🏆 대회와 🕵️ 탐정, 🫥 그림자 놀이는 <b>하루에 정해진 만큼</b>,
+      🙈 숨바꼭질은 <b>조금 쉬었다가</b> 또 할 수 있어요.<br>
       🧩 짝 맞추기는 <b>언제든 몇 번이든</b> 할 수 있어요 — 큰 선물만 하루에 한 번이에요.
     </div>
   </div>
@@ -20632,6 +21184,12 @@ function mumbleOf(k){
   if(dw>=7) pool.push('벌써 '+dw+'일째!');
   const d=S.dex[k];
   if(d && d.g>=4) pool.push('나 반짝반짝!','오늘 좀 예뻐요');
+  /* 💬 아이가 만든 것을 알아본다 — 편지의 짧은 짝이다.
+     ⚠️ 열 글자(MUMBLE_MAX)를 넘는 것은 아래 fit 이 걸러내니 길어도 안 깨진다 */
+  if(d && d.name) pool.push('제 이름 좋아','그게 제 이름!');
+  if(memoOf(k)) pool.push('그거 읽었어요','글씨 예뻐요');
+  if((S.album||[]).some(p=>(p.hams||[]).some(h=>h&&h.k===k))) pool.push('사진 봤어요');
+  if(menuOn()) pool.push('간판 봤어요');
   if(S.star && S.star.k===k) pool.push('오늘은 내 날!');
   if(isYard(S.room|0)){
     const w=wxNow();
@@ -20648,6 +21206,14 @@ function runStartQueue(){
   _mq=[];
   if(stkReport) _mq.push(showStkPrize);
   if(awayReport) _mq.push(showAway);
+  /* 🎲 오늘이 무슨 날인지 <b>먼저</b> 알려준다 — 도장·부탁을 무슨 마음으로 할지 정해진다.
+     ⚠️ 하루에 한 번만이다(funS().d). 매번 뜨면 그 순간 귀찮은 것이 된다. */
+  if(funNew()) _mq.push(showFunDay);
+  /* 🌙 밤새 일어난 일 — 셈은 여기서 하고(하루 한 번), 창은 줄에 세운다.
+     ⚠️ nightRoll 이 자리표·소품을 <b>바꿀 수 있으므로</b> 창을 띄우기 전에 불러야
+        아이가 보는 화면과 창의 이야기가 맞는다. */
+  nightRoll();
+  if(nightReport) _mq.push(showNight);
   if(stampReady()) _mq.push(openStamp);
   nextModal();
 }
