@@ -6089,10 +6089,7 @@ function hamKey(h){
   const w=h.wear||{};
   /* ⚠️ baby(아기 크기)를 열쇠에 꼭 넣어야 한다 — 안 넣으면 아기와 다 큰 아이가
      같은 그림을 캐시에서 나눠 쓰게 되어, 자라도 그림이 안 바뀐다. */
-  /* ⚠️ h.spark 를 여기 안 넣으면 반짝별이 늘어도 <b>옛 그림이 그대로</b> 나온다(그림을 아껴두므로).
-     ⚠️ 이름이 spark 인 까닭 — SHAPES 에도 <b>shine</b> 이 있는데 그건 몸에 얹는 <b>윤기</b>다
-        (🧈버터·🍯달고나). 같은 이름을 쓰면 언젠가 둘을 헷갈려 윤기를 지우게 된다. */
-  return h.shape+'|'+h.color+'|'+h.pattern+'|'+h.grade+'|'+(h.cone||'')+'|'+(w.hat||'')+'|'+(w.neck||'')+'|'+(w.hand||'')+'|'+(w.cone||'')+'|'+(h.mood||'')+'|'+(h.baby||'')+'|'+(h.spark||0);
+  return h.shape+'|'+h.color+'|'+h.pattern+'|'+h.grade+'|'+(h.cone||'')+'|'+(w.hat||'')+'|'+(w.neck||'')+'|'+(w.hand||'')+'|'+(w.cone||'')+'|'+(h.mood||'')+'|'+(h.baby||'');
 }
 function hamSVG(h){
   const k=hamKey(h);
@@ -6280,15 +6277,6 @@ function buildHamSVG(h){
   if(h.baby && h.baby<1){
     g=`<g transform="translate(50,92) scale(${h.baby}) translate(-50,-92)">${g}</g>`;
   }
-  /* ✨ 반짝별 — 하트를 한 판씩 채울 때마다 별이 하나 늘어난다.
-     ⚠️ <b>맨 마지막에</b> 그린다. 먼저 그리면 몸이나 소품에 가려서 세 번째·네 번째 별이
-        사라진다 — 몸이 cx50 cy54 r~44 로 넓어서 왼쪽·오른쪽 귀퉁이까지 닿는다.
-     ⚠️ 별 반지름(8) 만큼 그림칸(0~100) 안으로 들여 놓는다 — (50,3) 에 놓으면 윗머리가 잘린다.
-     ⚠️ 반지름을 6 으로 뒀더니 방 목록(56px)에서 6.7px 짜리 점이 됐다 — 「deco 는 56px 에서
-        사라진다」를 또 겪었다. 8 아래로 내리지 마라.
-     ⚠️ 이건 ⭐별(뽑기 등급)과 <b>다른 것</b>이다 — ⭐는 운이고, ✨는 아이가 놀아준 만큼이다. */
-  if(h.spark) g+=[[14,14],[86,14],[9,44],[91,44],[50,10]].slice(0,h.spark)
-    .map(q=>_star(q[0],q[1],8,'#fff3ae','#e8c24e')).join('');
   return `<svg viewBox="0 0 100 100">${g}</svg>`;
 }
 function hamPic(h,style){ return `<span class="hs" style="${style||''}">${hamSVG(h)}</span>`; }
@@ -6939,46 +6927,27 @@ const FREE_TUBS=['vanilla','straw','choco','milk'];
 function unlocked(){ return FKEYS.filter(k=>S.open.includes(k)); }
 
 /* 친밀도 */
-/* 💗 하트 칸 — 2026-09-07 에 <b>다섯 개에서 열 개로</b> 늘렸다.
-   아이 말: 「하트가 너무 작아… 두배세배 오르는게 아무 의미가 없어」.
-   장비를 다 올리면 🍒토핑 <b>두 번</b>에 꽉 찼다.
-   ⚠️ 늘리면서 옛 저장의 정을 <b>열 배</b>로 넘겨받는다(아래 load 참고) — 그래서
-      지금 하트가 몇 개든 <b>비율이 그대로</b>다. 아이한테서 뺏은 것이 하나도 없다.
-   ⚠️ 이 두 값을 또 바꿀 거면 load 의 `S.hv` 넘겨받기를 <b>반드시 같이</b> 손봐야 한다. */
-const HEART_MAX=10;                   /* 하트 칸 수 */
-const BOND_PER=100;                   /* 한 칸에 드는 정 */
-const BOND_MAX=HEART_MAX*BOND_PER;    /* 1000 */
-/* ✨ 반짝별 — 하트 열 칸을 다 채우면 그 열 칸이 <b>✨반짝별 한 개</b>가 되고
-   하트는 다시 처음부터 찬다. 다섯 개까지.
-   ⚠️ 정(d.bond)은 <b>절대 줄지 않는다</b>. 하트가 0 으로 보이는 것은 <b>표시</b>일 뿐,
-      한 판을 통째로 ✨ 로 <b>바꿔 준</b> 것이다 — 그래서 뺏는 것이 하나도 없다.
-   ⚠️ 그러니 코인 계수(heartPct)와 「꽉 찼나」(heartFull)는 <b>지금 판</b>을 보지 않고
-      정의 <b>총량</b>을 본다. 지금 판을 보면 반짝별이 되는 순간 벌이가 떨어지고
-      스티커가 취소된다 — 정확히 아이한테서 뺏는 것이다. */
-const SHINE_MAX=5;                     /* ✨반짝별 다섯 개까지 */
-const BOND_CAP=BOND_MAX*(1+SHINE_MAX); /* 6000 — 여기까지 차면 넘치는 사랑이 🍒토핑이 된다 */
-function bondOf(k){ const d=S.dex[k]; return d?clamp(d.bond||0,0,BOND_CAP):0; }
-function shine(k){ return S.dex[k]?Math.min(SHINE_MAX, Math.floor(bondOf(k)/BOND_MAX)):0; }
-function shineFull(k){ return shine(k)>=SHINE_MAX; }
-function shineStr(k){ return '✨'.repeat(shine(k)); }
-function hearts(k){
-  if(!S.dex[k]) return 0;
-  const sn=shine(k);
-  if(sn>=SHINE_MAX) return HEART_MAX;  /* 다 모은 아이는 하트도 꽉 찬 채로 둔다 */
-  return Math.min(HEART_MAX, Math.floor((bondOf(k)-sn*BOND_MAX)/BOND_PER));
-}
+/* 💗 하트 칸 — 다섯 개. 2026-09-07 에 열 개로 늘렸다가 <b>같은 날 되돌렸다</b>.
+   아이 말: 「하트 개수 늘리고 반짝별 추가한거 다시 롤백하자. 짝꿍만들때도 하트 개수때문에
+   계속 걸리고 계속 하트 개수 리셋느낌이라 체감도 별로야」
+   ⚠️ 늘렸을 때 진짜 결함이 있었다 — ✨반짝별이 생기면 하트가 0 으로 돌아가는데
+      짝꿍은 `hearts(a)>=MIX_NEED_HEART` 를 보므로 <b>제일 오래 키운 아이가 짝꿍을
+      못 만들었다</b>. 「지금 판이 아니라 총량을 봐야 한다」를 코인·스티커에는 적용하고
+      <b>짝꿍은 빠뜨렸다</b>. 하트를 다시 손댈 거면 hearts() 를 보는 곳을 <b>전부</b> 세라.
+   ⚠️ 그리고 아이는 하트가 도로 0 이 되는 것 자체를 싫어했다 — 창으로 알려줘도 그렇다.
+      <b>「채운 것이 줄어 보이는 것」은 설명으로 덮이지 않는다.</b>
+   ⚠️ 이 두 값을 또 바꿀 거면 load 의 `d.hv` 넘겨받기를 <b>반드시 같이</b> 손봐야 한다. */
+const HEART_MAX=5;                    /* 하트 칸 수 */
+const BOND_PER=20;                    /* 한 칸에 드는 정 */
+const BOND_MAX=HEART_MAX*BOND_PER;    /* 100 */
+function hearts(k){ const d=S.dex[k]; return d?Math.min(HEART_MAX,Math.floor((d.bond||0)/BOND_PER)):0; }
 /* 0~1 — 코인·점수 계수는 <b>반드시 이걸로</b> 쓴다. hearts(k) 에 상수를 곱하면
-   칸 수를 바꾸는 순간 아이 벌이가 소리 없이 뛴다(열 칸으로 늘릴 때 1.6배가 됐다).
-   ⚠️ hearts(k)/HEART_MAX 로 쓰면 안 된다 — 반짝별이 되면 0 으로 돌아가서 벌이가 떨어진다. */
-function heartPct(k){ return Math.min(1, Math.floor(bondOf(k)/BOND_PER)/HEART_MAX); }
-/* 「한 번이라도 하트를 꽉 채웠나」 — 스티커·저금통·승급에서 본다.
-   ⚠️ hearts(k)>=HEART_MAX 로 쓰면 안 된다 — 반짝별이 되면 false 가 되어 스티커가 취소된다. */
-function heartFull(k){ return shine(k)>=1; }
-/* ✨ 는 <b>이모지 하나 + 숫자</b>로 짧게 붙인다 — 다섯 개를 다 그리면 좁은 줄이 넘친다 */
-function heartStr(k){ const n=hearts(k), sn=shine(k);
-  return (sn?'✨'+sn+' ':'')+'💗'.repeat(n)+'🤍'.repeat(HEART_MAX-n); }
-/* 좁은 줄(방 목록처럼 nowrap 인 곳)에는 이모지 열 개가 안 들어간다 — 숫자로 보여준다 */
-function heartMini(k){ const sn=shine(k); return (sn?'✨'+sn+' ':'')+`💗${hearts(k)}/${HEART_MAX}`; }
+   칸 수를 바꾸는 순간 아이 벌이가 소리 없이 뛴다. */
+function heartPct(k){ return hearts(k)/HEART_MAX; }
+function heartFull(k){ return hearts(k)>=HEART_MAX; }
+function heartStr(k){ const n=hearts(k); return '💗'.repeat(n)+'🤍'.repeat(HEART_MAX-n); }
+/* 좁은 줄(방 목록처럼 nowrap 인 곳)에는 숫자로 보여준다 */
+function heartMini(k){ return `💗${hearts(k)}/${HEART_MAX}`; }
 function totalHearts(){ return Object.keys(S.dex).reduce((a,k)=>a+hearts(k),0); }
 /* 방을 여러 개 꾸미면 모든 방의 햄쮜가 함께 벌어준다 — 방을 늘릴 이유 */
 /* 😴 낮잠을 재우면 잠깐 코인이 두 배로 모인다 — 남은 시간(ms) */
@@ -8210,9 +8179,9 @@ function autoIncome(noBuff){
     const yard=isYard(i), tr=traitOf(i);
     /* ⚠️ 전에는 (1+0.3*hearts) 였다 — 하트 칸을 열로 늘리면서 그대로 두면 ×2.5 가 ×4 로
        뛴다(아이 벌이가 1.6배). heartPct 로 써서 <b>만점일 때 ×2.5 를 그대로</b> 지킨다. */
-    /* ✨ 반짝별 하나에 +10% — <b>새 지렛대를 만들지 않고</b> 하트 항에 이어 붙인다.
-       만점(하트 꽉 + 반짝별 다섯)이 ×3.0, 반짝별이 없으면 전과 똑같이 ×2.5 다. */
-    roomHams(i).forEach(k=>{ c+=S.dex[k].g*(1+1.5*heartPct(k)+0.1*shine(k))*0.3*(yard?yardOne(k):1)*buddyMul(k)*tr.auto*(hasSk(k,'coin')?1.2:1); });
+    /* ⚠️ heartPct(0~1) 로 쓴다 — hearts(k) 에 상수를 곱하면 칸 수를 바꾸는 순간
+       아이 벌이가 소리 없이 뛴다. 만점이 ×2.5 다. */
+    roomHams(i).forEach(k=>{ c+=S.dex[k].g*(1+1.5*heartPct(k))*0.3*(yard?yardOne(k):1)*buddyMul(k)*tr.auto*(hasSk(k,'coin')?1.2:1); });
   });
   const buff=(!noBuff && napLeft())?NAP_MUL:1;
   /* 🌙 밤에는 다들 자고 있어서 오히려 저절로 모이는 코인이 잘 는다 */
@@ -8374,23 +8343,23 @@ function hamOf(k,wearOv){
   if(m){   /* 💞 믹스쮜 — 색을 섞고, 두 아이의 특징을 모아 한 모양으로 만든다 */
     if(!m.sa||!m.sb||!SHAPES[m.shape]) mixFixShape(m);
     return {shape:m.shape, color:k, colorObj:m.col, pattern:d.p, grade:d.g, cone:m.cone, wear, mood:moodOf(k),
-            spark:shine(k), baby: m.baby ? babyScale(k) : 0};
+            baby: m.baby ? babyScale(k) : 0};
   }
   if(isSp(k)){
     const s=spOf(k);
     return {shape:s.shape, color:s.color, pattern:d?d.p:'plain', grade:d?d.g:1, cone:s.c, wear, mood:moodOf(k),
-            spark:shine(k)};
+            };
   }
   if(isCb(k)){
     const c=cbOf(k)||{};
     /* ⚠️ 무늬를 <b>여기서도</b> 못 박는다 — 저장에 옛 줄무늬가 남아 있어도 안 그린다.
        ⭐승급이나 쿠폰 같은 다른 길로 무늬가 들어와도 여기서 막힌다. */
     return {shape:c.shape, color:c.color, colorObj:c.col, pattern:'plain', grade:d?d.g:5,
-            cone:c.c, wear, mood:moodOf(k), spark:shine(k)};
+            cone:c.c, wear, mood:moodOf(k)};
   }
   const f=FL[k];
   return {shape:f.shape, color:f.color, pattern:d?d.p:'plain', grade:d?d.g:1, cone:f.c, wear, mood:moodOf(k),
-          spark:shine(k)};
+          };
 }
 /* 아이가 지어준 이름이 있으면 그 이름으로 부른다 */
 function nameOf(k){
@@ -8426,7 +8395,7 @@ function mixCount(){ return mixKeys().length; }
 ================================================================== */
 const SAVE='hamskin-robbins-v2';
 const OFFLINE_RATE=0.5, OFFLINE_MAX=12*3600;
-let S=null, awayReport=null, shineReport=null;
+let S=null, awayReport=null;
 function freshState(){
   return {
     coin:60, top:0, lv:1, exp:0, pity:0,
@@ -8496,7 +8465,7 @@ function freshState(){
        ⚠️ 옛 저장에는 없다. load() 의 Object.assign 이 이 기본값을 그대로 남기므로
           <b>따로 손댈 것이 없다</b>. frontS() 가 한 번 더 다듬는다. */
     front:{till:'', kit:'', hall:'', show:[]},
-    hv:3, stkP:[], toyTry:[],                         // 💗 하트 칸 판(2 = 열 칸). load 의 넘겨받기가 이걸 본다
+    hv:4, stkP:[], toyTry:[],                         // 💗 하트 칸 판(4 = 다섯 칸으로 되돌린 판). load 의 넘겨받기가 이걸 본다
     mixDay:'',                    // 💞 짝꿍을 마지막으로 만든 날 (하루 한 마리)
     mail:[], mailD:'', mailN:0, mailA:0, mailT:0, mailR:'mid', tix:0, tixD:'', ui:{},
                                   // 💌 받은 편지 · 마지막으로 센 날 · 오늘 온 배달 편지 수 · 마음 편지 수 · 마지막 편지 시각
@@ -8738,13 +8707,7 @@ const BADGES=[
                                             ok:()=>spCount()>=SP_KEYS.length, top:120},
   {k:'mx12',  em:'💕', n:'짝꿍 열둘',      d:'짝꿍 햄쮜를 12마리 만들었어요',      ok:()=>mixCount()>=12, top:45},
   {k:'mx30',  em:'🧬', n:'짝꿍 서른',      d:'짝꿍 햄쮜를 30마리 만들었어요',      ok:()=>mixCount()>=30, top:110},
-  /* ---- ✨ 반짝별 스티커 · 🎀 좋아하는 소품 스티커 (2026-09-07) ---- */
-  {k:'shn1',  em:'✨', n:'첫 반짝별',      d:'하트를 꽉 채워서 <b>반짝별</b>이 생겼어요',
-     ok:()=>Object.keys(S.dex).some(k=>shine(k)>=1), top:12},
-  {k:'shn3',  em:'🌟', n:'반짝이는 셋',    d:'반짝별이 있는 친구가 셋이에요',
-     ok:()=>Object.keys(S.dex).filter(k=>shine(k)>=1).length>=3, top:30},
-  {k:'shn5',  em:'💫', n:'반짝 다섯 개',   d:'반짝별 <b>다섯 개</b>를 다 모은 친구가 있어요!',
-     ok:()=>Object.keys(S.dex).some(k=>shineFull(k)), top:70},
+  /* ---- 🎀 좋아하는 소품 스티커 (2026-09-07) ---- */
   {k:'fw1',   em:'🎀', n:'취향 저격',      d:'제일 좋아하는 소품을 알아내서 입혀줬어요',
      ok:()=>Object.keys(S.dex).some(k=>S.dex[k]&&S.dex[k].fw), top:12},
   {k:'fw10',  em:'👗', n:'소품 척척박사',  d:'좋아하는 소품을 열 마리에게 입혀줬어요',
@@ -10916,19 +10879,6 @@ const MAIL_ACT_TPL={
     (k,m)=>`오늘 하트가 또 올랐어요.<br>
             얼마나 좋은지 손으로 재보려고 했는데요,<br>손이 작아서 다 못 재겠어요 🫶`
   ],
-  /* ✨ 반짝별이 하나 늘었을 때 — 아이가 제일 오래 놀아준 결과라서 자랑을 하게 둔다 */
-  shine:[  (k,m)=>`저 봤어요? <b>반짝별</b>이 하나 생겼어요! ✨<br>
-                   머리 위에서 반짝반짝 해요.<br>이거 그냥 생긴 거 아니에요 —
-                   ${wagwa(nameOf(k))} 놀아준 게 이만큼이라는 뜻이에요 🥰`,
-           (k,m)=>`하트가 열 개 다 차니까 <b>반짝별</b>로 바뀌었어요 ✨<br>
-                   처음엔 하트가 없어져서 깜짝 놀랐는데,<br>
-                   세어 보니까 하나도 안 없어졌어요. 별이 된 거였어요!`,
-           (k,m)=>`지금 반짝별 <b>${shine(k)}개</b>예요 ✨<br>
-                   거울 앞에서 한참 봤어요.<br>다섯 개까지 모을 수 있대요. 같이 모아요!`,
-           (k,m)=>`오늘 방에서 제가 제일 반짝였어요 ✨<br>
-                   다들 「어떻게 한 거야?」 물어봤는데요,<br>
-                   그냥 웃었어요. 우리 둘만 아는 거니까요 💗`
-  ],
   /* 🎀 좋아하는 소품을 알아내서 입혀줬을 때 */
   favw:[   (k,m)=>`${eul(favWearLabel(k))} 어떻게 알았어요?<br>
                    저 그거 제일 좋아하는데요.<br>거울 앞에서 계속 봤어요 🥰`,
@@ -11485,7 +11435,6 @@ const MAIL_WHY={
   fav  :'💕 좋아하는 놀이를 해줘서 신났대요',
   favw :'🎀 제일 좋아하는 소품을 입혀줘서 신났대요',
   friend:'💌 햄쮜끼리 주고받는 편지예요 — 전해 달라고 맡겼어요',
-  shine:'✨ 반짝별이 하나 늘어서 자랑하고 싶대요',
   new  :'🍨 오늘 처음 만나서 인사하는 편지예요',
   cont :'🎀 꾸미기 대회에 나갔던 이야기래요',
   anniv:'🎂 기념일을 축하해줘서 고맙대요',
@@ -11540,7 +11489,7 @@ function mailWho(){
   /* 💌 답장을 받은 아이가 제일 먼저 쓴다 — 답장했더니 아무 일도 없으면 김이 샌다 */
   const due=own.filter(k=>k!==last && replyDue(k));
   if(due.length) return pick(due);
-  let pool=own.filter(k=>hearts(k)>=4);        /* 옛 2/5 = 지금 4/10 */
+  let pool=own.filter(k=>hearts(k)>=2);
   if(!pool.length) pool=own;
   const fresh=pool.filter(k=>k!==last);
   return pick(fresh.length?fresh:pool);
@@ -11921,7 +11870,23 @@ const COUPONS={
                     furn:['cart','bigplant','garland'], mail:2},
   '우리방작은음악회':{em:'🎹', name:'우리방 작은 음악회', coin:5800, top:30,
                       wear:['hat_ribbon','neck_bowtie'],
-                      tub:['rose','yuja'], furn:['piano','jukebox','chair','books'], mail:3}
+                      tub:['rose','yuja'], furn:['piano','jukebox','chair','books'], mail:3},
+  /* 「놀이공원 가고싶어」 — 🎮놀이가 다섯 가지 늘어난 것을 기념하는 쿠폰.
+     ⚠️ 🎠회전목마·🎤노래자랑·🛝미끄럼틀·🎪서커스·🎡관람차는 <b>레벨로</b> 열린다 —
+        쿠폰으로 미리 열어주지 마라. 레벨이 오르는 재미가 그대로 사라진다.
+        대신 방을 놀이공원처럼 꾸밀 것들과 <b>놀이공원 간식</b>을 준다. */
+  '놀이공원가고싶어':{em:'🎪', name:'놀이공원 가고싶어', coin:6800, top:34,
+                      wear:['hat_catear','hand_skewer','cone_cberry'],
+                      tub:['waffle','pretzel'],
+                      furn:['ferris','tramp','tent','kite'], mail:2},
+  /* 「친구한테 편지 쓸래」 — 💌햄쮜끼리 편지를 기념하는 쿠폰. 밤에 편지 쓰는 자리 한 벌.
+     ⚠️ `mailR:'friend'` 는 <b>햄쮜끼리 편지</b>(MAIL_PAL_TPL·반말)를 넣는다 — 네 통이
+        한꺼번에 꽂히고, 읽고 「전해주기」를 누르면 <b>둘 다</b> 하트가 오른다.
+        받는 아이는 mailPush 가 나란히 앉은 친구 중에서 골라 <b>편지에 적어둔다</b>. */
+  '친구한테편지쓸래':{em:'💌', name:'친구한테 편지 쓸래', coin:6200, top:32,
+                      wear:['hat_moonpin','neck_bfly','cone_cmatcha'],
+                      tub:['matcha','cookie'],
+                      furn:['candle','bed','dessert'], mail:4, mailR:'friend'}
 };
 /* 🎫 받은 쿠폰이 스물여덟 장까지 늘 수 있다 — 다 늘어놓으면 팝업이 두 배로 길어진다.
    최근 여섯 장만 두고 나머지는 접는다. */
@@ -12437,23 +12402,25 @@ function load(){
           옛 저장이라도 <b>항상 2</b>다(새 판 기본값이 살아남는다). 그걸 보도록 짰다가
           시험해 보니 <b>5/5 만점이던 아이가 1/10 로 떨어졌다</b> — 정확히 「뺏는 것」이었다.
        ⚠️ 아이한테서 <b>아무것도 안 뺏는 것</b>이 이 줄의 목적이다. 지우지 마라. */
-    if((d.hv|0) < 2){
+    /* ↩️ 하트 칸 판 넘겨받기.
+       hv 0/1 = 원래 판(정 상한 100) · hv 2/3 = 열 칸 판(정 상한 1000·6000) · hv 4 = 되돌린 판.
+       ⚠️ <b>반드시 날것(d.hv)을 본다.</b> S.hv 는 Object.assign(freshState(), d) 를 지나면
+          옛 저장이라도 <b>항상 새 판 기본값</b>이다. 그걸 보도록 짰다가 시험해 보니
+          만점이던 아이가 1/10 로 떨어졌다 — 정확히 「뺏는 것」이었다.
+       ⚠️ 한 번만 해야 한다(S.hv 로 잠근다). 두 번 나누면 하트가 반 토막 난다. */
+    if((d.hv|0) >= 2 && (d.hv|0) < 4){
+      /* 열 칸 판을 잠깐 써 본 저장 — 열 배로 올려놨던 정을 <b>그대로 되돌린다</b>.
+         정 600(6/10) → 60(3/5) · 1000 이상(꽉 참) → 100(5/5). 비율이 그대로다. */
       Object.keys(S.dex).forEach(k=>{
         const e=S.dex[k];
-        if(typeof e.bond==='number') e.bond=clamp(e.bond*10, 0, BOND_MAX);
+        if(typeof e.bond==='number') e.bond=clamp(Math.round(e.bond/10), 0, BOND_MAX);
       });
-      S.hv=2;
+      /* ✨반짝별을 걷어냈으니 그 스티커도 지운다 —
+         없는 스티커가 장수에 끼면 🏅스티커 구간 상 문턱이 어긋난다.
+         이미 받은 🍒와 이미 받은 상(S.stkP)은 <b>돌려받지 않는다</b>. */
+      if(Array.isArray(S.badge)) S.badge=S.badge.filter(b=>['shn1','shn3','shn5'].indexOf(b)<0);
     }
-    /* ✨ 반짝별(2026-09-07) — 정은 <b>한 톨도 안 건드린다</b>. 하트를 꽉 채워둔 아이(정 1000)는
-       새 셈에서 그대로 ✨1 이 되므로 옮길 것이 없다.
-       ⚠️ 그런데 아이 눈에는 <b>하트 열 칸이 0 으로 비어 보인다</b> — 한 판이 별 하나로
-          바뀐 것이지만 알려주지 않으면 「하트를 뺏겼다」로 읽힌다.
-          그래서 처음 켤 때 <b>한 번만</b> 창으로 알려준다(S.hv 로 한 번만). */
-    if((d.hv|0) < 3){
-      const _sn=Object.keys(S.dex).filter(k=>(S.dex[k].bond||0)>=BOND_MAX).length;
-      if(_sn>0) shineReport={n:_sn};
-      S.hv=3;
-    }
+    S.hv=4;
     Object.keys(S.dex).forEach(k=>{
       const e=S.dex[k];
       if(e.bond==null) e.bond=0;
@@ -12983,16 +12950,19 @@ const TOYS={
      lv 가 있으면 그 레벨부터 열린다. rw 는 「무엇을 더 주나」다.
      ⚠️ 쉬는 시간을 길게 잡았다 — 하트가 한 번에 많이 오르는 대신 자주는 못 한다.
         짧게 잡으면 ⚽공놀이·🖐️쓰담쓰담이 쓸모없어진다.
+     ⚠️ bond 값은 <b>하트 다섯 칸(BOND_PER=20)</b> 기준이다 — 🍒토핑(12) 위쪽에 줄 세웠다.
+        하트 칸을 또 바꿀 거면 여기 다섯 값도 <b>같이</b> 다시 재라(열 칸 판에서는
+        10·13·16·20·26 이었다).
      ⚠️ <b>목록 맨 뒤에만</b> 더한다. 중간에 끼우면 저장된 「고른 놀이」가 딴 놀이가 된다. */
-  merry :{em:'🎠', name:'회전목마', tip:'다 같이 빙글빙글 돌아요',   bond:10, cd:180000, lv:30,
+  merry :{em:'🎠', name:'회전목마', tip:'다 같이 빙글빙글 돌아요',   bond:9,  cd:180000, lv:30,
           rw:{coin:[14,9]}},
-  sing  :{em:'🎤', name:'노래자랑', tip:'제일 잘한 아이를 뽑아요',   bond:13, cd:240000, lv:50,
+  sing  :{em:'🎤', name:'노래자랑', tip:'제일 잘한 아이를 뽑아요',   bond:10, cd:240000, lv:50,
           rw:{coin:[18,11], top:1, star:1}},
-  slide :{em:'🛝', name:'미끄럼틀', tip:'쭈욱 미끄러져 내려와요',    bond:16, cd:360000, lv:70,
+  slide :{em:'🛝', name:'미끄럼틀', tip:'쭈욱 미끄러져 내려와요',    bond:12, cd:360000, lv:70,
           rw:{coin:[24,14], top:2}},
-  circus:{em:'🎪', name:'서커스',   tip:'재주를 부려요 — 경험이 쑥!', bond:20, cd:480000, lv:90,
+  circus:{em:'🎪', name:'서커스',   tip:'재주를 부려요 — 경험이 쑥!', bond:14, cd:480000, lv:90,
           rw:{coin:[30,18], exp:40}},
-  ferris:{em:'🎡', name:'관람차',   tip:'제일 높은 데서 가게를 봐요', bond:26, cd:600000, lv:115,
+  ferris:{em:'🎡', name:'관람차',   tip:'제일 높은 데서 가게를 봐요', bond:16, cd:600000, lv:115,
           rw:{coin:[46,26], top:3}}
 };
 const TOY_KEYS=Object.keys(TOYS);
@@ -13363,9 +13333,7 @@ function petHam(k,ev){
       무한 연타가 됐다. 막는 김에 아이한테 <b>왜</b> 안 되는지도 말해준다. */
 function treatHam(k,ev){
   if(S.top<1){ sfx('boo'); toast('🍒 토핑이 없어요 — ⭐3 이상을 뜨거나 🫧비눗방울로 모아요'); return; }
-  /* ⚠️ heartFull 로 막으면 안 된다 — 반짝별을 모으는 중인데도 못 주게 된다.
-     반짝별을 <b>다 모은</b> 아이한테만 아껴두라고 한다. */
-  if(shineFull(k)){ sfx('boo'); toast(`✨ ${ega(nameOf(k))} 반짝별을 다 모았어요 — 🍒토핑은 아껴두세요`); return; }
+  if(heartFull(k)){ sfx('boo'); toast(`💗 ${ega(nameOf(k))} 하트가 이미 꽉 찼어요 — 🍒토핑은 아껴두세요`); return; }
   S.top-=1; addBond(k,TOYS.treat.bond,'treat'); errBump('treat');
   if(ev){ fxHeart(ev); popAt(ev.clientX-16, ev.clientY-18, '💗+'+TOYS.treat.bond); }
   setMood(k,'yum');
@@ -13391,47 +13359,32 @@ function addBond(k,v,kind){
   if(hasSk(k,'bond')) v*=1.25;          /* 🌟 학교에서 배운 재주 */
   const _tr=traitFor(k);
   v*=_tr.bond;                          /* 🏡 방 성격 — 🌙밤하늘 방은 하트가 잘 오른다 */
-  const b0=hearts(k), s0=shine(k);
+  const b0=hearts(k);
   /* 🛏️푹신 쿠션 · 💗사랑 가득 · 🌝달빛 조명 */
   const add=v*(1+upgLv('cozy')*0.2+upgLv('love')*0.35+upgLv('moon')*0.40)*snackMul('bond');
-  /* ⚠️ 상한은 BOND_MAX 가 아니라 <b>BOND_CAP</b> 이다 — 하트 한 판을 채우면 ✨반짝별이 되고
-     다음 판이 시작되니, 반짝별 다섯 개를 다 모을 때까지 계속 찬다.
-     BOND_MAX 로 두면 반짝별이 하나도 안 생긴다. */
-  d.bond=clamp((d.bond||0)+add,0,BOND_CAP);
+  const room=Math.max(0,BOND_MAX-(d.bond||0));
+  d.bond=clamp((d.bond||0)+add,0,BOND_MAX);
   /* 💗 하트가 꽉 찬 아이 — 넘치는 사랑은 🍒토핑이 된다.
      이게 없으면 하트 5개를 채운 뒤로는 놀아줄 이유가 사라진다. */
   let got=0;
   /* ⚠️ 🍒토핑을 줘서 넘친 것은 <b>토핑으로 안 돌려준다</b> —
      돌려주면 준 것보다 많이 돌아와서 토핑이 저절로 불어난다.
      쓰담쓰담·공놀이처럼 <b>공짜인 놀이</b>로 넘친 것만 토핑이 된다. */
-  /* ⚠️ 「정이 막힌 만큼」으로 세면 안 된다 — 반짝별이 생기면서 정 상한이 1000 → 6000 이 됐으니
-     반짝별 다섯 개를 다 모을 때까지 🍒토핑이 <b>한 개도</b> 안 나온다. 아이가 원래 받던 걸
-     뺏는 것이다. 「하트를 한 번이라도 꽉 채운 아이한테 준 만큼」으로 센다 —
-     그러면 전에 받던 🍒 양이 그대로고, ✨반짝별은 <b>덧붙는 것</b>이 된다. */
-  const over=(kind==='treat') ? 0 : (heartFull(k) ? add : 0);
+  const over=(kind==='treat') ? 0 : (add-room);
   if(over>0){
     d.over=(d.over||0)+over;
     /* ❄️눈나라 방은 넘치는 하트가 토핑으로 더 빨리 바뀐다 */
     const per=Math.max(5, OVERFLOW_TOP/((_tr.top||1)*seasonMul('top')*(hasSk(k,'top')?1.35:1)));
     while(d.over>=per){ d.over-=per; S.top+=1; got++; }
   }
-  const sUp=shine(k)>s0;
-  const up=sUp || hearts(k)>b0;
+  const up=hearts(k)>b0;
   if(up){
     addExp(playExp(8)); sfx('star4'); checkBadges();
-    /* ✨ 하트 열 칸이 반짝별이 되는 순간 — 여기가 이 놀이의 <b>제일 큰 순간</b>이다 */
-    if(sUp && shineFull(k)){
-      vib([0,30,60,30,60,50]);
-      toast(`✨ ${ega(nameOf(k))} <b>반짝별 다섯 개</b>를 다 모았어요!! 이제 더 놀아주면 🍒토핑이 쌓여요 🥳`);
-    }
-    else if(sUp){
-      vib([0,25,50,25,50,40]);
-      toast(`✨ ${ega(nameOf(k))} 하트 열 개가 <b>✨반짝별</b> 하나가 됐어요! 반짝별 <b>${shine(k)}/${SHINE_MAX}</b>개 — 하트는 다시 처음부터 💗`);
-    }
+    /* 하트를 다 채운 순간은 특별하게 — 이제부터 넘치는 사랑이 🍒토핑이 된다는 걸 알려준다 */
+    if(heartFull(k)) toast(`💗 ${ega(nameOf(k))} 하트를 <b>다 채웠어요!</b> 이제 더 놀아주면 🍒토핑이 쌓여요 🥰`);
     else toast(`💗 ${wagwa(nameOf(k))} 더 친해졌어요! 하트 <b>${hearts(k)}/${HEART_MAX}</b>개 — 코인을 더 많이 물어와요`);
     faceRefresh(k);                /* 😊 얼굴이 바뀌었으니 그림도 갈아끼운다 */
-    /* 💌 기뻐서 편지를 쓴다 — 반짝별이 됐으면 자랑하는 편지가 온다 */
-    mailAct(k, sUp?'shine':'heart', sUp?0.6:0.35);
+    mailAct(k,'heart',0.35);       /* 💌 기뻐서 편지를 쓴다 */
   }
   return {up, top:got, fav};
 }
@@ -14972,9 +14925,6 @@ function openDex(k){
       · 한 번 뜨는 값 <b>🪙${fmt(scoopCost(f))}</b><br>
       ${d?`💗 친한 정도 <b>${'💗'.repeat(hearts(k))+'🤍'.repeat(HEART_MAX-hearts(k))}</b> <b>${hearts(k)}/${HEART_MAX}</b><br>
           &nbsp;&nbsp;&nbsp;놀아줄 때 코인 <b>+${Math.round(heartPct(k)*100)}%</b><br>
-           ✨ 반짝별 <b>${shine(k)?'✨'.repeat(shine(k)):'아직 없어요'}</b> <b>${shine(k)}/${SHINE_MAX}</b>
-             — ${shineFull(k)?'다 모았어요! 이제 넘치는 사랑은 🍒토핑이 돼요'
-                :'하트를 꽉 채우면 열 칸이 <b>반짝별 하나</b>가 돼요'}<br>
            💕 제일 좋아하는 놀이 <b>${favToyLabel(k)}</b> — 이걸 해주면 하트가 <b>두 배</b><br>
            🎀 제일 좋아하는 소품 <b>${favWearLabel(k)}</b> — ${favWearOn(k)
              ?'<b>입고 있어요!</b> 하트가 두 배로 올라요 🥰'
@@ -15532,25 +15482,6 @@ function showAway(){
     <div class="row" style="justify-content:center;margin-top:11px">
       <button class="btn" onclick="nextModal()">고마워 🐹</button></div>`);
 }
-/* ✨ 판을 갈아입은 첫날 한 번만 — 하트 한 판이 반짝별 하나가 됐다는 것을 알려준다.
-   ⚠️ 「없어진 게 아니에요」를 <b>제일 먼저</b> 말한다. 아이가 걱정하는 것이 그것뿐이다. */
-function showShine(){
-  if(!shineReport) return;
-  const n=shineReport.n; shineReport=null;
-  openModal(`<h2>✨ 반짝별이 생겼어요!<span class="x" onclick="closeModal()">닫기</span></h2>
-    <div class="card" style="margin:0;font-size:13px;line-height:1.85">
-      하트를 꽉 채워준 친구 <b>${n}마리</b>가 오늘부터 <b>✨반짝별</b>을 하나씩 달았어요!
-      <div style="text-align:center;font-size:19px;margin:9px 0;line-height:1.4">
-        💗💗💗💗💗💗💗💗💗💗<br>⬇<br><span style="font-size:30px">✨</span></div>
-      💗 <b>하트 열 칸이 반짝별 하나로 바뀐 거예요</b> — 없어진 하트는 하나도 없어요!<br>
-      💗 그 친구들 하트는 <b>다시 처음부터</b> 채울 수 있어요. 또 꽉 채우면 반짝별이 <b>또</b> 하나 늘어요<br>
-      ✨ 반짝별은 <b>다섯 개</b>까지 모아요 — 하나마다 코인을 더 물어와요<br>
-      🍒 토핑은 전과 똑같이 계속 나와요. 하나도 안 줄었어요<br>
-      🎀 그리고 햄쮜마다 <b>제일 좋아하는 소품</b>이 생겼어요 — 도감에서 누가 뭘 좋아하는지 볼 수 있어요!
-    </div>
-    <div class="row" style="justify-content:center;margin-top:11px">
-      <button class="btn" onclick="nextModal()">우와! ✨</button></div>`);
-}
 let _askCb=null;
 function askConfirm(title,msg,ok,cb){
   _askCb=cb;
@@ -15891,7 +15822,7 @@ const DET_Q=[
    yes:'⭐가 세 개 이상이었어요',       no:'⭐가 두 개 이하였어요'},
   {k:'g4',    ask:h=>S.dex[h].g>=4,
    yes:'⭐가 네 개 이상이었어요',       no:'⭐가 세 개 이하였어요'},
-  {k:'heart', ask:h=>hearts(h)>=4,             /* 옛 2/5 = 지금 4/10 */
+  {k:'heart', ask:h=>hearts(h)>=2,
    yes:'하트가 두 개 이상이었어요',     no:'하트가 한 개 이하였어요'},
   {k:'sp',    ask:h=>isSp(h),
    yes:'🎁특별 햄쮜였어요',            no:'특별 햄쮜는 아니었어요'},
@@ -19940,7 +19871,9 @@ const MIX_TOP=5;                      /* 짝지어줄 때 드는 🍒토핑 */
 const MIX_DAY=1;                      /* 하루에 태어나는 짝꿍 수 */
 /* 오늘 짝꿍을 몇 마리 더 만들 수 있는지 */
 function mixLeft(){ return String(S.mixDay||'')===todayKey() ? 0 : MIX_DAY; }
-const MIX_NEED_HEART=2;               /* 둘 다 하트가 이만큼은 있어야 한다 (옛 1/5 = 지금 2/10) */
+/* ⚠️ 하트 칸을 바꿀 때 <b>여기를 반드시 같이</b> 본다 — 열 칸으로 늘리고 반짝별을 붙였을 때
+   반짝별이 생긴 아이는 하트가 0 으로 돌아가서 <b>짝꿍을 못 만들었다</b>. 아이가 짚었다. */
+const MIX_NEED_HEART=1;               /* 둘 다 하트가 이만큼은 있어야 한다 */
 
 function mixHex(a,b){                 /* 색 두 개의 한가운데 색 */
   const p=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
@@ -20692,7 +20625,7 @@ function mumbleOf(k){
   if(napLeft() || isNight()) return pick(MUMBLE_NAP);
   if(Math.random()<0.20) return pick(['♪','💗','😴','✨','🎵','🍨','🎀','💫','🥰']);
   const pool=MUMBLE.slice();
-  if(hearts(k)>=6) pool.push(...MUMBLE_LOVE);   /* 옛 3/5 = 지금 6/10 */
+  if(hearts(k)>=3) pool.push(...MUMBLE_LOVE);
   const t=TOYS[favToy(k)];
   if(t) pool.push(t.em+' 하고파', t.name+' 최고!');
   const dw=daysWith(k);
@@ -20713,8 +20646,6 @@ let _mq=[];
 function nextModal(){ const f=_mq.shift(); if(f) f(); else closeModal(); }
 function runStartQueue(){
   _mq=[];
-  /* ✨ 판이 바뀐 이야기를 <b>제일 먼저</b> — 하트가 비어 보이는 걸 보기 전에 알아야 한다 */
-  if(shineReport) _mq.push(showShine);
   if(stkReport) _mq.push(showStkPrize);
   if(awayReport) _mq.push(showAway);
   if(stampReady()) _mq.push(openStamp);
