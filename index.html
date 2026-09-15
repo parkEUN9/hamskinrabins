@@ -450,6 +450,40 @@ header{margin-bottom:7px}
 /* 🧩 짝 맞추기 카드 — 뒤집는 맛이 나야 해서 진짜로 <b>돌린다</b>(rotateY).
    ⚠️ 카드를 뒤집을 때 창을 다시 그리면 안 된다 — 그리는 순간 돌아가던 게 끊긴다.
    그래서 mgTap 은 그 카드의 class 만 건드린다. */
+/* 🍨 높이 쌓기 — 햄쮜가 스쿱을 들고 왔다 갔다 하는 동안 눌러서 얹는다.
+   ⚠️ .twboard 의 width·height 와 .twrow 의 height 는 코드의 TOW_BW·TOW_BH·TOW_H 와
+      <b>반드시 같아야</b> 한다 — 다르면 스쿱이 판 밖으로 나가거나 층이 어긋난다. */
+.twboard{
+  position:relative;width:240px;height:252px;margin:0 auto;border-radius:14px;
+  background:linear-gradient(180deg,#eaf2ff,#fff7fa 62%,#ffeef4);
+  border:1.5px solid var(--line);overflow:hidden;box-shadow:var(--sh);
+  cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.twrow{position:absolute;left:0;height:17px;border-radius:9px;box-sizing:border-box;
+  border:1.5px solid rgba(90,60,70,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.twmove{will-change:transform}
+.twham{position:absolute;left:50%;bottom:13px;width:36px;height:36px;
+  transform:translateX(-50%);pointer-events:none;display:block}
+.twtip{position:absolute;left:0;right:0;top:9px;text-align:center;font-size:11.5px;
+  font-weight:700;color:var(--ink2);pointer-events:none}
+.twdak{position:absolute;left:50%;top:42%;font-size:17px;font-weight:800;
+  color:var(--acc);pointer-events:none;animation:twdak .75s ease-out forwards}
+@keyframes twdak{
+  0%{opacity:0;transform:translate(-50%,7px) scale(.8)}
+  25%{opacity:1;transform:translate(-50%,-2px) scale(1.1)}
+  100%{opacity:0;transform:translate(-50%,-24px) scale(1)}}
+/* 🎵 따라 부르기 — 소리를 꺼둔 아이도 할 수 있게 <b>색도 같이</b> 켜진다 */
+.ecpads{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 2px}
+.ecpad{height:72px;border-radius:15px;border:2px solid rgba(90,60,70,.15);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:17px;font-weight:800;color:#6b5560;box-shadow:var(--sh);
+  cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:transform .09s ease-out, filter .12s, box-shadow .12s}
+.ecpad.on{filter:brightness(1.16) saturate(1.35);transform:scale(1.05);
+  border-color:var(--acc);box-shadow:0 0 0 3px rgba(255,150,190,.36)}
+.ecpad.wait{opacity:.5}
+.ecdots{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.ecdot{width:11px;height:11px;border-radius:50%;background:var(--line)}
+.ecdot.on{background:var(--acc)}
 .memgrid{display:grid;gap:7px;margin:2px 0 0}
 .memgrid.c3{grid-template-columns:repeat(3,1fr)}
 .memgrid.c4{grid-template-columns:repeat(4,1fr)}
@@ -5747,82 +5781,124 @@ const SHAPES={
 
   /* 🤝 2026-09-16 콜라보 — 원본 그림을 그대로 옮긴다(무늬·발·꼬리 없음, nomz) */
 
-  /* 🎀 마이멜로디 — <b>두건이 통째로 실루엣</b>이다. 귀도 두건 안이라 분홍이다.
-     ⚠️ 아이 말: 「콜라보햄쮜가 너무 대충그린거같은데 <b>최대한 원본과 똑같이</b> 그려줘」
-        1) 두건 가장자리가 얼굴을 <b>감싸며 볼 옆으로 내려온다</b> — 그냥 얹은 타원이 아니다
-        2) 귀는 <b>길고 끝이 둥글며</b> 안쪽에 <b>연분홍 속귀</b>가 있다
-        3) 코는 동그라미가 아니라 <b>아래로 뾰족한 자홍색 물방울</b>이다 */
-  /* ⏸️ 아래 둘(melody·toshil)은 <b>지금 아무도 안 쓴다</b> — 콜라보 등록을 덜어냈다.
-     지우지 말 것. 다시 그려서 COLLAB 에 도로 붙이면 그대로 쓰인다. */
-  melody:{name:'마이멜로디', w:33, top:2,
-    body:f=>`<path d="M50 24 C64 24 77 33 81 48 C84 61 83 75 75 83 C67 91 59 93 50 93
-             C41 93 33 91 25 83 C17 75 16 61 19 48 C23 33 36 24 50 24 Z" ${f} stroke-linejoin="round"/>`,
-    /* 귀는 몸보다 먼저 그린다 — 뿌리가 두건 안으로 들어가 자연스럽게 붙는다 */
-    ears:c=>`<path d="M40 40 C30 33 20 18 22 9 C24 1 33 3 37 14 C41 25 44 34 45 41 Z"
-              fill="${c.base}" stroke="#4a3339" stroke-width="2.6" stroke-linejoin="round"/>
-             <path d="M60 40 C70 33 80 18 78 9 C76 1 67 3 63 14 C59 25 56 34 55 41 Z"
-              fill="${c.base}" stroke="#4a3339" stroke-width="2.6" stroke-linejoin="round"/>
-             <path d="M39 35 C32 29 25 19 26 13 C28 8 32 10 35 18 C38 26 40 31 41 36 Z" fill="#ffd9e8"/>
-             <path d="M61 35 C68 29 75 19 74 13 C72 8 68 10 65 18 C62 26 60 31 59 36 Z" fill="#ffd9e8"/>`,
-    deco:()=>`<path d="M50 24 C64 24 77 33 81 48 C84 61 83 75 75 83 C67 91 59 93 50 93
-              C41 93 33 91 25 83 C17 75 16 61 19 48 C23 33 36 24 50 24 Z"
-              fill="none" stroke="#4a3339" stroke-width="3" stroke-linejoin="round"/>
-              <path d="M50 43 C68 43 79 55 79 70 C79 84 66 91 50 91 C34 91 21 84 21 70 C21 55 32 43 50 43 Z"
-              fill="#fffdf8" stroke="#4a3339" stroke-width="2.6" stroke-linejoin="round"/>`,
-    /* 작은 세로 타원 둘 — 흰 점을 넣지 않는다(원본에 없다) */
+  /* 🎀 마이멜로디(마이멜로쮜) — <b>원본 그림을 픽셀로 재서</b> 옮겼다.
+     ⚠️⚠️ 앞서 두 번 물렸다. 두 번 다 <b>기억으로</b> 그렸기 때문이다 —
+        사장님 말: 「진짜 하나도 똑같지가 않은데 … <b>키티때처럼 똑바로 보고</b> 제대로 그려줄래?」
+     📏 잰 값(원본 556×384) → 우리 100칸으로 옮긴 식: X=50+(x-285.5)*0.335, Y=3+(y-33)*0.335
+        · 두건+귀 둘이 <b>한 덩어리</b>다(헬로키쮜처럼 실루엣 하나)
+        · 왼 귀는 <b>큰 타원 한 장</b>이 왼쪽으로 처진 것이다 — 덧그린 선으로 갈라 보인다.
+          그 안에 <b>접힌 자국</b>(가는 선)이 따로 있다. 전엔 이걸 「가는 귀 두 짝」으로 잘못 봤다.
+        · 코는 <b>노랑 #ffeb77</b>(전엔 자홍이었다), 그 아래 <b>작은 웃음선</b>이 있다(전엔 아예 없었다)
+        · 두건 왼쪽의 <b>하얀 데이지</b>(노란 속)는 머리 너비의 1/3이나 된다 — 빠뜨리면 안 된다
+        · 테두리와 <b>눈</b>이 같은 회색 #6d6e71 이다(검정이 아니다) */
+  melody:{name:'마이멜로디', w:33, top:18,
+    body:f=>`<path d="M42 16.3 C46 16.5 50 17.8 53.5 20.5 C56 22.4 57.6 23.2 58.4 24.1 C59.5 21.5 62.5 18 66.9 15.4 C71.5 10.5 78 6 82 4.7 C86 3.4 91 3.6 94 5.5 C97 7.4 98.4 9 98.4 12 C98.4 16.5 95 24 89 31.5 C84.5 36.5 78 40 74.6 42.2 C77 45 79.5 48.5 80.3 50.2 C82.6 54.5 84.2 59 84.6 63.6 C85 68 84 72 82 74.4 C80.6 77 78.5 78.8 76.6 79.7 C72.5 82.8 62 89.4 50.5 89.4 C39 89.4 28.5 82.8 24.1 79.7 C22.2 78.8 19.9 77 18.7 74.4 C16.5 71 15.3 68 15.3 63.6 C15 60.5 15.1 61 15.3 58.3 C16 52 20 45 24.4 39.5 C24.6 36.5 24.6 33 25.4 31.5 C25.8 29 26 27.5 26.7 26.1 C27.5 24 29 22 31 20.8 C33 19 36.5 17.2 42 16.3 Z" ${f} stroke-linejoin="round"/>`,
+    ears:()=>``,
+    deco:()=>`<path d="M42 16.3 C46 16.5 50 17.8 53.5 20.5 C56 22.4 57.6 23.2 58.4 24.1 C59.5 21.5 62.5 18 66.9 15.4 C71.5 10.5 78 6 82 4.7 C86 3.4 91 3.6 94 5.5 C97 7.4 98.4 9 98.4 12 C98.4 16.5 95 24 89 31.5 C84.5 36.5 78 40 74.6 42.2 C77 45 79.5 48.5 80.3 50.2 C82.6 54.5 84.2 59 84.6 63.6 C85 68 84 72 82 74.4 C80.6 77 78.5 78.8 76.6 79.7 C72.5 82.8 62 89.4 50.5 89.4 C39 89.4 28.5 82.8 24.1 79.7 C22.2 78.8 19.9 77 18.7 74.4 C16.5 71 15.3 68 15.3 63.6 C15 60.5 15.1 61 15.3 58.3 C16 52 20 45 24.4 39.5 C24.6 36.5 24.6 33 25.4 31.5 C25.8 29 26 27.5 26.7 26.1 C27.5 24 29 22 31 20.8 C33 19 36.5 17.2 42 16.3 Z" fill="none" stroke="#6d6e71" stroke-width="3.1" stroke-linejoin="round"/>
+      <path d="M45.5 17.7 C50.5 19.8 55.5 21.2 58.8 25.2 C61.2 28.3 61.8 31.5 61.6 34.5
+       C61.4 37.8 60 39.6 58.2 40.5 C56.3 42.5 54.6 43.9 53.2 44.5"
+       fill="none" stroke="#6d6e71" stroke-width="2.9" stroke-linecap="round"/>
+      <path d="M36.1 27.1 C37.6 31.5 39.4 35.8 42.1 38.8 C43.6 40.6 45.4 42.1 46.9 42.9"
+       fill="none" stroke="#6d6e71" stroke-width="2" stroke-linecap="round"/>
+      <path d="M52 59.3 C64 59.3 73 63 76 69.8 C78.5 75.7 75.8 81.5 68 83.5
+       C63 84.8 57 84.4 52 84.4 C47 84.4 41 84.8 36 83.5
+       C28.2 81.5 25.5 75.7 28 69.8 C31 63 40 59.3 52 59.3 Z"
+       fill="#ffffff" stroke="#6d6e71" stroke-width="2.7" stroke-linejoin="round"/>
+      <g fill="#ffffff" stroke="#6d6e71" stroke-width="2">
+        <ellipse cx="27.4" cy="41.5" rx="4.6" ry="4"/>
+        <ellipse cx="35.1" cy="46.6" rx="4.6" ry="4"/>
+        <ellipse cx="32.1" cy="55.6" rx="4.6" ry="4"/>
+        <ellipse cx="22.7" cy="55.6" rx="4.6" ry="4"/>
+        <ellipse cx="19.7" cy="46.6" rx="4.6" ry="4"/>
+      </g>
+      <ellipse cx="27.4" cy="49.6" rx="2.6" ry="2.3" fill="#ffeb77" stroke="#6d6e71" stroke-width="1.3"/>`,
+    /* 눈은 회색 세로 타원 둘 — 원본에서 x±47, 18×26 이었다(흰 점은 없다) */
     eye:(c,fx,fy,s,m)=>{
-      if(m==='sleep') return `<g stroke="#4a3339" stroke-width="${2.6*s}" fill="none" stroke-linecap="round">
-        <path d="M${fx-14.5*s} ${fy} q${3.5*s} ${5*s} ${7*s} 0"/><path d="M${fx+7.5*s} ${fy} q${3.5*s} ${5*s} ${7*s} 0"/></g>`;
-      return `<ellipse cx="${fx-12.5*s}" cy="${fy}" rx="${3.9*s}" ry="${5.5*s}" fill="#4a3339"/>
-              <ellipse cx="${fx+12.5*s}" cy="${fy}" rx="${3.9*s}" ry="${5.5*s}" fill="#4a3339"/>`;
+      if(m==='sleep') return `<g stroke="#6d6e71" stroke-width="${2.4*s}" fill="none" stroke-linecap="round">
+        <path d="M${fx-18.7*s} ${fy} q${3*s} ${4.4*s} ${6*s} 0"/><path d="M${fx+12.7*s} ${fy} q${3*s} ${4.4*s} ${6*s} 0"/></g>`;
+      return `<ellipse cx="${fx-15.7*s}" cy="${fy}" rx="${3*s}" ry="${4.35*s}" fill="#6d6e71"/>
+              <ellipse cx="${fx+15.7*s}" cy="${fy}" rx="${3*s}" ry="${4.35*s}" fill="#6d6e71"/>`;
     },
-    /* 🩷 아래로 뾰족한 자홍 코 하나뿐 — <b>입은 그리지 않는다</b>(원본에 없다) */
-    mouth:(c,fx,fy,s,m)=>`<path d="M${fx} ${fy+11.4*s}
-      C${fx-3.4*s} ${fy+11.4*s} ${fx-4.2*s} ${fy+9.2*s} ${fx-4.2*s} ${fy+8.2*s}
-      C${fx-4.2*s} ${fy+6.9*s} ${fx-2.1*s} ${fy+6.5*s} ${fx} ${fy+6.5*s}
-      C${fx+2.1*s} ${fy+6.5*s} ${fx+4.2*s} ${fy+6.9*s} ${fx+4.2*s} ${fy+8.2*s}
-      C${fx+4.2*s} ${fy+9.2*s} ${fx+3.4*s} ${fy+11.4*s} ${fx} ${fy+11.4*s} Z"
-      fill="#e8548c" stroke="#4a3339" stroke-width="${1.2*s}" stroke-linejoin="round"/>`,
-    face:{x:50,y:64,s:.82}, feet:0, tail:0, nomz:1},
+    /* 🟡 노란 코 + 그 아래 작은 웃음선 — 원본에 둘 다 있다 */
+    mouth:(c,fx,fy,s,m)=>`<ellipse cx="${fx}" cy="${fy+4.2*s}" rx="${2.85*s}" ry="${2.2*s}"
+        fill="#ffeb77" stroke="#6d6e71" stroke-width="${1.1*s}"/>`
+      + `<path d="M${fx-3.9*s} ${fy+7*s} Q${fx} ${fy+10.2*s} ${fx+3.9*s} ${fy+7*s}"
+        fill="none" stroke="#6d6e71" stroke-width="${1.5*s}" stroke-linecap="round"/>`,
+    /* 원본은 얼굴이 두건 한가운데가 아니라 <b>조금 오른쪽</b>이다(고개를 살짝 돌리고 있다) */
+    face:{x:52,y:70.7,s:1}, feet:0, tail:0, nomz:1},
 
-  /* 🖤 쿠로미(토실쮜) — 이마에 분홍 해골이 달린 검은 광대 두건
-     ⚠️ 원본과 다른 데 셋을 고쳤다
-        1) 두건 귀는 <b>꺾인 삼각(L·Q)</b>이 아니라 <b>끝이 바깥으로 휜 광대 뿔</b>이다
-        2) 해골이 <b>분홍 동그라미</b>였다 — 눈구멍 둘·코 구멍·이빨까지 있어야 해골로 읽힌다
-        3) 얼굴 흰 자리가 <b>납작한 타원</b>이었다 — 원본은 볼이 통통한 세로 타원이다 */
-  toshil:{name:'토실', w:34, top:2,
-    body:f=>`<path d="M50 26 C65 26 78 35 82 51 C85 65 82 79 74 86 C66 93 58 95 50 95
-             C42 95 34 93 26 86 C18 79 15 65 18 51 C22 35 35 26 50 26 Z" ${f} stroke-linejoin="round"/>`,
-    /* 광대 뿔 둘 — 몸보다 먼저 그려서 뿌리가 두건 안으로 들어간다 */
-    ears:c=>`<path d="M26 45 C20 34 13 18 12 8 C11 1 19 2 23 9 C31 23 41 32 47 37 Z"
-              fill="${c.base}" stroke="#1a1420" stroke-width="2.8" stroke-linejoin="round"/>
-             <path d="M74 45 C80 34 87 18 88 8 C89 1 81 2 77 9 C69 23 59 32 53 37 Z"
-              fill="${c.base}" stroke="#1a1420" stroke-width="2.8" stroke-linejoin="round"/>`,
-    deco:()=>`<path d="M50 26 C65 26 78 35 82 51 C85 65 82 79 74 86 C66 93 58 95 50 95
-              C42 95 34 93 26 86 C18 79 15 65 18 51 C22 35 35 26 50 26 Z"
-              fill="none" stroke="#1a1420" stroke-width="3.2" stroke-linejoin="round"/>
-              <path d="M50 45 C68 45 79 57 79 72 C79 86 66 93 50 93 C34 93 21 86 21 72 C21 57 32 45 50 45 Z"
-              fill="#fffdf8" stroke="#1a1420" stroke-width="2.8" stroke-linejoin="round"/>
-              <path d="M50 22 C57 22 61.5 26.5 61.5 32 C61.5 35.6 59.8 38.2 57 39.4 L57 41.4
-              C57 43 55.6 44 54 44 L46 44 C44.4 44 43 43 43 41.4 L43 39.4
-              C40.2 38.2 38.5 35.6 38.5 32 C38.5 26.5 43 22 50 22 Z"
-              fill="#f6a8cc" stroke="#1a1420" stroke-width="1.9" stroke-linejoin="round"/>
-              <ellipse cx="45.8" cy="31.4" rx="2.7" ry="3.3" fill="#1a1420"/>
-              <ellipse cx="54.2" cy="31.4" rx="2.7" ry="3.3" fill="#1a1420"/>
-              <path d="M48.4 37.4 h3.2" stroke="#1a1420" stroke-width="1.5" stroke-linecap="round"/>
-              <g stroke="#1a1420" stroke-width="1.2" stroke-linecap="round">
-              <path d="M46.6 44 v-2.4"/><path d="M50 44 v-2.4"/><path d="M53.4 44 v-2.4"/></g>`,
+  /* 🖤 쿠로미(토실쮜) — 마찬가지로 원본을 픽셀로 재서 옮겼다.
+     📏 원본 560×560 → X=50+(x-276.5)*0.215, Y=3+(y-24)*0.215
+        · 뿔은 휜 것이 아니라 <b>곧은 사각 깃발</b>이고, <b>끝마다 검은 방울</b>이 달렸다.
+          전엔 방울을 통째로 빠뜨렸다 — 이게 쿠로미를 쿠로미로 보이게 하는 것이다.
+        · 눈은 큰 검은 아몬드인데 <b>바깥 위 모서리에 속눈썹 두 가닥</b>이 붙는다(전엔 맨 타원이었다)
+        · 해골은 <b>테두리 없는 분홍 동그라미</b>(r≈41)에 눈구멍 둘 + 아래 이빨 틈 둘.
+          구멍은 칠하는 게 아니라 <b>두건 색이 비치는 것</b>이다.
+        · 두건 아래는 <b>분홍 방울 달린 광대 깃</b> — 이것도 빠져 있었다.
+        · 두건은 먹빛이 아니라 <b>숯빛 #4b4949</b>, 테두리는 아주 굵은 #231f20 */
+  toshil:{name:'토실', w:34, top:19,
+    body:f=>`<path d="M50 24.7 C63.5 24.7 73.5 30.5 79.5 39.5 C83.5 45.5 84.9 50 84.8 55 C84.7 61 82.5 67 78 71.5 C73 76.5 62 80.5 50 80.5 C38 80.5 27 76.5 22 71.5 C17.5 67 15.3 61 15.2 55 C15.1 50 16.5 45.5 20.5 39.5 C26.5 30.5 36.5 24.7 50 24.7 Z" ${f} stroke-linejoin="round"/>`,
+    /* 뿔과 방울은 <b>몸보다 먼저</b> — 밑동이 두건 안으로 들어간다 */
+    ears:c=>`<path d="M8.9 9.5 L37.4 23.6 L23.8 38.7 L11.3 43 Z"
+       fill="${c.base}" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M91.1 9.5 L62.6 23.6 L76.2 38.7 L88.7 43 Z"
+       fill="${c.base}" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="6.6" cy="6.9" r="3" fill="${c.base}" stroke="#231f20" stroke-width="1.7"/>
+      <circle cx="93.4" cy="6.9" r="3" fill="${c.base}" stroke="#231f20" stroke-width="1.7"/>`,
+    deco:c=>`<path d="M20 78.5 L27 87 L34 79.5 L42 88.5 L50 80 L58 88.5 L66 79.5 L73 87 L80 78.5
+       C73 82 62 84 50 84 C38 84 27 82 20 78.5 Z"
+       fill="${c.base}" stroke="#231f20" stroke-width="2.6" stroke-linejoin="round"/>
+      <circle cx="20" cy="78.5" r="2.6" fill="#f4a6c8" stroke="#231f20" stroke-width="1.5"/>
+      <circle cx="80" cy="78.5" r="2.6" fill="#f4a6c8" stroke="#231f20" stroke-width="1.5"/>
+      <path d="M50 24.7 C63.5 24.7 73.5 30.5 79.5 39.5 C83.5 45.5 84.9 50 84.8 55 C84.7 61 82.5 67 78 71.5 C73 76.5 62 80.5 50 80.5 C38 80.5 27 76.5 22 71.5 C17.5 67 15.3 61 15.2 55 C15.1 50 16.5 45.5 20.5 39.5 C26.5 30.5 36.5 24.7 50 24.7 Z" fill="none" stroke="#231f20" stroke-width="3.4" stroke-linejoin="round"/>
+      <path d="M50 56.8 C54 53.8 56.5 53.3 60 53.3 C67.5 53.3 73.3 58 73.3 64.5
+       C73.3 71 69 77 62 79.2 C58 80.4 54 80.6 50 80.6
+       C46 80.6 42 80.4 38 79.2 C31 77 26.7 71 26.7 64.5
+       C26.7 58 32.5 53.3 40 53.3 C43.5 53.3 46 53.8 50 56.8 Z"
+       fill="#ffffff" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="50" cy="45.4" r="8.8" fill="#f4b5cd"/>
+      <ellipse cx="44.8" cy="43" rx="1.5" ry="1.7" fill="${c.base}"/>
+      <ellipse cx="55.2" cy="43" rx="1.5" ry="1.7" fill="${c.base}"/>
+      <g stroke="${c.base}" stroke-width="0.8"><path d="M49 49.6 V53"/><path d="M51 49.6 V53"/></g>`,
+    /* 큰 검은 아몬드 + 바깥 위로 뻗은 속눈썹 두 가닥 — 이 눈이 쿠로미의 얼굴이다 */
     eye:(c,fx,fy,s,m)=>{
-      if(m==='sleep') return `<g stroke="#1a1420" stroke-width="${2.6*s}" fill="none" stroke-linecap="round">
-        <path d="M${fx-14.5*s} ${fy} q${3.5*s} ${5*s} ${7*s} 0"/><path d="M${fx+7.5*s} ${fy} q${3.5*s} ${5*s} ${7*s} 0"/></g>`;
-      return `<ellipse cx="${fx-12.5*s}" cy="${fy}" rx="${4*s}" ry="${5.6*s}" fill="#1a1420"/>
-              <ellipse cx="${fx+12.5*s}" cy="${fy}" rx="${4*s}" ry="${5.6*s}" fill="#1a1420"/>`;
+      if(m==='sleep') return `<g stroke="#231f20" stroke-width="${2.6*s}" fill="none" stroke-linecap="round">
+        <path d="M${fx-17.5*s} ${fy} q${3.1*s} ${4.6*s} ${6.2*s} 0"/><path d="M${fx+11.3*s} ${fy} q${3.1*s} ${4.6*s} ${6.2*s} 0"/></g>`;
+      const eyeAt=(cx,d)=>`<path d="M${cx-4.2*d*s} ${fy-4.1*s}
+        C${cx-4.6*d*s} ${fy-1*s} ${cx-4.4*d*s} ${fy+3*s} ${cx-3.4*d*s} ${fy+4.6*s}
+        C${cx-1.5*d*s} ${fy+5.2*s} ${cx+1.6*d*s} ${fy+5*s} ${cx+2.9*d*s} ${fy+3.8*s}
+        C${cx+4.2*d*s} ${fy+2.2*s} ${cx+4.3*d*s} ${fy-0.8*s} ${cx+3.7*d*s} ${fy-2.4*s}
+        C${cx+2.4*d*s} ${fy-4.2*s} ${cx-1.4*d*s} ${fy-5*s} ${cx-4.2*d*s} ${fy-4.1*s} Z" fill="#231f20"/>
+        <g stroke="#231f20" stroke-width="${1.1*s}" stroke-linecap="round" fill="none">
+        <path d="M${cx-3.5*d*s} ${fy-4*s} L${cx-6.4*d*s} ${fy-6.6*s}"/>
+        <path d="M${cx-2*d*s} ${fy-4.8*s} L${cx-4.2*d*s} ${fy-7.8*s}"/></g>`;
+      return eyeAt(fx-14.4*s, 1) + eyeAt(fx+14.4*s, -1);
     },
-    /* 작은 검은 코 + 새침한 입 한 획 */
-    mouth:(c,fx,fy,s,m)=>`<ellipse cx="${fx}" cy="${fy+8.4*s}" rx="${2.9*s}" ry="${2.1*s}" fill="#1a1420"/>`
-      + (m==='sleep' ? '' : `<path d="M${fx-5.4*s} ${fy+13*s} q${5.4*s} ${4.8*s} ${10.8*s} 0"
-          stroke="#1a1420" stroke-width="${2*s}" fill="none" stroke-linecap="round"/>`),
-    face:{x:50,y:66,s:.82}, feet:0, tail:0, nomz:1},
+    /* 작은 분홍 코 + 한쪽으로 올라간 웃음 */
+    mouth:(c,fx,fy,s,m)=>`<ellipse cx="${fx}" cy="${fy+5.7*s}" rx="${1.94*s}" ry="${1.61*s}"
+        fill="#f2a0c0" stroke="#231f20" stroke-width="${1.08*s}"/>`
+      + (m==='sleep' ? '' : `<path d="M${fx-3.9*s} ${fy+8.3*s} Q${fx+0.2*s} ${fy+13.4*s} ${fx+3.9*s} ${fy+8.5*s}"
+        fill="none" stroke="#231f20" stroke-width="${1.9*s}" stroke-linecap="round"/>`),
+    face:{x:50,y:63.8,s:1}, feet:0, tail:0, nomz:1},
+
+  /* 🍀 네잎 — 표시는 <b>몸 뒤로 내민 하트 잎 넷</b>이다.
+     잎의 뾰족한 끝이 모두 몸 가운데를 향한다(네잎클로버가 그렇게 생겼다). */
+  clove:{name:'네잎', w:32, top:12,
+    body:f=>`<path d="M50 28 q25 7 25 32 q0 27 -25 29 q-25 -2 -25 -29 q0 -25 25 -32 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>{
+      const leaf=(x,y,r)=>`<g transform="translate(${x},${y}) rotate(${r}) scale(1.34)">
+        <path d="M0 0 C-9.2 -7 -9.6 -16.4 -4.4 -16.4 Q0 -16.4 0 -11.8 Q0 -16.4 4.4 -16.4
+                 C9.6 -16.4 9.2 -7 0 0 Z"
+          fill="${c.light}" stroke="${c.dark}" stroke-width="1.4" stroke-linejoin="round"/>
+        <path d="M0 -2 v-9" stroke="${c.dark}" stroke-width="1" opacity=".55"/></g>`;
+      return leaf(31,27,-45) + leaf(69,27,45) + leaf(15,52,-90) + leaf(85,52,90)
+        + `<path d="M50 86 q-3 9 -11 11" stroke="${c.dark}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    },
+    deco:c=>`<ellipse cx="50" cy="75" rx="16" ry="11" fill="${c.light}" opacity=".8"/>
+             <path d="M50 70 q-4.6 -3.6 -4.8 -7.4 q0 -2.4 2.4 -2.4 q2.4 0 2.4 2.6
+                      q0 -2.6 2.4 -2.6 q2.4 0 2.4 2.4 q-.2 3.8 -4.8 7.4 z"
+                   fill="${c.dark}" opacity=".28"/>`,
+    face:{x:50,y:55,s:.86}, feet:1, tail:1},
 };
 const COLORS={
   cream :{name:'크림',   base:'#f4d9a8', light:'#fbeccb', dark:'#d3a061', cheek:'#f7b7c6'},
@@ -6032,8 +6108,10 @@ const COLORS={
   magpu :{name:'마법사',    base:'#8a5ec8', light:'#b894ea', dark:'#543486', cheek:'#f2949e'},
   drgmt :{name:'아기용',    base:'#6ec8c0', light:'#a6e6e0', dark:'#3a8882', cheek:'#f79ab0'},
 
-  melopk:{name:'마이멜로디', base:'#fbb8d2', light:'#ffffff', dark:'#4a3339', cheek:'#ffffff'},
-  toshbk:{name:'토실',      base:'#2e2634', light:'#ffffff', dark:'#1a1420', cheek:'#ffffff'}
+  melopk:{name:'마이멜로디', base:'#f6a3b7', light:'#ffffff', dark:'#6d6e71', cheek:'#ffffff'},
+  toshbk:{name:'토실',      base:'#4b4949', light:'#ffffff', dark:'#231f20', cheek:'#ffffff'},
+
+  clovgr:{name:'네잎',      base:'#7fc46a', light:'#b8e4a2', dark:'#4a8a3a', cheek:'#f79ab0'}
 };
 const PATTERNS={plain:'민무늬', spot:'점박이', stripe:'줄무늬', patch:'얼룩', tux:'턱시도', socks:'양말'};
 const PAT_W={plain:34, spot:20, stripe:16, patch:14, tux:12, socks:10};
@@ -6377,7 +6455,51 @@ const WEAR={
       <path d="M-2 -6 q-9 -3 -11 3 q4 5 11 0 z" fill="#d8b6f0" stroke="#9070b8" stroke-width="1"/>
       <path d="M2 -6 q9 -3 11 3 q-4 5 -11 0 z" fill="#d8b6f0" stroke="#9070b8" stroke-width="1"/>
       <ellipse cx="0" cy="-6" rx="1.6" ry="5.4" fill="#6a5a7a"/>
-      <path d="M-1 -11 q-3 -4 -5 -5 M1 -11 q3 -4 5 -5" stroke="#6a5a7a" stroke-width="1.1" fill="none" stroke-linecap="round"/>`}
+      <path d="M-1 -11 q-3 -4 -5 -5 M1 -11 q3 -4 5 -5" stroke="#6a5a7a" stroke-width="1.1" fill="none" stroke-linecap="round"/>`},
+    /* 🆕 2026-09-15 — 쿠폰에 줄 물건이 바닥나서 한꺼번에 더 만들었다.
+       ⚠️ 모자는 <b>머리 꼭대기가 원점</b>이다(y 가 작을수록 위). 눈은 한참 아래(y+30쯤)라
+          y 를 +12 보다 내리면 <b>얼굴을 덮는다</b>. */
+    cakehat:{name:'케이크 모자', em:'🍰', coin:4200, d:()=>`
+      <path d="M-13 -1 L-13 -8 q13 -6 26 0 L13 -1 Z" fill="#fff3e0" stroke="#d9b083" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M-13 -8 q13 -6 26 0 q-3 5 -13 5 q-10 0 -13 -5 z" fill="#ffd9e8" stroke="#e5799f" stroke-width="1.2"/>
+      <path d="M-8 -1 v-4.6 M0 -1 v-5.6 M8 -1 v-4.6" stroke="#f2c6a0" stroke-width="1"/>
+      <rect x="-1.1" y="-20" width="2.2" height="9" rx="1" fill="#ff9fc0" stroke="#e5799f" stroke-width=".9"/>
+      <ellipse cx="0" cy="-22.6" rx="2.1" ry="3.1" fill="#ffd75e" stroke="#e0ac2c" stroke-width=".9"/>
+      <circle cx="-7" cy="-11.4" r="2" fill="#f2586e" stroke="#cf3f55" stroke-width=".9"/>
+      <circle cx="7" cy="-11.4" r="2" fill="#f2586e" stroke="#cf3f55" stroke-width=".9"/>`},
+    phones:{name:'헤드폰', em:'🎧', coin:2800, d:()=>`
+      <path d="M-14 3 q0 -18 14 -18 q14 0 14 18" stroke="#6a5f7a" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <rect x="-18.6" y="0" width="8.6" height="11" rx="4.2" fill="#ff9fc0" stroke="#d9557c" stroke-width="1.3"/>
+      <rect x="10" y="0" width="8.6" height="11" rx="4.2" fill="#ff9fc0" stroke="#d9557c" stroke-width="1.3"/>
+      <circle cx="-14.3" cy="5.5" r="2.2" fill="#fff0f6"/><circle cx="14.3" cy="5.5" r="2.2" fill="#fff0f6"/>`},
+    cap:{name:'야구 모자', em:'🧢', coin:1500, d:()=>`
+      <path d="M-11.6 -1 q0 -14 11.6 -14 q11.6 0 11.6 14 z" fill="#8fc4f0" stroke="#4f8ac4" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M0 -1 q14 -1.4 16.4 4 q-8.4 3 -16.4 1 z" fill="#6fa8dc" stroke="#4f8ac4" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M-7 -12.4 q7 -2 14 0" stroke="#fff" stroke-width="1.2" fill="none" opacity=".6"/>
+      <circle cx="0" cy="-15.4" r="1.9" fill="#4f8ac4"/>`},
+    goggle:{name:'수영 안경', em:'🥽', coin:1600, d:()=>`
+      <path d="M-16 -2 q16 -11 32 0" stroke="#5aa8c8" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <ellipse cx="-6.2" cy="-5" rx="6" ry="5.2" fill="#c4f0fa" stroke="#3f8fb0" stroke-width="1.4"/>
+      <ellipse cx="6.2" cy="-5" rx="6" ry="5.2" fill="#c4f0fa" stroke="#3f8fb0" stroke-width="1.4"/>
+      <path d="M-1 -5 h2" stroke="#3f8fb0" stroke-width="1.8"/>
+      <ellipse cx="-7.8" cy="-6.8" rx="1.8" ry="1.3" fill="#fff" opacity=".85"/>
+      <ellipse cx="4.6" cy="-6.8" rx="1.8" ry="1.3" fill="#fff" opacity=".85"/>`},
+    sailor:{name:'세일러 모자', em:'⚓', coin:3600, d:()=>`
+      <path d="M-11 -3 q0 -11.6 11 -11.6 q11 0 11 11.6 z" fill="#fffdf8" stroke="#c4b9a6" stroke-width="1.3" stroke-linejoin="round"/>
+      <ellipse cx="0" cy="-2.4" rx="15" ry="4.6" fill="#fffdf8" stroke="#c4b9a6" stroke-width="1.3"/>
+      <path d="M-10.4 -6 q10.4 4 20.8 0" stroke="#4f68b5" stroke-width="2.6" fill="none"/>
+      <path d="M0 -15.4 v5.6 M-2.4 -14 h4.8" stroke="#4f68b5" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M-2.8 -9.2 q2.8 3 5.6 0" stroke="#4f68b5" stroke-width="1.5" fill="none" stroke-linecap="round"/>`},
+    sunflo:{name:'해바라기 핀', em:'🌻', coin:900, d:()=>`
+      <path d="M-4 -2 q6 2 10 5" stroke="#7fc47a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <g transform="translate(-10,-7)">${[0,45,90,135,180,225,270,315].map(a=>
+        `<ellipse cx="0" cy="-6.4" rx="2.5" ry="4.9" fill="#ffd75e" stroke="#e0ac2c" stroke-width=".9" transform="rotate(${a})"/>`).join('')}
+        <circle r="3.5" fill="#8a6a44" stroke="#6a4f30" stroke-width="1"/></g>`},
+    /* 🍒 토핑으로만 */
+    halo:{name:'천사 고리', em:'🪽', top:30, d:()=>`
+      <ellipse cx="0" cy="-19" rx="10.6" ry="3.7" fill="none" stroke="#e0ac2c" stroke-width="3.4"/>
+      <ellipse cx="0" cy="-19" rx="10.6" ry="3.7" fill="none" stroke="#fff6cf" stroke-width="1.5"/>
+      ${_star(-13.5,-13,3.1,'#fff6cf','#e0ac2c')}${_star(13.5,-13,3.1,'#fff6cf','#e0ac2c')}`},
   }},
   neck:{name:'목', em:'🧣', items:{
     bowtie:{name:'나비 넥타이', em:'🎗️', coin:180, d:(x,y,w)=>`
@@ -6472,6 +6594,44 @@ const WEAR={
         fill="#fff4f8" stroke="#e5a8c0" stroke-width="1.3" stroke-linejoin="round"/>
       ${[-0.62,-0.2,0.2,0.62].map(f=>`<circle cx="${x+w*f}" cy="${y+5.4}" r="2.9" fill="#ffeaf3" stroke="#e5a8c0" stroke-width="1.1"/>`).join('')}
       <circle cx="${x}" cy="${y+1}" r="2.4" fill="#ff9fc0" stroke="#d9557c" stroke-width="1.1"/>`},
+    /* 🆕 2026-09-15 여섯 — 목걸이는 x,y,w 를 받아 <b>몸 너비에 맞춰</b> 그린다 */
+    choker:{name:'리본 초커', em:'💝', coin:700, d:(x,y,w)=>`
+      <path d="M${x-w*0.8} ${y-1} q${w*0.8} 9 ${w*1.6} 0" stroke="#d9557c" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <path d="M${x-1.5} ${y+4} q-9 -7 -10.4 -1 q1.4 6 10.4 3 z" fill="#ff9fc0" stroke="#d9557c" stroke-width="1.1"/>
+      <path d="M${x+1.5} ${y+4} q9 -7 10.4 -1 q-1.4 6 -10.4 3 z" fill="#ff9fc0" stroke="#d9557c" stroke-width="1.1"/>
+      <circle cx="${x}" cy="${y+4}" r="2.4" fill="#ffd0e0" stroke="#d9557c" stroke-width="1.1"/>`},
+    leafn:{name:'잎사귀 목걸이', em:'🍃', coin:1400, d:(x,y,w)=>`
+      <path d="M${x-w*0.82} ${y-2} q${w*0.82} 11 ${w*1.64} 0" stroke="#7fa86a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M${x} ${y+3} q-7 3.4 -6 9.6 q7 .6 8 -7.6 z" fill="#9ed48a" stroke="#5f8a4e" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M${x} ${y+3} q7 3.4 6 9.6 q-7 .6 -8 -7.6 z" fill="#bfe4a8" stroke="#5f8a4e" stroke-width="1.1" stroke-linejoin="round"/>
+      <path d="M${x} ${y+3} v9.6" stroke="#5f8a4e" stroke-width="1"/>`},
+    keyn:{name:'열쇠 목걸이', em:'🗝️', coin:2800, d:(x,y,w)=>`
+      <path d="M${x-w*0.8} ${y-2} q${w*0.8} 11 ${w*1.6} 0" stroke="#c9a86a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <circle cx="${x}" cy="${y+5.4}" r="3.5" fill="none" stroke="#e0b95e" stroke-width="2.2"/>
+      <path d="M${x} ${y+8.9} v6.2" stroke="#e0b95e" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M${x} ${y+12} h3.2 M${x} ${y+14.4} h2.4" stroke="#e0b95e" stroke-width="1.8" stroke-linecap="round"/>`},
+    musicn:{name:'음표 목걸이', em:'🎵', coin:3000, d:(x,y,w)=>`
+      <path d="M${x-w*0.8} ${y-2} q${w*0.8} 11 ${w*1.6} 0" stroke="#a8a0d8" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <path d="M${x+3.6} ${y+3.4} v9" stroke="#6a5f9a" stroke-width="1.9" stroke-linecap="round"/>
+      <path d="M${x+3.6} ${y+3.4} q4.4 .8 5 3.6" stroke="#6a5f9a" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+      <ellipse cx="${x+1}" cy="${y+12.4}" rx="3.5" ry="2.7" fill="#8a7ad0" stroke="#5f4fa0" stroke-width="1.1"
+        transform="rotate(-18 ${x+1} ${y+12.4})"/>`},
+    featn:{name:'깃털 목걸이', em:'🪶', coin:5400, d:(x,y,w)=>`
+      <path d="M${x-w*0.8} ${y-2} q${w*0.8} 11 ${w*1.6} 0" stroke="#bfb0a0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <g transform="rotate(15 ${x} ${y+4})">
+        <path d="M${x} ${y+3} q-4.8 4.2 -4.2 9.6 q.6 4 4.2 5.6 q3.6 -1.6 4.2 -5.6 q.6 -5.4 -4.2 -9.6 z"
+          fill="#cfe4f5" stroke="#6f94b8" stroke-width="1.1" stroke-linejoin="round"/>
+        <path d="M${x} ${y+3.6} v14.4" stroke="#6f94b8" stroke-width="1.1" stroke-linecap="round"/>
+        <g stroke="#93b4d0" stroke-width=".85" fill="none" stroke-linecap="round">
+          <path d="M${x} ${y+7} l-2.8 2 M${x} ${y+10.4} l-3 2 M${x} ${y+13.6} l-2.4 1.8
+                   M${x} ${y+7} l2.8 2 M${x} ${y+10.4} l3 2 M${x} ${y+13.6} l2.4 1.8"/></g>
+      </g>`},
+    /* 🍒 토핑으로만 */
+    starn:{name:'별 목걸이', em:'🌟', top:28, d:(x,y,w)=>`
+      <path d="M${x-w*0.82} ${y-3} q${w*0.82} 11 ${w*1.64} 0" stroke="#e0c47a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      ${_star(x, y+6.2, 5.8, '#fff3ae', '#e0ac2c')}
+      <circle cx="${x-w*0.42}" cy="${y+2}" r="1.7" fill="#fff6cf"/>
+      <circle cx="${x+w*0.42}" cy="${y+2}" r="1.7" fill="#fff6cf"/>`},
   }},
   hand:{name:'손', em:'🎈', items:{
     lolly:{name:'막대사탕', em:'🍭', coin:220, d:(x,y)=>`
@@ -6586,7 +6746,53 @@ const WEAR={
       ${[[-6,-11,'#ff9fc0'],[6,-11,'#ffe07a'],[0,-16,'#fff4f8'],[-2,-8,'#c9a4e0'],[4,-6,'#8fd0e8']].map(f=>
         `<g transform="translate(${x+f[0]},${y+f[1]})">${[0,72,144,216,288].map(a=>
           `<ellipse cx="0" cy="-3.6" rx="2.5" ry="3.6" fill="${f[2]}" stroke="#dfa8b8" stroke-width=".9" transform="rotate(${a})"/>`).join('')}
-          <circle r="1.7" fill="#ffe07a" stroke="#e0ac2c" stroke-width=".8"/></g>`).join('')}`}
+          <circle r="1.7" fill="#ffe07a" stroke="#e0ac2c" stroke-width=".8"/></g>`).join('')}`},
+    /* 🆕 2026-09-15 일곱 — 손에 든 것은 (x,y) 가 <b>손 자리</b>다(기본 80,74).
+       ⚠️ y 를 +12 보다 내리면 그림 밖(100)으로 나간다. */
+    soda:{name:'주스 컵', em:'🥤', coin:600, d:(x,y)=>`
+      <path d="M${x+1.6} ${y-12} l2.6 -8" stroke="#8fc4f0" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M${x-5.4} ${y-11} L${x-4.2} ${y+3} q4.2 1.7 8.4 0 L${x+5.4} ${y-11} z"
+        fill="#fff2f8" stroke="#e5799f" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M${x-4.8} ${y-6} q4.8 2 9.6 0 l-.8 8 q-4 1.4 -8 0 z" fill="#ff9fc0"/>
+      <ellipse cx="${x}" cy="${y-11}" rx="5.6" ry="1.9" fill="#ffd0e0" stroke="#e5799f" stroke-width="1.1"/>`},
+    yoyo:{name:'요요', em:'🪀', coin:1300, d:(x,y)=>`
+      <path d="M${x} ${y-5} v8" stroke="#d8c8a8" stroke-width="1.3"/>
+      <circle cx="${x}" cy="${y+8.6}" r="6.3" fill="#ff9fc0" stroke="#d9557c" stroke-width="1.3"/>
+      <circle cx="${x}" cy="${y+8.6}" r="2.3" fill="#fff0f6" stroke="#d9557c" stroke-width="1"/>
+      <path d="M${x-6.3} ${y+8.6} a6.3 6.3 0 0 1 4.5 -6" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/>`},
+    cookie:{name:'쿠키', em:'🍪', coin:1100, d:(x,y)=>`
+      <circle cx="${x}" cy="${y-6}" r="7.4" fill="#e8bd86" stroke="#bf8f56" stroke-width="1.3"/>
+      <g fill="#6a4a30"><circle cx="${x-2.6}" cy="${y-8.6}" r="1.3"/><circle cx="${x+2.8}" cy="${y-7}" r="1.3"/>
+      <circle cx="${x-0.6}" cy="${y-3.2}" r="1.2"/><circle cx="${x+3.4}" cy="${y-11}" r="1"/></g>`},
+    flobask:{name:'꽃바구니', em:'🧺', coin:1900, d:(x,y)=>`
+      <circle cx="${x-3.4}" cy="${y-6.4}" r="2.7" fill="#ff9fc0" stroke="#e5799f" stroke-width="1"/>
+      <circle cx="${x+3.2}" cy="${y-6.8}" r="2.7" fill="#ffe07a" stroke="#e0ac2c" stroke-width="1"/>
+      <circle cx="${x}" cy="${y-9.4}" r="2.5" fill="#c9a8ee" stroke="#9070b8" stroke-width="1"/>
+      <path d="M${x-6.6} ${y-4} q6.6 -6 13.2 0" stroke="#c9a86a" stroke-width="1.6" fill="none"/>
+      <path d="M${x-7.4} ${y-4} L${x-5.4} ${y+6} q5.4 2 10.8 0 L${x+7.4} ${y-4} z"
+        fill="#e0c08a" stroke="#a8874e" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M${x-6.6} ${y-0.6} h13.2 M${x-3.4} ${y-4} v9.8 M${x+3.4} ${y-4} v9.8" stroke="#a8874e" stroke-width="1"/>`},
+    watercan:{name:'물뿌리개', em:'🪣', coin:2200, d:(x,y)=>`
+      <path d="M${x+5.4} ${y-6.4} l5.6 -3.6" stroke="#4f92b0" stroke-width="2" stroke-linecap="round"/>
+      <ellipse cx="${x+11.6}" cy="${y-10.4}" rx="2.4" ry="1.8" fill="#c4eaf5" stroke="#4f92b0" stroke-width="1.1"/>
+      <path d="M${x-6} ${y-8} q-4.4 -6.4 2 -6.4" stroke="#4f92b0" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <path d="M${x-6} ${y-8} L${x-4.6} ${y+5} q4.6 1.8 9.2 0 L${x+6} ${y-8} z"
+        fill="#9ed4e8" stroke="#4f92b0" stroke-width="1.3" stroke-linejoin="round"/>
+      <ellipse cx="${x}" cy="${y-8}" rx="6" ry="1.9" fill="#c4eaf5" stroke="#4f92b0" stroke-width="1.1"/>`},
+    guitarh:{name:'작은 기타', em:'🪕', coin:4600, d:(x,y)=>`
+      <path d="M${x} ${y-11} v-10" stroke="#a8763e" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M${x-2.2} ${y-21} h4.4" stroke="#6a4a30" stroke-width="2" stroke-linecap="round"/>
+      <path d="M${x} ${y+6} q-6 0 -6 -5 q0 -4 3.4 -4.6 q-3 -1.4 -3 -4.4 q0 -3.6 5.6 -3.6
+               q5.6 0 5.6 3.6 q0 3 -3 4.4 q3.4 .6 3.4 4.6 q0 5 -6 5 z"
+        fill="#e8b878" stroke="#a8763e" stroke-width="1.3" stroke-linejoin="round"/>
+      <circle cx="${x}" cy="${y+1}" r="2.2" fill="#6a4a30"/>`},
+    /* 🍒 토핑으로만 */
+    sparkler:{name:'반짝이 막대', em:'🎇', top:16, d:(x,y)=>`
+      <path d="M${x} ${y+4} v-12" stroke="#8a7a6a" stroke-width="2" stroke-linecap="round"/>
+      <g stroke="#ffd75e" stroke-width="1.4" stroke-linecap="round" fill="none">
+        <path d="M${x-9} ${y-19} l-3 -3 M${x+9} ${y-19} l3 -3 M${x} ${y-22} v-3.6
+                 M${x-10} ${y-11} l-3.6 1 M${x+10} ${y-11} l3.6 1"/></g>
+      ${_star(x, y-14, 6.4, '#fff3ae', '#e0ac2c')}`},
   }},
   /* 🍨 콘 타기 — 햄쮜가 아이스크림 한 스쿱이 되어 콘 위에 올라앉는다.
      art(c) 는 콘 그림(c = 그 햄쮜의 맛 색). hy·hs 는 몸을 얼마나 올리고 줄일지. */
@@ -6668,6 +6874,32 @@ const WEAR={
         _star(q[0],q[1],q[2],'#fff3ae','#e0ac2c')).join('')}
       <ellipse cx="50" cy="61" rx="30" ry="6.4" fill="#b8a8f0" stroke="#5f4fa0" stroke-width="2.2"/>
       <ellipse cx="50" cy="59.6" rx="24" ry="4" fill="${c}" opacity=".5"/>`},
+    /* 🆕 2026-09-15 셋 — 콘은 art(c)·hy·hs 로 만든다(d() 가 아니다) */
+    cmint:{name:'민트콘', em:'🌿', coin:7800, hy:33, hs:.74, art:c=>`
+      <path d="M20 61 L50 99 L80 61 Z" fill="#9ed8c0" stroke="#4f9a7e" stroke-width="2.4" stroke-linejoin="round"/>
+      <g stroke="#6fb89a" stroke-width="1.5" opacity=".85" fill="none">
+        <path d="M29 61 L50 88 M39 61 L50 75 M61 61 L50 75 M71 61 L50 88"/></g>
+      <g fill="#3f5f4e"><circle cx="36" cy="70" r="1.6"/><circle cx="52" cy="76" r="1.5"/>
+      <circle cx="63" cy="68" r="1.5"/><circle cx="45" cy="84" r="1.3"/></g>
+      <ellipse cx="50" cy="61" rx="30" ry="6.4" fill="#c4ecdc" stroke="#4f9a7e" stroke-width="2.2"/>
+      <ellipse cx="50" cy="59.6" rx="24" ry="4" fill="${c}" opacity=".5"/>`},
+    cblue:{name:'블루베리콘', em:'🫐', coin:9600, hy:33, hs:.74, art:c=>`
+      <path d="M20 61 L50 99 L80 61 Z" fill="#8ea0d8" stroke="#4f5f9a" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M20 61 q7 9 5 15 q9 5 12 -2 q7 8 13 0 q7 6 12 -2 q3 -5 10 -11 Z"
+        fill="#6a7cc0" stroke="#4f5f9a" stroke-width="1.6" stroke-linejoin="round"/>
+      <g fill="#b4c0ea"><circle cx="35" cy="72" r="2"/><circle cx="52" cy="79" r="1.9"/><circle cx="64" cy="70" r="1.8"/></g>
+      <ellipse cx="50" cy="61" rx="30" ry="6.4" fill="#b4c0ea" stroke="#4f5f9a" stroke-width="2.2"/>
+      <ellipse cx="50" cy="59.6" rx="24" ry="4" fill="${c}" opacity=".5"/>`},
+    /* 🍒 토핑으로만 */
+    cbowl:{name:'곰돌이 그릇', em:'🥣', top:32, hy:32, hs:.7, art:c=>`
+      <circle cx="17" cy="66" r="8.4" fill="#e8c49a" stroke="#b08a56" stroke-width="2"/>
+      <circle cx="83" cy="66" r="8.4" fill="#e8c49a" stroke="#b08a56" stroke-width="2"/>
+      <circle cx="17" cy="66" r="4" fill="#f7dcbd"/><circle cx="83" cy="66" r="4" fill="#f7dcbd"/>
+      <ellipse cx="50" cy="95" rx="16" ry="4.2" fill="#d9a877"/>
+      <path d="M21 60 L79 60 L66 86 q-3 6 -16 6 q-13 0 -16 -6 Z"
+        fill="#f0d2ac" stroke="#b08a56" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M31 62 L41 80 M50 62 L50 86 M69 62 L59 80" stroke="#e0bd92" stroke-width="1.7" fill="none"/>
+      <ellipse cx="50" cy="60" rx="29" ry="5.8" fill="${c}" opacity=".45" stroke="#b08a56" stroke-width="2.2"/>`},
   }}
 };
 const WEAR_SLOTS=Object.keys(WEAR);
@@ -8557,7 +8789,6 @@ function schoolAt(k){ return schoolS().find(x=>x.k===k)||null; }
 function schoolLeft(x){ return Math.max(0, (x.at+SCHOOL_MS)-Date.now()); }
 function schoolBackList(){ return schoolS().filter(x=>schoolLeft(x)<=0); }
 function schoolFree(){ return Math.max(0, SCHOOL_MAX-schoolS().length); }
-function schoolReady(){ return schoolBackList().length>0 || schoolFree()>0; }
 function schoolWait(ms){
   const m=Math.ceil(ms/60000);
   return m>=60 ? `${Math.floor(m/60)}시간 ${m%60}분` : `${m}분`;
@@ -8696,7 +8927,9 @@ const WQ_POOL=[
   {k:'jar',   em:'🍯', n:'항아리 토핑 모으기',u:'개',   get:()=>S.jarAll|0,       amt:[20,40,70]},
   {k:'best4', em:'⭐', n:'⭐4개 이상 뜨기',   u:'마리', get:()=>S.stats.best4|0,  amt:[2,4,6]},
   {k:'re',    em:'💗', n:'다시 만난 친구',    u:'번',   get:()=>S.stats.re|0,     amt:[10,20,30]},
-  {k:'party', em:'🎂', n:'생일 파티 열어주기',u:'번',   get:()=>S.stats.party|0,  amt:[1,1,2]}
+  {k:'party', em:'🎂', n:'생일 파티 열어주기',u:'번',   get:()=>S.stats.party|0,  amt:[1,1,2]},
+  {k:'tower', em:'🍨', n:'아이스크림 쌓기',  u:'층',   get:()=>(S.tower&&S.tower.all)|0, amt:[15,30,55]},
+  {k:'echo',  em:'🎵', n:'가락 따라 부르기', u:'음',   get:()=>(S.echo&&S.echo.all)|0,   amt:[12,25,45]}
 ];
 const WQ_BY={}; WQ_POOL.forEach(x=>WQ_BY[x.k]=x);
 const WQ_N=5;
@@ -9108,6 +9341,10 @@ function diaryLines(){
   if(photoN) L.push(`📸 사진을 <b>${photoN}장</b> 찍었어요.`);
   const tn=(S.tripDay&&S.tripDay.d===dk)?(S.tripDay.n|0):0;
   if(tn) L.push(`🎒 소풍을 <b>${tn}번</b> 보냈어요.`);
+  if(S.tower && S.tower.day===dk && (S.tower.dbest|0)>0)
+    L.push(`🍨 아이스크림을 <b>${S.tower.dbest}층</b>까지 쌓았어요.`);
+  if(S.echo && S.echo.day===dk && (S.echo.dbest|0)>0)
+    L.push(`🎵 가락을 <b>${S.echo.dbest}음</b>까지 따라 불렀어요.`);
   if(S.cont && S.cont.d===dk) L.push('🏆 꾸미기 대회에 나갔어요.');
   /* ⚠️ 이름을 대지 않는다 — 이제 만든 메뉴 <b>여섯 개가 다</b> 팔리는데
      간판에 건 한 개의 이름을 대면 딴 메뉴를 판 날에도 그 이름이 뜬다.
@@ -9310,7 +9547,13 @@ const SPECIAL={
   mage   :{hn:'마법쮜',  shape:'mage',    color:'magpu', c:'#8a5ec8', star:2260, g:5, em:'🪄', pers:'joker',
            d:'모자에서 숟가락을 꺼내는 재주가 있어요. 아직 넣는 법은 못 배웠대요'},
   drgn   :{hn:'아기용쮜',shape:'drgn',    color:'drgmt', c:'#6ec8c0', star:2400, g:5, em:'🐉', pers:'brave',
-           d:'알에서 막 나온 작은 용이에요. 재채기를 하면 아이스크림이 살짝 녹아요'}
+           d:'알에서 막 나온 작은 용이에요. 재채기를 하면 아이스크림이 살짝 녹아요'},
+
+  /* 🍀 네잎쮜 — <b>⭐로는 안 오는 아이</b>. 🎫쿠폰을 쓰면 찾아온다.
+     ⚠️ gift:1 이라 spLocked() 의 ⭐사다리에서 빠진다 — star 를 적으면 안 된다.
+     ⚠️ 🍀는 「네잎클로버 날」에도 쓰는 그림표다. 같은 뜻이라 일부러 맞춘 것이다. */
+  clove  :{hn:'네잎쮜',  shape:'clove',   color:'clovgr',c:'#a8dc90', gift:1,   g:5, em:'🍀', pers:'shy',
+           d:'풀밭에서 아주 오래 숨어 있었대요. 찾아준 사람한테만 조용히 따라와요'}
 };
 const SP_KEYS=Object.keys(SPECIAL);
 function spId(k){ return 'sp_'+k; }
@@ -9787,7 +10030,23 @@ const BADGES=[
   {k:'shd50', em:'🎭', n:'그림자 박사',    d:'그림자를 <b>쉰 번</b> 맞혔어요',
      ok:()=>(S.shd&&S.shd.all||0)>=50, top:40},
   {k:'shdrun',em:'🔥', n:'다섯 판 연속',   d:'그림자를 <b>다섯 판 내리</b> 한 번에 맞혔어요',
-     ok:()=>(S.shd&&S.shd.best||0)>=5, top:55}
+     ok:()=>(S.shd&&S.shd.best||0)>=5, top:55},
+  /* ---- 🍨 높이 쌓기 · 🎵 따라 부르기 스티커 (2026-09-15) ----
+     ⚠️ 열쇠는 <b>맨 뒤</b>에만 — 저장에 열쇠가 적혀 있다.
+     ⚠️ ok 안에서 towS()·echoS() 를 부르지 않는다 — 저장을 <b>읽기만</b> 해야 하는 자리라
+        없는 칸을 만들어 놓으면 아직 한 번도 안 논 아이의 저장이 괜히 불어난다. */
+  {k:'tow5',  em:'🍨', n:'다섯 층',       d:'아이스크림을 <b>다섯 층</b> 쌓았어요',
+     ok:()=>(S.tower&&S.tower.best||0)>=5,  top:10},
+  {k:'tow12', em:'⛰️', n:'열두 층',       d:'아이스크림을 <b>열두 층</b>이나 쌓았어요',
+     ok:()=>(S.tower&&S.tower.best||0)>=12, top:40},
+  {k:'towdak',em:'✨', n:'딱 맞추기 왕',  d:'한 판에 <b>다섯 번</b>이나 딱 맞췄어요',
+     ok:()=>(S.stats&&S.stats.towPerf||0)>=5, top:45},
+  {k:'ec5',   em:'🎵', n:'다섯 음',       d:'가락을 <b>다섯 음</b>까지 따라 불렀어요',
+     ok:()=>(S.echo&&S.echo.best||0)>=5,  top:10},
+  {k:'ec9',   em:'🎶', n:'아홉 음',       d:'가락을 <b>아홉 음</b>까지 따라 불렀어요',
+     ok:()=>(S.echo&&S.echo.best||0)>=9,  top:40},
+  {k:'ec12',  em:'🎼', n:'노래 박사',     d:'가락을 <b>열두 음</b>까지 다 따라 불렀어요',
+     ok:()=>(S.echo&&S.echo.best||0)>=12, top:60}
 ];
 function checkBadges(){
   BADGES.forEach(b=>{
@@ -10744,12 +11003,24 @@ const COLLAB={
     d:'빨간 리본을 맸어요. 엄마가 구워주는 애플파이를 제일 좋아하고, 쿠키 굽기도 잘한대요.'},
   nyani:{hn:'냐니쮜', em:'🐱', from:'냐니', shape:'nyani', color:'nyaniw', c:'#eef0f2',
     pers:'shy', g:1, cost:1, open:'2026-09-09', days:7,
-    d:'눈이 아주 커요. 시무룩해 보이지만 사실은 부끄러운 거래요.'}
-  /* ⏸️ <b>2026-09-16 콜라보(마이멜로쮜·토실쮜)는 덜어냈다.</b>
-     그림을 두 번 물렸는데 다시 그려도 사장님이 보고 고르셔야 끝난다 —
-     오늘 못 보시므로 <b>나머지만 먼저</b> 내보낸다. 다시 붙일 때 open 을 그때 날짜로 정한다.
-     모양(SHAPES melody·toshil)과 빛깔(COLORS melopk·toshbk)은 <b>남겨 뒀다</b> —
-     아무 데서도 안 불리므로 게임엔 영향이 없고, 다시 그릴 때 고치기만 하면 된다. */
+    d:'눈이 아주 커요. 시무룩해 보이지만 사실은 부끄러운 거래요.'},
+  /* 🗓️ <b>2026-09-16 ~ 09-22</b> (아이 결정) — 헬로키쮜·냐니쮜가 9/15 밤에 끝나므로
+     <b>빈 날 없이 바로 이어진다</b>. 이번에도 둘이 <b>같이</b> 온다 — 이레 동안 초대권은 일곱 장,
+     ⭐5 는 다섯 장이라 <b>한 마리만</b> 다 키울 수 있다. 누구를 키울지 고르는 것이 이 놀이다.
+     ⚠️ 아이에게 배포한 뒤에는 <b>open 을 고치지 마라</b>.
+     ⚠️ 아이가 이름을 직접 골랐다 — 「쿠로미는 이름을 토실쮜로, 마이멜로디는 마이멜로쮜로」.
+     ⏸️ 9/15 에 <b>그림 때문에 한 판 걸렀다</b> — 모양을 원본대로 다시 그린 뒤 도로 붙였다. */
+  /* ⚠️ 그림표는 🎀가 아니라 🌼다 — 🎀는 <b>헬로키쮜</b>가 이미 쓴다.
+     콜라보 목록에서 둘이 나란히 서기 때문에 겹치면 구별이 안 된다(🌙이 둘이었던 적이 있다).
+     🌼는 두건에 달린 <b>데이지</b>다 — 원본에 있는 것이라 딴 데서 가져온 표가 아니다. */
+  melody:{hn:'마이멜로쮜', em:'🌼', from:'마이멜로디', shape:'melody', color:'melopk', c:'#ffd6e6',
+    pers:'foodie', g:1, cost:1, open:'2026-09-16', days:7,
+    /* ⚠️ 설명은 <b>원래 있는 설정</b>만 쓴다(할머니가 만들어 준 두건 · 아몬드 파운드 케이크 · 숲속 집). */
+    d:'할머니가 만들어 준 분홍 두건을 늘 쓰고 다녀요. 아몬드 파운드 케이크를 제일 좋아한대요.'},
+  toshil:{hn:'토실쮜', em:'🖤', from:'쿠로미', shape:'toshil', color:'toshbk', c:'#e6ddf2',
+    pers:'joker', g:1, cost:1, open:'2026-09-16', days:7,
+    /* ⚠️ 원래 있는 설정만 — 검은 두건에 분홍 해골 · 일기 쓰기가 취미 · 마이멜로디의 라이벌. */
+    d:'검은 두건에 분홍 해골을 달았어요. 일기 쓰기가 취미이고, 마이멜로쮜와는 라이벌이래요.'}
 };
 const CB_KEYS=Object.keys(COLLAB);
 function cbId(k){ return 'cb_'+k; }
@@ -12503,6 +12774,22 @@ const MAIL_ACT_TPL={
             저도 <b>저렇게 몽실몽실한 퐁실이</b>였는데 어느 날 눈이 뜨이고 발이 생겼거든요.<br>
             말을 걸어볼까 하다가 부끄러워서 그냥 왔어요 🙈`
   ],
+  /* 🍀 네잎쮜가 오자마자 쓰는 편지 — 쿠폰 「높이높이 쌓기」로 올 때.
+     ⚠️ 이 아이는 ⭐로는 안 오는 아이다. 그러니 편지에도 <b>「찾아줘서」</b>가 들어가야
+        왜 왔는지가 말이 된다. */
+  clovehi:[
+    (k,m)=>`저는 <b>네잎쮜</b>라고 해요 🍀<br>
+            풀밭에서 아주 아주 오래 숨어 있었어요.<br>
+            찾아 주셔서 고맙습니다!`,
+    (k,m)=>{ const p=mailPalName(m);
+      return `잎이 넷이라 자꾸 걸려서 빨리는 못 뛰어요.<br>
+              ${p?`그런데 <b>${p}</b>가 「천천히 와도 된다」고 했어요 🌱`
+                 :'그런데 다들 「천천히 와도 된다」고 했어요 🌱'}<br>
+              그 말이 참 좋았어요`; },
+    (k,m)=>`제가 옆에 있는 날은 <b>운이 좋대요</b>.<br>
+            정말인지는 저도 잘 몰라요.<br>
+            그래도 옆에 있어 볼게요 🍀`
+  ],
   /* 🧚 요정쮜가 오자마자 쓰는 편지 — 쿠폰 「아프지마 쮜돌아」로 올 때 */
   fairyhi:[
     (k,m)=>`안녕하세요! 저 <b>요정쮜</b>예요 🧚<br>
@@ -12515,6 +12802,21 @@ const MAIL_ACT_TPL={
     (k,m)=>`제 날개는 아주 얇아서요,<br>
             바람이 세게 불면 <b>붙잡고 있어야</b> 해요.<br>
             그래도 아픈 친구가 있는 곳에는 꼭 날아갈 수 있어요 🤍`
+  ],
+  /* 🌕 달님쮜가 온 날 — 🎵「같이 노래 부르자」 쿠폰으로 온다.
+     ⚠️ 원래 설명(「불을 다 꺼도 방이 은은하게 밝아요」)에서 벗어나지 않는다. */
+  moonhi:[
+    (k,m)=>`안녕하세요, 저 <b>달님쮜</b>예요 🌕<br>
+            밤마다 창문에 걸려서 내려다보고 있었는데요,<br>
+            <b>노랫소리</b>가 들려서 그만 내려와 버렸어요!`,
+    (k,m)=>{ const p=mailPalName(m);
+      return `불을 다 껐는데도 제가 <b>은은하게</b> 밝아서요,<br>
+              ${p?`<b>${p}</b>가 「달이 들어왔다」고 했어요 😳`
+                 :'다들 「달이 들어왔다」고 했어요 😳'}<br>
+              이제 밤에도 방이 깜깜하지 않을 거예요`; },
+    (k,m)=>`저는 노래를 아주 <b>작게</b> 불러요.<br>
+            아무도 못 들을 만큼요.<br>
+            그래도 같이 불러 주시면 조금 크게 부를 수 있어요 🎵`
   ]
 };
 /* 💌 햄쮜끼리 쓴 편지 — 받는 아이 이름이 b 로 들어온다.
@@ -12612,6 +12914,8 @@ const MAIL_WHY={
   fox  :'🦊 여우쮜가 산에서 내려온 날 쓴 편지예요',
   busan:'🌊 부산에서 부친 엽서예요',
   bdayhi:'🎂 생일 축하 인사를 받고 기뻐서 쓴 편지예요',
+  moonhi:'🌕 달님쮜가 내려온 날 쓴 편지예요',
+  clovehi:'🍀 네잎쮜를 찾아낸 날 쓴 편지예요',
   jar  :'🍯 토핑 항아리에 토핑을 모아다 주고 쓴 편지예요',
   school:'🎀 학교에서 재주를 배워 오고 쓴 편지예요',
   cake :'🍰 케이크를 나눠 먹고 신나서 쓴 편지예요',
@@ -13138,7 +13442,32 @@ const COUPONS={
   '아프지마쮜돌아':{em:'🍀', name:'아프지마 쮜돌아', coin:12000, top:60,
                     sp:['fairy'], spMail:'fairyhi',
                     wear:['hat_beret','neck_daisy','hand_handbell','hand_camera'],
-                    furn:['fount','swingy','treasure','arcade'], mail:5}
+                    furn:['fount','swingy','treasure','arcade'], mail:5},
+  /* 🍨 「높이높이 쌓기」 — 새로 생긴 🍨높이 쌓기 놀이를 기념하는 쿠폰.
+     ⚠️ 줄 <b>물건이 거의 없다.</b> 서른일곱 장이 소품과 가구를 다 썼고, 남은 상점 소품은
+        💎보석 목걸이 하나뿐이었다. ⇒ 그래서 <b>소품 23가지·가구 18가지를 새로 만들고</b>
+        여기에 담았다. 쿠폰은 코인만 불리는 종이가 아니라 <b>물건을 주는 것</b>이어야 한다.
+     ⚠️ `sport:1` 은 오늘 운동회를 한 번 더 열어준다 — 같은 날 새로 생긴
+        📣<b>응원 연타</b>를 바로 또 해볼 수 있다. 레벨로 잠긴 것을 여는 게 아니라
+        <b>이미 열린 하루치</b>를 한 번 더 주는 것이라 규칙에 어긋나지 않는다.
+     ⚠️ 통은 안 넣었다 — Lv.26 아래 통은 이미 다 열려 있어서 「이미 있어서 🍒+20」만 뜬다.
+     🍀 네잎쮜는 <b>⭐로는 절대 안 오는 아이</b>다(gift:1). 쿠폰이 <b>유일한 길</b>이라
+        「쿠폰으로 레벨 잠금을 연다」에 해당하지 않는다 — 잠긴 것을 앞당기는 게 아니라
+        <b>여기에만 있는 것</b>을 주는 것이다. */
+  '높이높이쌓기':{em:'🍨', name:'높이높이 쌓기', coin:8000, top:40,
+                  wear:['hat_cakehat','neck_gem','hand_soda','cone_cmint'],
+                  furn:['popcorn','wparty','seesaw'],
+                  sp:['clove'], spMail:'clovehi', sport:1, mail:3},
+  /* 🎵 「같이 노래 부르자」 — 새로 생긴 🎵따라 부르기를 기념하는 쿠폰.
+     ⚠️ 특별햄쮜는 <b>이 한 장에만</b> 넣는다 — 두 장 다 주면 같은 날 두 마리가 들어와
+        ⭐가 할 일이 없어진다(9/14 에도 같은 이유로 한 장에만 넣었다).
+     ⚠️ 🌕달님쮜(⭐1280)는 이번 판에 새로 들어온 열 마리 중 <b>제일 가까운</b> 아이다.
+        더 먼 아이를 주면 그 자리가 텅 비고, 마지막 아이(🐉아기용쮜 ⭐2400)를 주면
+        모으는 재미의 <b>끝</b>이 사라진다. */
+  '같이노래부르자':{em:'🎵', name:'같이 노래 부르자', coin:8400, top:42,
+                    wear:['hat_phones','neck_musicn','hand_guitarh'],
+                    furn:['drum','guitarf','mirrorb'],
+                    sp:['moonh'], spMail:'moonhi', mail:4}
 };
 /* 🎫 받은 쿠폰이 스물여덟 장까지 늘 수 있다 — 다 늘어놓으면 팝업이 두 배로 길어진다.
    최근 여섯 장만 두고 나머지는 접는다. */
@@ -14380,7 +14709,33 @@ const FURN={
      ⚠️ 열쇠는 맨 뒤에만 — 저장에 열쇠가 적혀 있다. */
   torgel :{em:'🎠',  n:'목마 오르골',    kind:'floor', gift:1},
   snowlet:{em:'✉️',  n:'눈사람 편지함',  kind:'wall',  gift:1},
-  seashel:{em:'🐚',  n:'노래하는 소라',  kind:'floor', gift:1}
+  seashel:{em:'🐚',  n:'노래하는 소라',  kind:'floor', gift:1},
+  /* 🆕 2026-09-15 열여덟 — 쿠폰에 줄 물건이 바닥나서 한꺼번에 더 만들었다.
+     ⚠️ 그림표(em)가 이미 쓰인 것과 겹치면 목록에서 <b>같은 물건으로 보인다</b> —
+        🎈풍선·⭐별 모빌·🧁디저트 진열대와 겹치지 않게 골랐다. */
+  /* --- 바닥 여덟 --- */
+  cactus :{em:'🌵',  n:'선인장',          kind:'floor', coin:1200},
+  puzzle :{em:'🧩',  n:'퍼즐 판',         kind:'floor', coin:4800},
+  easel  :{em:'🖌️',  n:'그림 이젤',       kind:'floor', coin:7000},
+  drum   :{em:'🥁',  n:'북',              kind:'floor', coin:11000},
+  guitarf:{em:'🎸',  n:'기타',            kind:'floor', coin:16000},
+  globe  :{em:'🔮',  n:'마법 구슬',       kind:'floor', coin:21000},
+  fridge :{em:'🧊',  n:'얼음 냉장고',     kind:'floor', coin:29000},
+  mirrorb:{em:'🪩',  n:'반짝 조명 공',    kind:'floor', coin:43000},
+  /* --- 벽 여섯 --- */
+  wchime :{em:'🎐',  n:'풍경',            kind:'wall',  coin:1800},
+  wheart :{em:'💖',  n:'하트 벽걸이',     kind:'wall',  coin:3000},
+  wmask  :{em:'🎭',  n:'가면 장식',       kind:'wall',  coin:5600},
+  wsun   :{em:'🌞',  n:'해님 장식',       kind:'wall',  coin:8800},
+  wphoto :{em:'📸',  n:'사진 벽',         kind:'wall',  coin:14000},
+  wpaw   :{em:'🐾',  n:'발자국 장식',     kind:'wall',  coin:20000},
+  wparty :{em:'🎊',  n:'꽃가루 장식',     kind:'wall',  coin:24000},
+  popcorn:{em:'🍿',  n:'팝콘 기계',       kind:'floor', coin:34000},
+  /* --- 🌳 마당 놀이기구 넷 ---
+     ⚠️ 값과 pay 는 있던 줄(🛝6,000/26 … 🎡260,000/300)을 <b>이어서</b> 매겼다.
+        있던 것의 값을 내리지 않는다 — 이미 산 아이한테서 뺏는 셈이 된다. */
+  seesaw :{em:'🪵',  n:'시소',            kind:'ride',  coin:3000,  pay:16, tip:'위로 아래로 통통'},
+  pool   :{em:'🏊',  n:'물놀이장',        kind:'ride',  coin:30000, pay:58, tip:'첨벙첨벙 헤엄쳐요'}
 };
 const FURN_KEYS=Object.keys(FURN);
 const FURN_FREE=['chair','balloon'];      /* 처음부터 가지고 있는 것 */
@@ -14520,7 +14875,6 @@ function seatHams(){ return roomHams(S.room|0); }
 const PB_MAX=100;                       /* 여기까지 차면 단짝 */
 const PB_PLAY=7;                        /* 나란히 앉아 같이 놀면 한 번에 오르는 양 */
 function pbKey(a,b){ return a<b ? a+'|'+b : b+'|'+a; }
-function pbGet(a,b){ return (S.pb&&S.pb[pbKey(a,b)])||0; }
 /* 그 아이의 단짝 (없으면 null). 한 아이에 하나 — 먼저 100이 된 쪽이 임자다. */
 function buddyOf(k){
   if(!S.pb||!S.dex[k]) return null;
@@ -14711,6 +15065,41 @@ const RIDE_ART={
   </svg>`,
   /* 사다리밑 → 사다리 중간 → 발판 → 앉기 → 미끄럼 중간 → 끝 → 착지 */
   path:[[32,118,0,.86],[32,74,0,.78],[33,30,0,.70],[54,42,14,.70],[82,72,26,.78],[108,100,12,.86],[120,116,0,.90]]},
+
+  /* 🪵 시소 — 받침 위에 널빤지. 왼쪽이 내려간 자세로 멈춰 있다 */
+  seesaw:{w:132, h:88, art:`<svg viewBox="0 0 132 88">
+    <ellipse cx="66" cy="82" rx="54" ry="6" fill="#000" opacity=".10"/>
+    <path d="M66 36 L82 78 L50 78 Z" fill="#c9a06a" stroke="#a8814e" stroke-width="2.4" stroke-linejoin="round"/>
+    <rect x="46" y="74" width="40" height="7" rx="3.5" fill="#a8814e"/>
+    <g transform="rotate(-11 66 40)">
+      <path d="M30 32 q0 -13 9 -13 M102 32 q0 -13 -9 -13" stroke="#5ea6d8" stroke-width="5"
+            fill="none" stroke-linecap="round"/>
+      <circle cx="39" cy="18" r="4.8" fill="#ffd75e" stroke="#e0ac2c" stroke-width="1.7"/>
+      <circle cx="93" cy="18" r="4.8" fill="#8fcbee" stroke="#5ea6d8" stroke-width="1.7"/>
+      <rect x="10" y="33" width="112" height="13" rx="6.5" fill="#ff8fae" stroke="#e0708f" stroke-width="2.3"/>
+      <rect x="15" y="36" width="102" height="4" rx="2" fill="#ffd0de"/>
+    </g>
+  </svg>`,
+  /* 옆에 섬 → 낮은 쪽에 앉음 → 올라갔다 내려갔다 세 번 */
+  path:[[26,72,0,.88],[32,52,-9,.80],[32,32,-9,.80],[32,54,-9,.80],[32,34,-9,.80],[32,54,-9,.80]]},
+
+  /* 🏊 물놀이장 — 동그란 풀에 물결과 튜브. 왼쪽에 작은 미끄럼 */
+  pool:{w:132, h:96, art:`<svg viewBox="0 0 132 96">
+    <ellipse cx="66" cy="90" rx="58" ry="7" fill="#000" opacity=".10"/>
+    <path d="M14 26 q16 11 18 28" stroke="#e0ac2c" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <path d="M14 26 q16 11 18 28" stroke="#ffd75e" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="14" cy="24" r="6.4" fill="#ffd75e" stroke="#e0ac2c" stroke-width="2"/>
+    <ellipse cx="66" cy="66" rx="58" ry="24" fill="#8fcbee" stroke="#4f92b0" stroke-width="3"/>
+    <ellipse cx="66" cy="63" rx="50" ry="19" fill="#c4eaf5" stroke="#4f92b0" stroke-width="2"/>
+    <path d="M28 62 q9 -5 18 0 q9 5 18 0 q9 -5 18 0 q9 5 18 0" stroke="#7fc4e0" stroke-width="2.6"
+          fill="none" stroke-linecap="round"/>
+    <path d="M36 71 q8 -4 16 0 q8 4 16 0 q8 -4 16 0" stroke="#a8ddef" stroke-width="2.2"
+          fill="none" stroke-linecap="round"/>
+    <ellipse cx="95" cy="57" rx="15" ry="8" fill="#ff8fae" stroke="#e0708f" stroke-width="2.4"/>
+    <ellipse cx="95" cy="57" rx="6.6" ry="3.4" fill="#c4eaf5" stroke="#e0708f" stroke-width="1.7"/>
+  </svg>`,
+  /* 미끄럼 위 → 쪼르르 → 물속 → 튜브까지 헤엄 */
+  path:[[16,70,0,.86],[16,34,-16,.76],[30,58,12,.78],[50,64,0,.80],[74,64,0,.80],[95,60,0,.80]]},
 
   /* 회전목마 — 기둥에 지붕, 말이 매달려 돈다 */
   merry:{w:110, h:104, art:`<svg viewBox="0 0 110 104">
@@ -16581,7 +16970,8 @@ function renderStoreTab(){
       가구는 <b>놓을 자리를 보면서</b> 사는 게 좋아요 — 🏠놀이방 → <b>🎨 방 꾸미기</b> 에서 살 수 있어요.</div>
     <div class="row"><button class="btn w sm" onclick="go('play');setTimeout(openRoomDeco,60)">🎨 방 꾸미러 가기</button></div>
     <div class="muted" style="margin-top:9px;line-height:1.8;border-top:1px dashed var(--line);padding-top:8px">
-      🍒 <b>토핑</b>은 ⭐3개 이상 뜰 때 · 🔔손님 주문받기 · 🏆꾸미기 대회 · 🙈숨바꼭질 · 📅도장판 · 🏅스티커에서 나와요.
+      🍒 <b>토핑</b>은 ⭐3개 이상 뜰 때 · 🔔손님 주문받기 · 🏆꾸미기 대회 · 🙈숨바꼭질 ·
+      🍨높이 쌓기 · 🎵따라 부르기 · 📅도장판 · 🏅스티커에서 나와요.
       더 자세한 건 <span class="tlink" onclick="openHelp()"><b>❓도움말</b></span> 에 있어요.
     </div>
   </div>`;
@@ -16644,7 +17034,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-09-14';
+const NEWS_VER='2026-09-15';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
@@ -16664,8 +17054,8 @@ const HELP_GROUPS=[
                                    '마당 놀이기구','사진첩','춤추기','햄쮜 표정을 보세요']],
   ['daily', '📅 날마다 하는 것',  ['오늘의 도장판','오늘의 이야기','오늘의 친구',
                                    '아침 인사와 🌠별똥별','아침·낮·저녁·밤','햄쮜 생일','선물상자']],
-  ['game',  '🎮 놀이',           ['놀이터 (탭)','꾸미기 대회','햄쮜 탐정','숨바꼭질',
-                                   '햄쮜 운동회','여름 축제']],
+  ['game',  '🎮 놀이',           ['놀이터 (탭)','높이 쌓기','따라 부르기','꾸미기 대회',
+                                   '햄쮜 탐정','숨바꼭질','햄쮜 운동회','여름 축제']],
   ['far',   '🎒 멀리 가기',       ['소풍 보내기','여행 가기','이어지는 동화']],
   ['friend','🐹 친구 늘리기',     ['단짝 만들기','아기 햄쮜','짝꿍 만들기','특별 햄쮜','단골 손님',
                                    '가게 앞 자리']],
@@ -16707,7 +17097,9 @@ function openHelp(){
     ['💌','편지에 답장하기','편지를 읽고 <b>답장 세 개</b> 중 하나를 골라 보낼 수 있어요. 햄쮜마다 <b>좋아하는 답장</b>이 달라서, 맞히면 하트가 <b>두 배</b>로 올라요! 알아낸 답장은 📖도감에 적혀요.'],
     ['🌟','오늘의 친구','매일 아침 친구 한 마리가 <b>오늘의 친구</b>가 돼요. 그 친구를 쓰담쓰담하면 코인과 하트를 <b>두 배</b>로 받아요!'],
     ['🙈','숨바꼭질','아이스크림 컵 세 개 중 하나에 햄쮜가 숨어요. 맞히면 🍒토핑을 줘요. 8분에 한 번 할 수 있어요.'],
-    ['🎮','놀이터 (탭)','아래 <b>🎮놀이터</b> 탭에 놀이가 다 모여 있어요 — 📅도장판·🎯심부름·🔔주문받기·🏆꾸미기 대회·🙈숨바꼭질·🕵️햄쮜 탐정.<br><b>🔔손님 주문받기</b> 는 한 판에 손님 <b>3명</b>이 차례로 와서 주문해요. 한 판에 손님 <b>3명</b>이 차례로 와서 주문해요. <b>콘 → 맛 → 토핑</b> 순서로 골라 주문서대로 만들면 한 칸에 1점 — 세 명 모두 딱 맞히면 <b>9점 = ⭐3개</b>! 틀려도 ⭐를 하나는 받아요. 잘못 골랐으면 <b>↩다시 고르기</b>. <b>쉬는 시간이 없어서</b> 하고 싶은 만큼 할 수 있어요.'],
+    ['🍨','높이 쌓기','🎮놀이터에서 해요. 햄쮜가 아이스크림 스쿱을 들고 <b>왔다 갔다</b> 하는데, 판 아무 데나 <b>한 번 누르면</b> 그 자리에 얹어져요 — <b>몇 층</b>까지 쌓을 수 있을까요?<br>가운데에 <b>딱</b> 맞추면 스쿱이 <b>한 톨도 안 깎여요</b> ✨ 빗나간 만큼만 깎이니까 천천히 보고 누르면 돼요.<br>스쿱이 미끄러져도 괜찮아요 — <b>쌓은 만큼 그대로</b> 🪙코인을 받아요. 쉬는 시간이 <b>없어서</b> 하고 싶은 만큼 할 수 있고, 🍒토핑은 <b>오늘 첫 판</b>에 줘요.<br>스쿱 빛깔은 <b>내가 모은 통</b>의 색이랍니다 🍓🍌🍏'],
+    ['🎵','따라 부르기','🎮놀이터에서 해요. 햄쮜가 <b>가락을 들려주면</b> 그대로 눌러서 따라 하는 놀이예요 🎶<br>한 번 맞힐 때마다 <b>음이 하나씩 늘어나요</b> — 🍓도 · 🍌미 · 🍏솔 · 🫐<b>높은도</b> 네 개로 <b>열두 음</b>까지 갈 수 있어요.<br><b>👂다시 듣기는 몇 번이든</b> 눌러도 돼요 — 상은 하나도 안 줄어요 😊<br>소리를 꺼두셨어도 할 수 있어요 — 음이 울릴 때 <b>색도 같이 켜진답니다</b> 🎨'],
+    ['🎮','놀이터 (탭)','아래 <b>🎮놀이터</b> 탭에 놀이가 다 모여 있어요 — 📅도장판·🎯심부름·🔔주문받기·🏆꾸미기 대회·🙈숨바꼭질·🕵️햄쮜 탐정·🧩짝 맞추기·🫥그림자 놀이·<b>🍨높이 쌓기</b>·<b>🎵따라 부르기</b>.<br><b>🔔손님 주문받기</b> 는 한 판에 손님 <b>3명</b>이 차례로 와서 주문해요. <b>콘 → 맛 → 토핑</b> 순서로 골라 주문서대로 만들면 한 칸에 1점 — 세 명 모두 딱 맞히면 <b>9점 = ⭐3개</b>! 틀려도 ⭐를 하나는 받아요. 잘못 골랐으면 <b>↩다시 고르기</b>. <b>쉬는 시간이 없어서</b> 하고 싶은 만큼 할 수 있어요.'],
     ['🎁','특별 햄쮜','주문 놀이로 모은 <b>⭐</b>가 쌓이면 <b>통에서는 안 나오는</b> 특별한 햄쮜가 하나씩 놀러 와요 — 🐰토끼쮜·🐤병아리쮜·🐱냥쮜·🧸곰돌쮜·🐼판다쮜·🌸꽃쮜·🦄유니콘쮜·🍮푸딩쮜·💎보석쮜·👼천사쮜·🫧퐁실쮜·🪨돌쮜·🌙꿈나라쮜 <b>열세 마리</b>! 📖도감이나 🎮놀이터 탭에서 눌러보면 알려줘요. 특별 햄쮜는 또 뜰 수 없으니 <b>🍒토핑으로 ⭐를 올려줄 수 있어요.</b>'],
     ['🏆','꾸미기 대회','하루에 한 번 열려요. 매일 <b>오늘의 주제 소품</b>이 정해지는데, 그 소품을 입은 햄쮜를 내보내면 점수가 <b>확</b> 올라요. 머리·목·손을 다 채우고(풀코디) 💗하트가 많으면 더 유리해요. 1등은 🥇 상품이 아주 커요!'],
     ['📸','사진첩','🏠놀이방 오른쪽 위 <b>📸</b> 를 누르면 지금 함께 있는 햄쮜들 사진을 찍어요. 테두리를 고르고 제목을 지어 <b>사진첩</b>에 12장까지 모을 수 있어요.'],
@@ -16851,12 +17243,20 @@ function stampsHTML(){
 }
 function anyUnownedWear(){
   const all=[];
-  WEAR_SLOTS.forEach(sl=>Object.keys(WEAR[sl].items).forEach(key=>{ if(!ownWear(sl,key)) all.push(sl+'_'+key); }));
+  /* ⚠️⚠️ gift:1 은 <b>반드시</b> 빼야 한다 — 🎪축제 대상·🏅스티커 구간 상·📚동화 선물
+     <b>전용</b> 물건이다. 여기서 나가면 상이 상이 아니게 된다(쿠폰에 못 넣는 것과 같은 까닭).
+     ⇒ 2026-09-15 에 잡았다. 그 전에는 🎏축제 머리꽃·✨별콘·스티커 상 여섯이
+        ✏️문방구 심부름에서 <b>그냥 나왔다.</b> */
+  WEAR_SLOTS.forEach(sl=>Object.keys(WEAR[sl].items).forEach(key=>{
+    if(WEAR[sl].items[key].gift) return;
+    if(!ownWear(sl,key)) all.push(sl+'_'+key); }));
   return all.length?pick(all):null;
 }
 /* 아직 안 산 가구 하나 — 선물로 줄 때 쓴다 */
 function anyUnownedFurn(){
-  const all=Object.keys(FURN).filter(k=>(S.furn||[]).indexOf(k)<0);
+  /* ⚠️⚠️ 위와 같다 — 🥄달빛 스푼·🎠목마 오르골·✉️눈사람 편지함·🐚노래하는 소라는
+     <b>동화를 끝까지 읽어야</b> 받는 것이다. 🧸장난감 가게 심부름이 주면 안 된다. */
+  const all=Object.keys(FURN).filter(k=>!FURN[k].gift && (S.furn||[]).indexOf(k)<0);
   return all.length?pick(all):null;
 }
 function openStamp(){
@@ -16943,7 +17343,11 @@ const ERR=[
    ok:()=>Object.keys(S.dex).length>=4 && detLeft()>0},
   /* ⚠️ 심부름 열쇠는 <b>맨 뒤</b>에만 더한다 — 저장에 열쇠가 적혀 있다(errToday) */
   {k:'shd',   em:'🫥', n:2,  s:'그림자 2판',  d:'그림자 놀이에서 두 번 맞히기', go:()=>openShadow(),
-   ok:()=>Object.keys(S.dex).length>=4 && shdLeft()>0}
+   ok:()=>Object.keys(S.dex).length>=4 && shdLeft()>0},
+  {k:'stack', em:'🍨', n:1,  s:'높이 쌓기 1',  d:'아이스크림 높이 쌓기 한 판 하기', go:()=>openTower(),
+   ok:()=>Object.keys(S.dex).length>=1},
+  {k:'echo',  em:'🎵', n:1,  s:'따라 부르기 1',d:'가락 따라 부르기 한 판 하기',     go:()=>openEcho(),
+   ok:()=>Object.keys(S.dex).length>=1}
 ];
 const ERR_N=3;
 function errOf(k){ return ERR.find(e=>e.k===k); }
@@ -19982,6 +20386,458 @@ function memQuit(){
 }
 
 /* ==================================================================
+   🍨 높이 쌓기 — 햄쮜가 스쿱을 들고 왔다 갔다 한다. 눌러서 얹으면 한 층이다.
+   ⚠️ 왜 만들었나 — 여기까지의 놀이 여섯(🔔주문·🧩짝 맞추기·🫥그림자·🕵️탐정·🏆대회·🙈숨바꼭질)이
+      <b>전부 「보고 답을 고르는」</b> 놀이였다. 손으로 하는 것이 하나도 없어서
+      아이한테는 다섯이 다 비슷하게 느껴졌다. 이건 답이 없고 <b>타이밍만</b> 있다.
+   ⚠️ <b>지는 법이 없다.</b> 빗나가면 그 자리에서 끝나되 <b>쌓은 만큼</b> 상을 준다 —
+      「실패」「졌어요」라는 말을 쓰지 않는다. 한 층이면 한 층만큼 받는다.
+   ⚠️ 하루 제한을 두지 않는다. 큰 선물(🍒)만 하루 한 번이고 그 뒤로도 얼마든지 논다 —
+      「오늘 할 일」에 줄을 더하지 않기 위해서다(🧩짝 맞추기와 같은 규칙).
+================================================================== */
+const TOW_BW=240;      /* 판 너비 — ⚠️ CSS .twboard 의 width 와 같아야 한다 */
+const TOW_BH=252;      /* 판 높이 — ⚠️ CSS .twboard 의 height 와 같아야 한다 */
+const TOW_H=17;        /* 한 층 높이 — ⚠️ CSS .twrow 의 height 와 같아야 한다 */
+const TOW_W0=104;      /* 바닥 층 너비 */
+const TOW_MIN=9;       /* 이보다 얇아지면 더 못 얹는다 */
+const TOW_VIS=11;      /* 화면에 보이는 층 수 — 넘으면 아래가 잘려 내려간다 */
+const TOW_SNAP=3.6;    /* 이만큼 안에 맞추면 <b>딱!</b> — 그 층은 안 깎인다 */
+function towS(){
+  if(!S.tower||typeof S.tower!=='object'||Array.isArray(S.tower))
+    S.tower={best:0, all:0, day:'', n:0, dbest:0};
+  const t=S.tower;
+  ['best','all','n','dbest'].forEach(k=>{ if(typeof t[k]!=='number') t[k]=0; });
+  if(typeof t.day!=='string') t.day='';
+  return t;
+}
+/* 🎁 큰 선물(🍒)은 하루 한 번 — 그 뒤로도 얼마든지 놀 수 있다 */
+function towBonusLeft(){ const t=towS(); return t.day===todayKey()? Math.max(0,1-(t.n|0)) : 1; }
+/* 스쿱 빛깔 — <b>내가 모은 통</b>의 색을 쓴다. 아직 통이 적으면 기본 여섯 가지 */
+function towColors(){
+  const out=[];
+  Object.keys(S.dex).forEach(k=>{ const f=FL[k]; if(f&&f.c&&out.indexOf(f.c)<0) out.push(f.c); });
+  return out.length>=4 ? out : ['#ffd9e4','#ffe9b8','#c9e7ff','#d8f0d2','#f0dcff','#ffd2c2'];
+}
+/* 스쿱을 들고 오는 아이 — 방에 앉은 아이를 먼저 부른다(눈에 익은 얼굴이라 반갑다) */
+function towPool(){
+  const out=[];
+  seatHams().forEach(k=>{ if(S.dex[k]&&out.indexOf(k)<0) out.push(k); });
+  Object.keys(S.dex).forEach(k=>{ if(out.indexOf(k)<0) out.push(k); });
+  return out;
+}
+let _tw=null;                          /* 진행 중인 판 — 저장하지 않는다 */
+/* ⚠️ 타이머 번호는 <b>_tw 바깥</b>에 둔다 — _tw 가 먼저 null 이 되면
+   _tw.tm 을 보고 멈추는 코드는 clearInterval 을 영영 못 부른다(오류도 안 난다). */
+let _twTm=0;
+function openTower(){
+  sfx('tap'); towStop(); _tw=null;
+  if(!Object.keys(S.dex).length){
+    sfx('boo'); toast('먼저 햄쮜를 만나야 같이 쌓을 수 있어요 🍨'); return;
+  }
+  const t=towS();
+  openModal(`<h2>🍨 높이 쌓기<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="line-height:1.85;margin-bottom:10px">
+      햄쮜가 아이스크림 스쿱을 들고 <b>왔다 갔다</b> 해요.<br>
+      아무 데나 <b>한 번 누르면</b> 그 자리에 얹어요 — <b>몇 층</b>까지 쌓을 수 있을까요?<br>
+      가운데에 <b>딱</b> 맞추면 스쿱이 <b>안 깎여요</b> ✨<br>
+      빗나가도 괜찮아요 — <b>쌓은 만큼 그대로 상을 받아요</b> 😊<br>
+      ${towBonusLeft()
+        ? '🎁 오늘 <b>첫 판</b>에는 🍒토핑을 같이 줘요!'
+        : '🎁 오늘 🍒토핑은 받았어요 — 그래도 <b>얼마든지 더</b> 쌓을 수 있어요'}</div>
+    <div class="score">
+      <div><span>제일 높이 쌓은 기록</span><b>${t.best?`${t.best}층`:'아직 없어요'}</b></div>
+      <div><span>지금까지 쌓은 층</span><b>${fmt(t.all)}층</b></div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="btn g" onclick="towStart()">🍨 쌓으러 가기!</button>
+      <button class="btn w" onclick="closeModal()">나중에</button></div>`);
+}
+function towStart(){
+  const pool=towPool();
+  if(!pool.length){ sfx('boo'); toast('먼저 햄쮜를 만나야 해요 🍨'); return; }
+  const cols=towColors();
+  _tw={rows:[{x:(TOW_BW-TOW_W0)/2, w:TOW_W0, c:cols[0]}],
+       cols, ci:0, pool, pi:0, helped:[],
+       x:0, w:TOW_W0, dir:1, v:92, perf:0, last:0, over:false};
+  towNextPiece();
+  sfx('tap');
+  towBoard();
+  /* ⚠️ requestAnimationFrame 을 쓰지 않는다 — 어떤 창에서는 visibilityState 가
+     'visible' 인데도 <b>한 번도 안 불렸다.</b> 그러면 스쿱이 가만히 서 있고
+     오류도 안 나서, 아이 눈에는 그냥 고장난 놀이가 된다. */
+  towStop();
+  _twTm=setInterval(towTick, 16);
+}
+/* 다음 스쿱 — 빛깔과 들고 올 아이를 정하고 <b>가장자리에서</b> 출발시킨다 */
+function towNextPiece(){
+  const g=_tw; if(!g) return;
+  g.ci=(g.ci+1)%g.cols.length;
+  g.c=g.cols[g.ci];
+  g.pi=(g.pi+1)%g.pool.length;
+  g.who=g.pool[g.pi];
+  if(g.helped.indexOf(g.who)<0) g.helped.push(g.who);
+  g.dir=(g.rows.length%2)?1:-1;
+  g.x=g.dir>0 ? 0 : TOW_BW-g.w;
+  g.v=Math.min(262, 92+g.rows.length*7);
+}
+function towRowsHTML(){
+  const g=_tw, rows=g.rows;
+  const from=Math.max(0, rows.length-TOW_VIS);
+  return rows.slice(from).map((r,i)=>`<div class="twrow" style="width:${r.w.toFixed(1)}px;`
+    + `bottom:${i*TOW_H}px;background:${r.c};transform:translateX(${r.x.toFixed(1)}px)"></div>`).join('');
+}
+function towMoveBottom(){
+  return Math.min(_tw.rows.length, TOW_VIS)*TOW_H;
+}
+function towBoard(){
+  const g=_tw; if(!g) return;
+  const n=g.rows.length-1;              /* 바닥 한 층은 깔아 준 것이라 안 센다 */
+  openModal(`<h2>🍨 높이 쌓기 <small style="font-weight:700;color:var(--ink2)">${n}층</small>
+      <span class="x" onclick="towEnd()">그만</span></h2>
+    <div class="twboard" id="twboard" onclick="towDrop()">
+      <div class="twtip" id="twtip">눌러서 얹어요!</div>
+      ${towRowsHTML()}
+      <div class="twrow twmove" id="twmove" style="width:${g.w.toFixed(1)}px;`
+    + `bottom:${towMoveBottom()}px;background:${g.c};transform:translateX(${g.x.toFixed(1)}px)">
+        <span class="twham hs" id="twham">${hamSVG(hamOf(g.who))}</span>
+      </div>
+    </div>
+    <div class="muted" style="text-align:center;margin-top:9px;line-height:1.65">
+      판 아무 데나 누르면 얹어져요 · <b>딱</b> 맞추면 안 깎여요 ✨<br>
+      빗나가도 <b>쌓은 만큼 상을 받아요</b> — 걱정 말고 해보세요 😊</div>
+    <div class="row" style="justify-content:center;margin-top:10px">
+      <button class="btn w sm" onclick="towEnd()">그만하고 상 받기</button></div>`);
+}
+function towTick(){
+  const g=_tw;
+  if(!g||g.over){ towStop(); return; }
+  const el=$('#twmove');
+  if(!el||!modalOn()){ towEnd('close'); return; }   /* 창이 닫혔다 — 쌓은 만큼 주고 멈춘다 */
+  const now=Date.now();
+  if(!g.last) g.last=now;
+  /* ⚠️ 폰을 덮어두면 간격이 크게 벌어진다 — 그대로 더하면 스쿱이 순간이동한다 */
+  const dt=Math.min(64, now-g.last); g.last=now;
+  g.x += g.dir*g.v*dt/1000;
+  if(g.x<=0){ g.x=0; g.dir=1; }
+  if(g.x+g.w>=TOW_BW){ g.x=TOW_BW-g.w; g.dir=-1; }
+  el.style.transform=`translateX(${g.x.toFixed(1)}px)`;
+}
+function towStop(){ if(_twTm){ clearInterval(_twTm); _twTm=0; } }
+/* 「딱!」 하고 뜨는 글자 — 판 안에 잠깐 붙였다 지운다 */
+function towDak(word){
+  const bd=$('#twboard'); if(!bd) return;
+  const sp=document.createElement('span');
+  sp.className='twdak'; sp.textContent=word;
+  bd.appendChild(sp);
+  setTimeout(()=>sp.remove(), 800);
+}
+function towDrop(){
+  const g=_tw; if(!g||g.over) return;
+  const t=g.rows[g.rows.length-1];
+  const L=Math.max(g.x, t.x), R=Math.min(g.x+g.w, t.x+t.w);
+  let w=R-L, x=L;
+  const snap=Math.abs(g.x-t.x)<=TOW_SNAP;
+  if(snap){ w=t.w; x=t.x; }             /* ✨ 딱 맞으면 한 톨도 안 깎인다 */
+  if(w<=TOW_MIN){                        /* 거의 다 빗나갔다 — 여기서 끝난다 */
+    g.rows.push({x:L, w:Math.max(3,w), c:g.c});
+    sfx('boo'); vib(20);
+    towEnd('slip'); return;
+  }
+  g.rows.push({x, w, c:g.c});
+  g.w=w;
+  if(snap){ g.perf++; towDak('딱! ✨'); sfx('coin'); vib([0,12,28,12]); }
+  else { sfx('scoop'); vib(10); }
+  towNextPiece();
+  /* 창을 통째로 다시 그리면 스쿱이 멈춘다 — 층과 스쿱만 갈아끼운다 */
+  const bd=$('#twboard');
+  if(bd){
+    const tip=$('#twtip'), mv=$('#twmove');
+    bd.querySelectorAll('.twrow:not(.twmove)').forEach(e=>e.remove());
+    if(mv) mv.insertAdjacentHTML('beforebegin', towRowsHTML());
+    if(mv){
+      mv.style.width=g.w.toFixed(1)+'px';
+      mv.style.bottom=towMoveBottom()+'px';
+      mv.style.background=g.c;
+      mv.style.transform=`translateX(${g.x.toFixed(1)}px)`;
+      const hm=$('#twham'); if(hm) hm.innerHTML=hamSVG(hamOf(g.who));
+    }
+    if(tip) tip.innerHTML=`<b>${g.rows.length-1}층</b>${g.perf?` · 딱 맞춘 것 ${g.perf}번`:''}`;
+  }
+  const h2=$('#modal h2 small'); if(h2) h2.textContent=(g.rows.length-1)+'층';
+}
+function towPay(n, perf, bonus){
+  const coin=Math.round((120+S.lv*62)*n*(1+perf*0.12))+payMin(4);
+  const top = bonus ? Math.min(9, 1+Math.floor(n/3)) : 0;
+  return {coin, top};
+}
+function towEnd(why){
+  const g=_tw; if(!g||g.over) return;
+  g.over=true;
+  towStop();
+  const n=Math.max(0, g.rows.length-1-(why==='slip'?1:0));
+  const perf=g.perf|0, helped=g.helped.filter(k=>S.dex[k]);
+  const t=towS();
+  if(t.day!==todayKey()){ t.day=todayKey(); t.n=0; t.dbest=0; }
+  const bonus=towBonusLeft()>0 && n>0;
+  if(bonus) t.n=(t.n|0)+1;
+  const isBest=n>(t.best|0);
+  if(isBest) t.best=n;
+  if(n>(t.dbest|0)) t.dbest=n;
+  t.all=(t.all|0)+n;
+  const pay=towPay(n, perf, bonus);
+  S.coin+=pay.coin; S.top+=pay.top;
+  S.stats.tower=(S.stats.tower||0)+1;
+  if(perf>(S.stats.towPerf||0)) S.stats.towPerf=perf;
+  addStar(1+(bonus?1:0)+(isBest&&n>=3?1:0), '높이 쌓기');
+  addExp(playExp(4+n*2));
+  errBump('stack');
+  todayBump('play');
+  _mailing=true;
+  try{ helped.forEach(k=>addBond(k,3)); } finally{ _mailing=false; }
+  helped.forEach(k=>setMood(k,'happy'));
+  sfx(n>=3?'star4':'heart'); vib([0,28,44,28]);
+  _tw=null;
+  checkBadges(); save(); renderHUD(); renderView();
+  if(why==='close'){                    /* 창을 닫고 나갔다 — 창을 또 띄우지 않는다 */
+    if(n) toast(`🍨 <b>${n}층</b>까지 쌓았어요 — 🪙+${fmt(pay.coin)}${pay.top?` · 🍒+${pay.top}`:''}`);
+    return;
+  }
+  openModal(`<h2>🍨 ${n?`${n}층 쌓았어요!`:'또 해볼까요?'}<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div style="text-align:center;font-size:34px;line-height:1.25" class="burst">🍨</div>
+    <div style="text-align:center;font-size:14.5px;line-height:1.85;margin-top:2px">
+      ${why==='slip'?'스쿱이 <b>쪼르르</b> 미끄러졌어요!<br>':''}
+      ${n ? `<b>${n}층</b>까지 쌓았어요${perf?` — <b>딱</b> 맞춘 게 ${perf}번이에요 ✨`:''}`
+          : '괜찮아요 — 스쿱이 <b>천천히</b> 지나갈 때 누르면 잘 얹어져요 😊'}
+      ${isBest&&n>0?'<br><b style="color:var(--acc)">🎉 제일 높이 쌓은 기록이에요!</b>'
+                   :(t.best?`<br><span class="muted">제일 높은 기록은 <b>${t.best}층</b>이에요</span>`:'')}
+    </div>
+    ${helped.length?`<div class="row" style="justify-content:center;gap:4px;flex-wrap:wrap;margin-top:9px">
+      ${helped.slice(0,6).map(k=>`<span class="hs" style="width:40px;height:40px;display:block">${hamSVG(hamOf(k))}</span>`).join('')}
+    </div>`:''}
+    <div class="score" style="margin-top:9px">
+      <div class="tot"><span>${bonus?'🎁 오늘 첫 판 선물':'받은 것'}</span>
+        <b>🪙+${fmt(pay.coin)}${pay.top?` · 🍒+${pay.top}`:''}</b></div>
+      ${helped.length?'<div class="tot"><span>같이 쌓은 햄쮜</span><b>💗+3씩</b></div>':''}
+    </div>
+    ${bonus?'':'<div class="muted" style="text-align:center;margin-top:6px">오늘 🍒토핑은 받았지만 <b>얼마든지 더</b> 쌓을 수 있어요 😊</div>'}
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn g" onclick="towStart()">🔄 한 번 더!</button>
+      <button class="btn w" onclick="closeModal()">그만할래요</button></div>`);
+}
+
+/* ==================================================================
+   🎵 따라 부르기 — 햄쮜가 가락을 들려주면 그대로 눌러 따라 한다.
+   ⚠️ 이 게임에 <b>소리로 하는 놀이가 하나도 없었다.</b> note() 신디사이저는 처음부터
+      있었는데 ⏰알람에만 쓰였다 — 노래 파일을 하나도 안 넣고 만들 수 있다.
+   ⚠️ <b>소리를 꺼둔 아이도 할 수 있어야 한다</b> — 그래서 음이 울릴 때 <b>색도 같이</b> 켜진다.
+      소리만으로 맞히게 하면 🔕로 꺼둔 아이에게는 그냥 안 되는 놀이가 된다.
+   ⚠️ <b>다시 듣기는 몇 번이든 된다.</b> 상을 깎지 않는다 — 저학년 아이가 한 번에
+      못 들었다고 벌을 받을 이유가 없다. 기록은 「몇 음까지 따라 했나」다.
+================================================================== */
+const ECHO_KEYS=[
+  {f:523.25, n:'도', c:'#ffd0dd', em:'🍓'},
+  {f:659.25, n:'미', c:'#ffe7ab', em:'🍌'},
+  {f:783.99, n:'솔', c:'#c3e8cd', em:'🍏'},
+  {f:1046.5, n:'높은도', c:'#c6dcff', em:'🫐'}
+];
+const ECHO_START=2;    /* 첫 판에 들려주는 음 수 */
+const ECHO_MAX=12;     /* 여기까지 따라 하면 다 한 것이다 */
+const ECHO_GAP=520;    /* 음 사이 간격(ms) — 저학년이 따라올 수 있게 넉넉히 */
+function echoS(){
+  if(!S.echo||typeof S.echo!=='object'||Array.isArray(S.echo))
+    S.echo={best:0, all:0, day:'', n:0, dbest:0};
+  const e=S.echo;
+  ['best','all','n','dbest'].forEach(k=>{ if(typeof e[k]!=='number') e[k]=0; });
+  if(typeof e.day!=='string') e.day='';
+  return e;
+}
+function echoBonusLeft(){ const e=echoS(); return e.day===todayKey()? Math.max(0,1-(e.n|0)) : 1; }
+let _ec=null;
+/* 음 하나 — 소리를 꺼뒀으면 <b>색만</b> 켠다 */
+function echoNote(i){
+  const p=ECHO_KEYS[i]; if(!p) return;
+  if(S.snd!==false){ try{ note(p.f, 0, .34, .12, 'triangle'); }catch(e){} }
+  const el=$('#ecpad'+i); if(!el) return;
+  el.classList.add('on');
+  setTimeout(()=>{ const e2=$('#ecpad'+i); if(e2) e2.classList.remove('on'); }, 260);
+}
+function openEcho(){
+  sfx('tap'); _ec=null;
+  if(!Object.keys(S.dex).length){
+    sfx('boo'); toast('먼저 햄쮜를 만나야 같이 노래할 수 있어요 🍨'); return;
+  }
+  const e=echoS();
+  openModal(`<h2>🎵 따라 부르기<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div class="muted" style="line-height:1.85;margin-bottom:10px">
+      햄쮜가 <b>가락을 들려주면</b> 그대로 눌러서 따라 해요 🎶<br>
+      한 번 맞힐 때마다 <b>음이 하나씩 늘어나요</b> — 몇 음까지 갈 수 있을까요?<br>
+      <b>👂다시 듣기는 몇 번이든</b> 돼요. 상은 그대로예요 😊<br>
+      소리를 꺼두셨어도 괜찮아요 — <b>색도 같이 켜져요</b> 🎨<br>
+      ${echoBonusLeft()
+        ? '🎁 오늘 <b>첫 판</b>에는 🍒토핑을 같이 줘요!'
+        : '🎁 오늘 🍒토핑은 받았어요 — 그래도 <b>얼마든지 더</b> 부를 수 있어요'}</div>
+    <div class="score">
+      <div><span>제일 길게 따라 한 기록</span><b>${e.best?`${e.best}음`:'아직 없어요'}</b></div>
+      <div><span>지금까지 따라 한 음</span><b>${fmt(e.all)}음</b></div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="btn g" onclick="echoStart()">🎵 불러 볼래요!</button>
+      <button class="btn w" onclick="closeModal()">나중에</button></div>`);
+}
+function echoStart(){
+  const pool=Object.keys(S.dex);
+  if(!pool.length){ sfx('boo'); return; }
+  _ec={seq:[], at:0, done:0, playing:false, who:pick(pool), tms:[]};
+  echoGrow();
+}
+/* 음을 하나 더 붙인다 — 같은 음이 <b>세 번 내리</b> 나오지 않게 한다 */
+function echoGrow(){
+  const g=_ec; if(!g) return;
+  const need = g.seq.length ? 1 : ECHO_START;
+  for(let i=0;i<need;i++){
+    let v=ri(0,ECHO_KEYS.length-1), t=0;
+    while(t++<8 && g.seq.length>=2 && g.seq[g.seq.length-1]===v && g.seq[g.seq.length-2]===v)
+      v=ri(0,ECHO_KEYS.length-1);
+    g.seq.push(v);
+  }
+  g.at=0;
+  echoBoard();
+  echoPlaySeq();
+}
+function echoClearTms(){
+  if(!_ec) return;
+  (_ec.tms||[]).forEach(t=>clearTimeout(t));
+  _ec.tms=[];
+}
+function echoPlaySeq(){
+  const g=_ec; if(!g) return;
+  echoClearTms();
+  g.playing=true; g.at=0;
+  echoTop();
+  g.seq.forEach((v,i)=>{
+    g.tms.push(setTimeout(()=>{
+      if(!_ec||!modalOn()||!$('#ecpad0')) return;   /* 창이 닫혔다 */
+      echoNote(v);
+    }, 420+i*ECHO_GAP));
+  });
+  g.tms.push(setTimeout(()=>{
+    if(!_ec||!modalOn()||!$('#ecpad0')) return;
+    _ec.playing=false; echoTop(); echoPads();
+  }, 420+g.seq.length*ECHO_GAP));
+}
+function echoTop(){
+  const g=_ec, el=$('#ectop'); if(!g||!el) return;
+  el.innerHTML = g.playing
+    ? `🎧 잘 들어보세요 — <b>${g.seq.length}음</b>이에요`
+    : `🎤 이제 따라 해보세요! <b>${g.at}</b>/${g.seq.length}음`;
+}
+function echoPads(){
+  const g=_ec; if(!g) return;
+  ECHO_KEYS.forEach((p,i)=>{
+    const el=$('#ecpad'+i); if(!el) return;
+    el.classList.toggle('wait', !!g.playing);
+  });
+  const d=$('#ecdots');
+  if(d) d.innerHTML=g.seq.map((v,i)=>`<span class="ecdot ${i<g.at?'on':''}"></span>`).join('');
+}
+function echoBoard(){
+  const g=_ec; if(!g) return;
+  openModal(`<h2>🎵 따라 부르기 <small style="font-weight:700;color:var(--ink2)">${g.seq.length}음</small>
+      <span class="x" onclick="echoEnd()">그만</span></h2>
+    <div class="row" style="justify-content:center;margin-bottom:4px">
+      <span class="hs" style="width:56px;height:56px;display:block">${hamSVG(hamOf(g.who))}</span></div>
+    <div class="muted" id="ectop" style="text-align:center;font-size:13px;line-height:1.6">
+      🎧 잘 들어보세요 — <b>${g.seq.length}음</b>이에요</div>
+    <div class="ecpads">
+      ${ECHO_KEYS.map((p,i)=>`<div class="ecpad wait" id="ecpad${i}"
+         style="background:${p.c}" onclick="echoTap(${i})">${p.em} ${p.n}</div>`).join('')}
+    </div>
+    <div class="ecdots" id="ecdots">${g.seq.map(()=>'<span class="ecdot"></span>').join('')}</div>
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn w sm" onclick="echoPlaySeq()">👂 다시 들을래요</button>
+      <button class="btn w sm" onclick="echoEnd()">그만하고 상 받기</button></div>`);
+  echoPads();
+}
+function echoTap(i){
+  const g=_ec; if(!g||g.playing) return;
+  echoNote(i);
+  if(g.seq[g.at]===i){
+    g.at++;
+    vib(9);
+    echoTop(); echoPads();
+    if(g.at>=g.seq.length){
+      g.done=g.seq.length;
+      if(g.seq.length>=ECHO_MAX){ setTimeout(()=>echoEnd('all'), 420); return; }
+      sfx('heart');
+      g.playing=true; echoTop(); echoPads();
+      g.tms.push(setTimeout(()=>{ if(_ec&&modalOn()&&$('#ecpad0')) echoGrow(); }, 760));
+    }
+  }else{
+    sfx('boo'); vib(22);
+    echoEnd('miss');
+  }
+}
+function echoPay(n, bonus){
+  const coin=Math.round((150+S.lv*74)*n)+payMin(4);
+  const top = bonus ? Math.min(9, n) : 0;
+  return {coin, top};
+}
+function echoEnd(why){
+  const g=_ec; if(!g) return;
+  echoClearTms();
+  /* ⚠️ 다 못 채운 판도 <b>맞힌 만큼</b>은 센다 — 「0음」이라고 적어 보내지 않는다 */
+  const n=Math.max(g.done|0, g.at|0), who=g.who;
+  _ec=null;
+  const e=echoS();
+  if(e.day!==todayKey()){ e.day=todayKey(); e.n=0; e.dbest=0; }
+  const bonus=echoBonusLeft()>0 && n>0;
+  if(bonus) e.n=(e.n|0)+1;
+  const isBest=n>(e.best|0);
+  if(isBest) e.best=n;
+  if(n>(e.dbest|0)) e.dbest=n;
+  e.all=(e.all|0)+n;
+  const pay=echoPay(n, bonus);
+  S.coin+=pay.coin; S.top+=pay.top;
+  S.stats.echo=(S.stats.echo||0)+1;
+  addStar(1+(bonus?1:0)+(isBest&&n>=4?1:0), '따라 부르기');
+  addExp(playExp(4+n*3));
+  errBump('echo');
+  todayBump('play');
+  if(S.dex[who]){
+    _mailing=true;
+    try{ addBond(who, 5); } finally{ _mailing=false; }
+    setMood(who,'happy');
+  }
+  sfx(n>=4?'star4':'heart'); vib([0,26,40,26]);
+  checkBadges(); save(); renderHUD(); renderView();
+  if(why==='close'){                    /* 창을 닫고 나갔다 — 창을 또 띄우지 않는다 */
+    if(n) toast(`🎵 <b>${n}음</b>까지 따라 했어요 — 🪙+${fmt(pay.coin)}${pay.top?` · 🍒+${pay.top}`:''}`);
+    return;
+  }
+  openModal(`<h2>🎵 ${n?`${n}음까지 따라 했어요!`:'또 해볼까요?'}<span class="x" onclick="closeModal()">닫기</span></h2>
+    <div style="text-align:center;font-size:34px;line-height:1.25" class="burst">${why==='all'?'🏆':'🎶'}</div>
+    <div style="text-align:center;font-size:14.5px;line-height:1.85;margin-top:2px">
+      ${why==='all'?'<b>끝까지 다 따라 했어요!</b> 정말 대단해요 🎉<br>'
+        :(why==='miss'?'앗, 다른 음을 눌렀어요!<br>':'')}
+      ${n ? `<b>${n}음</b>짜리 가락을 따라 했어요`
+          : '괜찮아요 — <b>👂다시 듣기</b>는 몇 번이든 눌러도 돼요 😊'}
+      ${isBest&&n>0?'<br><b style="color:var(--acc)">🎉 제일 길게 따라 한 기록이에요!</b>'
+                   :(e.best?`<br><span class="muted">제일 긴 기록은 <b>${e.best}음</b>이에요</span>`:'')}
+    </div>
+    ${S.dex[who]?`<div class="row" style="justify-content:center;margin-top:9px">
+      <span class="hs" style="width:52px;height:52px;display:block">${hamSVG(hamOf(who))}</span></div>`:''}
+    <div class="score" style="margin-top:9px">
+      <div class="tot"><span>${bonus?'🎁 오늘 첫 판 선물':'받은 것'}</span>
+        <b>🪙+${fmt(pay.coin)}${pay.top?` · 🍒+${pay.top}`:''}</b></div>
+      ${S.dex[who]?`<div class="tot"><span>같이 부른 햄쮜</span><b>💗+5</b></div>`:''}
+    </div>
+    ${bonus?'':'<div class="muted" style="text-align:center;margin-top:6px">오늘 🍒토핑은 받았지만 <b>얼마든지 더</b> 부를 수 있어요 😊</div>'}
+    <div class="row" style="justify-content:center;margin-top:11px">
+      <button class="btn g" onclick="echoStart()">🔄 한 번 더!</button>
+      <button class="btn w" onclick="closeModal()">그만할래요</button></div>`);
+}
+
+/* ==================================================================
    🧳 여행 가기 — 아이가 여행을 갈 때, 햄쮜를 가방에 넣어 데려간다.
    🎒소풍과 달리 <b>방에서 빠지지 않는다</b> — 며칠짜리라 손해까지 있으면
    여행 내내 가게가 멈춘다. 대신 하루에 한 번만 열 수 있다.
@@ -20589,14 +21445,82 @@ function sportToggle(k){
   pickJump(_sp.who.length>=sportMax());
 }
 const SPORT_MEDAL=['🥇','🥈','🥉'];
+/* ==================================================================
+   📣 응원 — 🏃달리기 앞에 <b>아이가 직접</b> 하는 자리를 하나 둔다.
+   ⚠️ 여기까지 운동회는 「누구를 내보낼지 고르고 <b>결과를 보는</b>」 놀이였다.
+      고르고 「출발!」을 누르면 그 뒤로 아이가 할 일이 하나도 없었다 —
+      이 게임의 놀이가 죄다 「보고 고르기」인 까닭이 여기에도 있었다.
+   ⚠️ <b>안 해도 손해가 없다.</b> 배수의 밑이 <b>1</b>이라 그냥 넘기면 예전과 똑같다.
+      「응원을 안 하면 느려진다」로 만들면 안 된다 — 이 게임은 지는 법이 없다.
+   ⚠️ 창을 닫으면 <b>오늘 운동회를 안 쓴 것</b>으로 둔다(S.sport 를 안 적는다) —
+      실수로 닫았다고 하루치가 날아가면 안 된다.
+================================================================== */
+const CHEER_MS=4000;      /* 응원하는 시간 */
+const CHEER_FULL=45;      /* 이만큼 누르면 꽉 찬다 — 저학년 손에 맞춘 수다 */
+const CHEER_MAX=1.35;     /* 꽉 찼을 때 🏃달리기 배수 */
+let _ch=null;
 function sportGo(){
   if(!sportReady()){ sfx('boo'); return; }
   const team=_sp.who.filter(k=>S.dex[k]);
+  if(team.length<2){ sfx('boo'); return; }
+  sportCheer(team);
+}
+function sportCheer(team){
+  _ch={team, taps:0, t0:0, tm:0};
+  sfx('tap');
+  openModal(`<h2>📣 응원해 주세요!<span class="x" onclick="sportCheerCancel()">닫기</span></h2>
+    <div class="muted" style="text-align:center;line-height:1.8;margin-bottom:9px">
+      🏃<b>달리기</b>가 곧 시작해요!<br>
+      아래 단추를 <b>빠르게 여러 번</b> 누르면 우리 아이들이 <b>더 빨리</b> 달려요 📣<br>
+      <b>안 눌러도 괜찮아요</b> — 그래도 원래대로 달린답니다 😊</div>
+    <div class="row" style="justify-content:center;gap:5px;flex-wrap:wrap;margin-bottom:9px">
+      ${team.slice(0,4).map(k=>`<span class="hs" style="width:46px;height:46px;display:block">${hamSVG(hamOf(k))}</span>`).join('')}
+    </div>
+    <div class="bar"><div id="chbar" style="width:0%"></div></div>
+    <div class="muted" id="chtxt" style="text-align:center;margin-top:7px">
+      단추를 누르면 시작해요 — <b>4초</b> 동안이에요!</div>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="btn g" style="font-size:19px;padding:17px 30px" onclick="sportCheerTap()">📣 힘내라!</button></div>
+    <div class="row" style="justify-content:center;margin-top:9px">
+      <button class="btn w sm" onclick="sportCheerSkip()">응원 없이 그냥 시작할래요</button></div>`);
+}
+function sportCheerTap(){
+  const g=_ch; if(!g) return;
+  if(!g.t0){ g.t0=Date.now(); g.tm=setTimeout(sportCheerDone, CHEER_MS); }
+  g.taps++;
+  if(S.snd!==false){ try{ note(640+Math.min(10,g.taps)*24, 0, .06, .07, 'triangle'); }catch(e){} }
+  vib(7);
+  const p=Math.min(1, g.taps/CHEER_FULL);
+  const b=$('#chbar'); if(b) b.style.width=(p*100).toFixed(0)+'%';
+  const t=$('#chtxt');
+  if(t) t.innerHTML=`📣 <b>${g.taps}번</b> 응원했어요!${p>=1?' — 꽉 찼어요! 🎉':''}`;
+}
+function sportCheerDone(){
+  const g=_ch; if(!g) return;
+  if(!modalOn()||!$('#chbar')){ _ch=null; return; }  /* 창이 닫혔다 — 오늘 운동회는 그대로 남는다 */
+  if(g.tm) clearTimeout(g.tm);
+  _ch=null;
+  sportFinish(g.team, 1+(CHEER_MAX-1)*Math.min(1, g.taps/CHEER_FULL), g.taps);
+}
+function sportCheerSkip(){
+  const g=_ch; if(!g) return;
+  if(g.tm) clearTimeout(g.tm);
+  _ch=null;
+  sportFinish(g.team, 1, 0);
+}
+function sportCheerCancel(){
+  if(_ch && _ch.tm) clearTimeout(_ch.tm);
+  _ch=null; closeModal();
+}
+function sportFinish(team, cmul, taps){
+  if(!sportReady()){ sfx('boo'); return; }
+  team=(team||[]).filter(k=>S.dex[k]);
   if(team.length<2){ sfx('boo'); return; }
   /* 종목별 점수를 내고 합쳐서 줄을 세운다 */
   const rows=team.map(k=>{
     const ev={};
     SPORT_EV.forEach(e=>ev[e.k]=sportScore(k,e.k,team));
+    ev.run*=cmul;                    /* 📣 아이가 응원한 만큼 달리기가 빨라진다 */
     const tot=SPORT_EV.reduce((a,e)=>a+ev[e.k],0);
     return {k, ev, tot};
   }).sort((a,b)=>b.tot-a.tot);
@@ -20616,6 +21540,7 @@ function sportGo(){
     pbPlayRoom(team);                    /* 같이 나간 아이들은 부쩍 가까워진다 */
   } finally{ _mailing=false; }
   const res={d:todayKey(), pers:sportPersona(), wx:sportWx().d,
+             cheer:taps|0, cmul:Math.round(cmul*100)/100,
              rows:rows.map(r=>({k:r.k, ev:{run:Math.round(r.ev.run*10)/10, tug:Math.round(r.ev.tug*10)/10, hunt:Math.round(r.ev.hunt*10)/10},
                                 tot:Math.round(r.tot*10)/10})),
              coin, top};
@@ -20643,6 +21568,8 @@ function sportShow(res){
     <div style="text-align:center;font-size:14px;line-height:1.8;margin-top:6px">
       🥇 <b>${ega(nameOf(res.rows[0].k))}</b> 1등이에요!<br>
       <span class="muted">${res.wx} · 🎁보물찾기는 <b>${P.em} ${P.n}</b>가 유리했어요</span>
+      ${res.cheer ? `<br><span class="muted">📣 <b>${res.cheer}번</b> 응원해서 🏃달리기가
+        <b>${res.cmul}배</b>였어요!</span>` : ''}
     </div>
     <div class="score" style="margin-top:9px">
       ${res.rows.map((r,i)=>`<div><span>${SPORT_MEDAL[i]||'　'} ${nameOf(r.k)}</span>
@@ -21524,13 +22451,18 @@ function renderOrderTab(){
         🕵️ 햄쮜 탐정${detLeft()?` (오늘 ${detLeft()}판 남음)`:' (내일 또)'}</button>
       <button class="btn ${memBonusLeft()?'g':'w'} sm" onclick="openMem()">
         🧩 짝 맞추기${memBonusLeft()?' (오늘 첫 판 세 배!)':''}</button>
+      <button class="btn ${towBonusLeft()?'g':'w'} sm" onclick="openTower()">
+        🍨 높이 쌓기${towS().best?` (최고 ${towS().best}층)`:''}</button>
+      <button class="btn ${echoBonusLeft()?'g':'w'} sm" onclick="openEcho()">
+        🎵 따라 부르기${echoS().best?` (최고 ${echoS().best}음)`:''}</button>
       <button class="btn ${shdLeft()?'g':'w'} sm" style="grid-column:1/-1" onclick="openShadow()">
         🫥 그림자 놀이${shdLeft()?` (오늘 ${shdLeft()}판 남음)`:' (내일 또)'}</button>
     </div>
     <div class="muted" style="margin-top:7px;line-height:1.6">
       🏆 대회와 🕵️ 탐정, 🫥 그림자 놀이는 <b>하루에 정해진 만큼</b>,
       🙈 숨바꼭질은 <b>조금 쉬었다가</b> 또 할 수 있어요.<br>
-      🧩 짝 맞추기는 <b>언제든 몇 번이든</b> 할 수 있어요 — 큰 선물만 하루에 한 번이에요.
+      🧩 짝 맞추기 · 🍨 높이 쌓기 · 🎵 따라 부르기는 <b>언제든 몇 번이든</b> 할 수 있어요 —
+      🍒토핑만 하루에 한 번이고, 그 뒤로도 얼마든지 놀 수 있어요.
     </div>
   </div>
 
@@ -21640,8 +22572,6 @@ function contRivals(){
             sc:Math.max(22, Math.round(par*r.pw*(th?1:0.76)) + sw)};
   });
 }
-/* 내 점수가 몇 등인지 — 나보다 높은 아이 수 + 1 */
-function contRank(tot){ return 1 + contRivals().filter(r=>r.sc>tot).length; }
 function contReady(){ return S.cont.d!==todayKey(); }
 let contRes=null, contWarn=null;
 function openContest(){
@@ -22878,6 +23808,9 @@ function mumbleOf(k){
 
 /* ---------- 시작할 때 차례차례 보여줄 창 ---------- */
 let _mq=[];
+/* 창이 <b>지금 보이는가</b> — #modal 속은 닫아도 남아 있어서, 요소가 있는지로는
+   알 수 없다. 미뤄둔 셈이 창을 도로 열지 않게 하려면 이걸 봐야 한다. */
+function modalOn(){ const v=$('#veil'); return !!(v && v.classList.contains('on')); }
 function nextModal(){ const f=_mq.shift(); if(f) f(); else closeModal(); }
 function runStartQueue(){
   _mq=[];
@@ -22932,6 +23865,14 @@ function closeModal(fromBack){
   const veil=$('#veil');
   if(!veil.classList.contains('on')){ _backArmed=false; return; }
   veil.classList.remove('on');
+  /* ⚠️ 여기서 <b>#modal 속은 그대로 남는다</b> — 겉만 감출 뿐이다.
+     그래서 돌고 있던 놀이를 여기서 끊어 주지 않으면 ①스쿱 타이머가 영영 돌고
+     ②미뤄둔 setTimeout 이 창을 <b>도로 열어버린다.</b>
+     ⚠️ 그리고 <b>여태 한 만큼은 상을 준다</b> — 실수로 닫았다고 없던 일이 되면 안 된다.
+        창은 안 띄우고(도로 열리니까) 알림만 띄운다. */
+  if(typeof _tw!=='undefined' && _tw && !_tw.over) towEnd('close');
+  if(typeof _ec!=='undefined' && _ec) echoEnd('close');
+  if(typeof _ch!=='undefined' && _ch){ if(_ch.tm) clearTimeout(_ch.tm); _ch=null; }
   if(!_backArmed) return;
   if(fromBack){ _backArmed=false; return; }
   /* ⚠️ 여기서 history.back() 을 바로 부르면 안 된다.
