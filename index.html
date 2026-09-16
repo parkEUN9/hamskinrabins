@@ -5347,14 +5347,36 @@ const SHAPES={
              <ellipse cx="34" cy="30" rx="5" ry="3" fill="#fff" opacity=".5" transform="rotate(-25 34 30)"/>`,
     face:{x:50,y:57,s:.8}, feet:1, tail:1},
 
-  /* 🥑 아보카도 — 위가 좁고 아래가 둥근 <b>서양배</b> 꼴. 씨는 얼굴 아래에 둔다 */
-  avoca:{name:'아보카도', w:30, top:14,
-    body:f=>`<path d="M50 14 q12 0 15 14 q12 12 12 28 a27 27 0 0 1 -54 0 q0 -16 12 -28 q3 -14 15 -14 z" ${f} stroke-linejoin="round"/>`,
-    ears:c=>`<ellipse cx="22" cy="48" rx="7" ry="6.5" fill="${c.base}"/><ellipse cx="78" cy="48" rx="7" ry="6.5" fill="${c.base}"/>
-             <ellipse cx="22" cy="49" rx="3.4" ry="3" fill="${c.cheek}"/><ellipse cx="78" cy="49" rx="3.4" ry="3" fill="${c.cheek}"/>`,
-    deco:c=>`<ellipse cx="50" cy="56" rx="24" ry="27" fill="${c.light}" opacity=".8"/>
-             <circle cx="50" cy="76" r="11" fill="#a8733c"/><circle cx="46" cy="72" r="3" fill="#cb9c66" opacity=".8"/>`,
-    face:{x:50,y:50,s:.74}, feet:1, tail:1},
+  /* 🥑 아보카도 — 위가 좁고 아래가 둥근 <b>서양배</b> 꼴.
+     ⚠️⚠️⚠️ 씨를 <b>배 아래</b>에 두면 안 된다. 세 번 만에 알았다.
+        ① 처음: 씨 y76·r11 ⇒ <b>몸 밖으로 4px</b> 나가 발을 덮었다.
+        ② 다음: 씨 y73·r7.5 로 몸 안에 넣고 머리·귀·눈까지 키웠다.
+           재보면 다 맞는데 사장님 말은 <b>「여전히 너무 징그럽게 생겼어」</b>였다.
+           얼굴은 위, 씨는 배 아래 ⇒ 갈색 덩이가 <b>혹</b>처럼 보였다. 치수 문제가 아니었다.
+        ③ 답: <b>「원래 좀 귀여운 아보카도들 있지않아? 씨도 가운데 있고」</b>
+           ⇒ 씨를 <b>한가운데</b>에 두고 <b>그 씨 위에 얼굴을 올린다.</b> 흔히 보는 그 아보카도다.
+     🐹 그래서 이 아이는 <b>얼굴 판이 곧 씨</b>다. 세 가지가 따라온다.
+        1. `nomz:1` — 엔진이 그리는 주둥이 자국은 `c.light`(연두)라 갈색 씨 위에서 뜬다.
+           크림색 주둥이를 `deco` 에 <b>직접</b> 그린다(얼굴보다 먼저라 코·입이 그 위에 온다).
+        2. 몸을 넓혔다(arc r27→<b>r29</b>, 가장 넓은 자리 y56→y54). 아래 끝은 <b>y83 그대로</b>다.
+           씨가 커진 만큼 <b>초록 테</b>가 남아야 아보카도로 보인다.
+        3. 얼굴 `s` 와 씨 크기는 <b>같이</b> 정한다 — 볼(분홍)은 얼굴 중심에서 <b>±27×s</b> 까지
+           퍼진다. `27×s ≤ 씨 rx` 가 아니면 <b>볼이 씨 밖으로 삐져나와</b> 분홍 막대가 된다.
+           ⇒ 씨 rx23.5 · s.86(27×.86=23.2) 로 <b>딱 안에</b> 들어온다.
+     ⚠️ `deco` 는 몸에 안 잘린다(clip 은 무늬·반짝임에만 걸린다). 과육 타원 ry 를 27.5 로 뒀더니
+        아래 끝이 y84.5 라 <b>몸(y83) 밖으로</b> 나갔다. ry25.5(아래 끝 y82.5)로 줄였다. */
+  avoca:{name:'아보카도', w:30, top:14, nomz:1,
+    body:f=>`<path d="M50 15 q13 0 18 16 q9 12 11 23 a29 29 0 0 1 -58 0 q2 -11 11 -23 q5 -16 18 -16 z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<path d="M50 17 q0 -8 0 -11" stroke="#6a9a3e" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+             <path d="M50 8 q-10 -6 -13 1 q9 7 13 -1 z" fill="#8fc45e" stroke="#6a9a3e" stroke-width="1.2" stroke-linejoin="round"/>
+             <path d="M50 9 q10 -7 14 0 q-8 8 -14 0 z" fill="#a9d97a" stroke="#6a9a3e" stroke-width="1.2" stroke-linejoin="round"/>
+             <ellipse cx="25" cy="33" rx="7.6" ry="7" fill="${c.base}"/><ellipse cx="75" cy="33" rx="7.6" ry="7" fill="${c.base}"/>
+             <ellipse cx="22.6" cy="33.5" rx="3.6" ry="3.2" fill="${c.cheek}"/><ellipse cx="77.4" cy="33.5" rx="3.6" ry="3.2" fill="${c.cheek}"/>`,
+    deco:c=>`<ellipse cx="50" cy="57" rx="26" ry="25.5" fill="${c.light}" opacity=".92"/>
+             <ellipse cx="50" cy="57" rx="23.5" ry="19" fill="#ddad74" stroke="#b5824b" stroke-width="1.3"/>
+             <ellipse cx="50" cy="64.7" rx="11.7" ry="8.3" fill="#f5e0be"/>
+             <ellipse cx="41" cy="47.5" rx="5.4" ry="3.5" fill="#fff" opacity=".4" transform="rotate(-28 41 47.5)"/>`,
+    face:{x:50,y:57,s:.86}, feet:1, tail:1},
 
   /* 🥐 에클레어 — <b>가로로 길쭉</b>하고 위에 초콜릿 띠 */
   eclair:{name:'에클레어', w:34, top:24,
