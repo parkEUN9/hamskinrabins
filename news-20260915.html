@@ -15,7 +15,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>햄스킨라빈스 · 9월 17일 소식</title>
+<title>햄스킨라빈스 · 9월 15일 소식</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,22 +188,11 @@ h1{
   width:32px; height:32px; border-radius:50% 50% 46% 46%;
   display:grid; place-items:center; font-size:17px; color:#fff;
 }
-/* 📰 2026-09-17 — 꼭지는 <b>제목 한 줄 + 보충 한 줄</b>이다.
-   ⚠️ 제목만 남겼더니 설명할 말을 제목에 다 넣게 되어 <b>31px 글씨가 서너 줄</b>로 접혔다.
-      줄인 게 아니라 <b>읽기만 나빠졌다</b>. 제목은 짧게, 보충은 본문 크기로 내린다.
-   ⚠️ 제목은 <b>왼쪽 줄을 맞춘다</b> — 가운데 정렬은 머리말(h1)에만 쓴다.
-      여러 꼭지가 이어질 때 왼쪽이 안 맞으면 눈이 줄을 못 잡는다. */
 .scoop h3{
-  font-family:'Gaegu',cursive; font-weight:700; font-size:clamp(23px,5.8vw,27px);
-  margin:0; line-height:1.3; text-align:left; text-wrap:balance;
+  font-family:'Gaegu',cursive; font-weight:700; font-size:clamp(25px,6.6vw,31px);
+  margin:0; line-height:1.25; text-wrap:balance;
 }
 .scoop p{margin:0; color:var(--ink); line-height:1.72}
-/* 보충 한 줄 — 제목보다 <b>작고 차분하게</b>. 중요한 낱말만 진하게 남긴다. */
-.scoop .lead{
-  margin:3px 0 0; font-size:16.5px; line-height:1.7;
-  color:var(--ink-soft); text-align:left;
-}
-.scoop .lead b{color:var(--ink)}
 .scoop p em{font-style:normal; color:var(--ink); background:var(--butter-soft); padding:1px 5px; border-radius:6px}
 /* 장비처럼 「이름 — 설명」이 여러 줄 이어질 때는 문단보다 목록이 읽기 쉽다 */
 .scoop ul.mini{margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px}
@@ -361,31 +350,143 @@ h1{
       <ellipse cx="100" cy="152" rx="47" ry="11" fill="#F2CD97" stroke="#B3803F" stroke-width="3.2"/>
       <ellipse cx="100" cy="149" rx="36" ry="6.5" fill="#FFC2D4" opacity=".55"/>
     </svg>
-    <span class="eyebrow">햄스킨라빈스 · 9월 17일</span>
-    <h1>🧾 <span class="count">케이크 주문</span>이 오고<br>
-      새 햄쮜가 <span class="count">열한 마리</span> 왔어요!</h1>
-    <p class="sub">오늘 새로 생긴 것만 <b>제목만</b> 짧게 적었어요 😊<br>
-      🎫 새 쿠폰 <span class="count">세 장</span>은 <b>바로 아래</b>에 있어요</p>
+    <span class="eyebrow">햄스킨라빈스 · 9월 15일</span>
+    <h1>🤝 <span class="count">마이멜로쮜</span>랑 <span class="count">토실쮜</span>가<br>
+      <span class="count">9월 16일</span>부터 놀러 와요!</h1>
+    <p class="sub">어제 알려드린 것 말고 <b>오늘 새로 생긴 것</b>만 적었어요 😊<br>
+      🎫 새 쿠폰 <span class="count">세 장</span>이 있어요 — 지난 쿠폰 네 장도 아래에 있어요</p>
+
+    <!-- 📑 목차 — 누르면 그 자리로 갑니다.
+         ⚠️ 예전에는 여기에 <b>꼭지 여섯 줄을 그대로 적어</b> 두었습니다. 아래에 같은 말이
+            또 나와서 아이가 <b>같은 걸 두 번</b> 읽었고, 머리말만 화면 한 장이었습니다.
+            같은 정보인데 <b>짧고, 누르면 건너뛸 수 있게</b> 바꿨습니다. -->
+    <nav class="toc" aria-label="오늘 소식 목차">
+      <span class="toclabel">📑 눌러서 바로 가기</span>
+      <a class="tocitem" href="#s1">🤝 마이멜로쮜·토실쮜</a>
+      <a class="tocitem" href="#s2">🎮 새 놀이 둘</a>
+      <a class="tocitem" href="#s3">📣 운동회 응원</a>
+      <a class="tocitem" href="#s4">👗 소품·가구</a>
+      <a class="tocitem" href="#s5">🍀 네잎쮜</a>
+      <a class="tocitem hot" href="#tix">🎫 쿠폰 번호</a>
+    </nav>
   </header>
 
-  <section class="tickets" id="tix">
-    <h2>🎫 쿠폰 번호 <span class="count">세 장</span></h2>
-    <p class="tipnote">게임에서 ⚙️<b>설정</b> ▸ 🎫<b>쿠폰 쓰기</b> 에 <b>띄어쓰기까지 그대로</b> 적어 주세요 😊</p>
+  <section class="changes">
+    <h2>🆕 새로 생긴 것</h2>
+
+    <ol class="scoops">
+      <li class="scoop" id="s1" data-toc="🤝 마이멜로쮜·토실쮜">
+        <span class="num">9월 16일부터</span>
+        <h3>🤝 <b>마이멜로쮜</b>랑 <b>토실쮜</b>가 놀러 와요</h3>
+        <p>🌼<b>마이멜로쮜</b>는 할머니가 만들어 준 분홍 두건을 늘 쓰고 다녀요.
+          아몬드 파운드 케이크를 제일 좋아한대요.<br>
+          🖤<b>토실쮜</b>는 검은 두건에 분홍 해골을 달았어요. 일기 쓰기가 취미래요.</p>
+        <ul class="mini">
+          <li>🗓️ <b>9월 16일부터 9월 22일까지</b>만 만날 수 있어요</li>
+          <li>🎟️ <b>초대권</b>은 하루에 한 장씩 받을 수 있어요 — 이레 동안 일곱 장이에요</li>
+          <li>⭐ 일곱 장으로는 <b>한 마리만</b> ⭐5까지 키울 수 있어요 —
+            <b>누구를 키울지 고르는 것</b>이 재미예요!</li>
+          <li>🎫 못 챙긴 날이 있으면 맨 아래 <b>「못 받은 초대권」</b> 쿠폰을 쓰세요 😊</li>
+        </ul>
+      </li>
+
+      <li class="scoop" id="s2" data-toc="🎮 새 놀이 둘">
+        <span class="num">두 가지</span>
+        <h3>🎮 <b>새 놀이</b>가 두 가지 생겼어요</h3>
+        <p>지금 놀이터에 있던 놀이는 여섯 가지였는데, <b>여섯이 다 「보고 고르는」 놀이</b>였어요.
+          그래서 <b>손으로 하는 놀이</b>랑 <b>소리로 하는 놀이</b>를 하나씩 만들었어요!</p>
+        <ul class="mini">
+          <li>🍨 <b>높이 쌓기</b> — 햄쮜가 스쿱을 들고 왔다 갔다 해요.
+            아무 데나 <b>한 번 누르면</b> 그 자리에 얹어져요. <b>몇 층</b>까지 쌓을 수 있을까요?</li>
+          <li>✨ 가운데에 <b>딱</b> 맞추면 스쿱이 <b>한 톨도 안 깎여요</b>.
+            빗나가도 괜찮아요 — <b>쌓은 만큼 그대로</b> 상을 받아요 😊</li>
+          <li>🎵 <b>따라 부르기</b> — 햄쮜가 가락을 들려주면 그대로 눌러 따라 해요.
+            맞힐 때마다 음이 하나씩 늘어서 <b>열두 음</b>까지 갈 수 있어요 🎶</li>
+          <li>👂 <b>다시 듣기는 몇 번이든</b> 눌러도 돼요 — 상은 하나도 안 줄어요.
+            소리를 꺼뒀어도 <b>색이 같이 켜져서</b> 할 수 있어요 🎨</li>
+          <li>⏳ 둘 다 <b>쉬는 시간이 없어요</b> — 하고 싶은 만큼 할 수 있어요.
+            🍒토핑만 <b>오늘 첫 판</b>에 줘요</li>
+          <li>🏅 스티커도 <b>여섯 장</b> 새로 생겼어요 — 다섯 층 · 열두 층 · 딱 맞추기 왕 ·
+            다섯 음 · 아홉 음 · 노래 박사!</li>
+        </ul>
+      </li>
+
+      <li class="scoop" id="s3" data-toc="📣 운동회 응원">
+        <span class="num">달리기</span>
+        <h3>📣 <b>운동회</b>에서 응원을 할 수 있어요</h3>
+        <p>지금까지는 <b>누구를 내보낼지 고르면</b> 바로 결과가 나왔어요.
+          이제 🏃<b>달리기</b> 앞에 <b>4초 동안</b> 응원하는 자리가 생겼어요!</p>
+        <ul class="mini">
+          <li>📣 단추를 <b>빠르게 여러 번</b> 누를수록 우리 아이들이 <b>더 빨리</b> 달려요</li>
+          <li>😊 <b>안 눌러도 괜찮아요</b> — 그래도 원래대로 달려요. 느려지지 않아요</li>
+          <li>🏃 꽉 채우면 달리기가 <b>1.35배</b>가 돼요</li>
+        </ul>
+      </li>
+
+      <li class="scoop" id="s4" data-toc="👗 소품·가구">
+        <span class="num">꾸밀 것이 왕창</span>
+        <h3>👗 <b>소품 23가지</b>랑 🛋️ <b>가구 18가지</b>가 새로 생겼어요</h3>
+        <p>꾸밀 게 모자랐어요. 그래서 <b>한꺼번에 많이</b> 만들었어요 🎀</p>
+        <ul class="mini">
+          <li>🎀 머리에 — 🍰케이크 모자 · 🎧헤드폰 · 🧢야구 모자 · 🥽수영 안경 ·
+            ⚓세일러 모자 · 🌻해바라기 핀 · 🪽천사 고리</li>
+          <li>🧣 목에 — 💝리본 초커 · 🍃잎사귀 · 🗝️열쇠 · 🎵음표 · 🪶깃털 · 🌟별</li>
+          <li>🎈 손에 — 🥤주스 컵 · 🪀요요 · 🍪쿠키 · 🧺꽃바구니 · 🪣물뿌리개 ·
+            🪕작은 기타 · 🎇반짝이 막대</li>
+          <li>🍨 콘은 — 🌿민트콘 · 🫐블루베리콘 · 🥣곰돌이 그릇</li>
+          <li>🛋️ 방에는 — 🌵선인장 · 🧩퍼즐 판 · 🖌️이젤 · 🥁북 · 🎸기타 · 🔮마법 구슬 ·
+            🧊얼음 냉장고 · 🪩반짝 조명 공 · 🍿팝콘 기계</li>
+          <li>🖼️ 벽에는 — 🎐풍경 · 💖하트 · 🎭가면 · 🌞해님 · 📸사진 벽 · 🐾발자국 · 🎊꽃가루</li>
+          <li>🌳 마당에는 — 🪵<b>시소</b>랑 🏊<b>물놀이장</b>이 생겼어요.
+            누르면 햄쮜가 <b>정말 타고 놀아요!</b></li>
+        </ul>
+      </li>
+
+      <li class="scoop" id="s5" data-toc="🍀 네잎쮜">
+        <span class="num">쿠폰에서만</span>
+        <h3>🍀 <b>네잎쮜</b>는 쿠폰으로만 와요</h3>
+        <p>⭐별을 아무리 많이 모아도 <b>안 오는 햄쮜</b>가 하나 생겼어요.
+          아래 🎫<b>「높이높이 쌓기」</b> 쿠폰을 써야만 찾아와요 🍀</p>
+        <ul class="mini">
+          <li>🍀 풀밭에 아주 오래 숨어 있었대요 — <b>찾아준 사람</b>한테만 따라와요</li>
+          <li>💌 오자마자 <b>편지</b>를 한 통 써요</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <section class="gifts" id="tix">
+    <h2>🎫 새 쿠폰 번호</h2>
 
     <div class="ticket">
       <span class="label">새 쿠폰 번호</span>
-      <div class="code">케이크 구워줘</div>
-      <div class="gets">🧾 <b>케이크 주문</b>이 생긴 기념이에요 — 아홉 개쯤 구울 수 있는 코인이에요!
+      <div class="code">소식지 읽었어요</div>
+      <div class="gets">📰 여기까지 <b>읽어주셔서 고마워요!</b> 작은 선물이에요 😊
         <ul class="gl">
-          <li class="big">🪙<b>9,000</b> — 케이크 굽는 값이에요</li>
-          <li>🍒<b>45</b></li>
-          <li>🧢<b>야구 모자</b></li>
-          <li>💝<b>리본 초커</b></li>
-          <li>🍪<b>쿠키</b></li>
-          <li>🥣<b>곰돌이 그릇</b></li>
-          <li>🧊<b>얼음 냉장고</b></li>
-          <li>🎐<b>풍경</b></li>
-          <li>🧩<b>퍼즐 판</b></li>
+          <li>🪙<b>1,600</b></li>
+          <li>🍒<b>8</b></li>
+          <li>💌<b>편지 한 통</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <span class="label">새 쿠폰 번호</span>
+      <div class="code">높이높이 쌓기</div>
+      <div class="gets">🍨 <b>높이 쌓기</b> 놀이가 새로 생긴 기념이에요!
+        <ul class="gl">
+          <li class="big">🍀<b>네잎쮜</b> — 이 쿠폰으로만 와요!</li>
+          <li class="big">🏆<b>오늘 운동회 한 번 더</b> — 새 📣응원을 바로 또!</li>
+          <li>🪙<b>8,000</b></li>
+          <li>🍒<b>40</b></li>
+          <li>🍰<b>케이크 모자</b></li>
+          <li>💎<b>보석 목걸이</b></li>
+          <li>🥤<b>주스 컵</b></li>
+          <li>🌿<b>민트콘</b></li>
+          <li>🍿<b>팝콘 기계</b></li>
+          <li>🎊<b>꽃가루 장식</b></li>
+          <li>🪵<b>시소</b></li>
+          <li>💌<b>네잎쮜가 오자마자 쓴 편지</b></li>
           <li>💌<b>편지 세 통</b></li>
         </ul>
       </div>
@@ -393,115 +494,119 @@ h1{
 
     <div class="ticket">
       <span class="label">새 쿠폰 번호</span>
-      <div class="code">해님이 왔어요</div>
-      <div class="gets">☀️ 새 특별 햄쮜 셋 중에 <b>해님쮜</b>가 이 쿠폰으로 먼저 와요!
+      <div class="code">같이 노래 부르자</div>
+      <div class="gets">🎵 <b>따라 부르기</b> 놀이가 새로 생긴 기념이에요!
         <ul class="gl">
-          <li class="big">☀️<b>해님쮜</b> — 특별 햄쮜예요!</li>
-          <li>🪙<b>9,600</b></li>
-          <li>🍒<b>48</b></li>
-          <li>🌻<b>해바라기 핀</b></li>
-          <li>🌟<b>별 목걸이</b></li>
-          <li>🎇<b>반짝이 막대</b></li>
-          <li>🔮<b>마법 구슬</b></li>
-          <li>💖<b>하트 벽걸이</b></li>
-          <li>📸<b>사진 벽</b></li>
-          <li>💌<b>해님쮜가 오자마자 쓴 편지</b></li>
+          <li class="big">🌕<b>달님쮜</b> — 특별 햄쮜예요!</li>
+          <li>🪙<b>8,400</b></li>
+          <li>🍒<b>42</b></li>
+          <li>🎧<b>헤드폰</b></li>
+          <li>🎵<b>음표 목걸이</b></li>
+          <li>🪕<b>작은 기타</b></li>
+          <li>🥁<b>북</b></li>
+          <li>🎸<b>기타</b></li>
+          <li>🪩<b>반짝 조명 공</b></li>
+          <li>💌<b>달님쮜가 오자마자 쓴 편지</b></li>
           <li>💌<b>편지 네 통</b></li>
         </ul>
       </div>
     </div>
 
-    <div class="ticket">
-      <span class="label">새 쿠폰 번호</span>
-      <div class="code">코인이 와르르</div>
-      <div class="gets">🪙 <b>쿠폰 중에 제일 큰 선물</b>이에요 — 코인이 와르르 쏟아져요!
+    <details class="fold">
+      <summary>🎟️ 어제·지난번 쿠폰 <span class="cnt">네 장</span></summary>
+      <div class="inner">
+    <h2 class="sub">🎟️ 어제 알려드린 쿠폰</h2>
+    <p class="pastnote">이 둘은 <b>어제 소식지</b>에 있던 거예요.
+      아직 안 썼으면 지금 써도 돼요 😊</p>
+
+    <div class="ticket old">
+      <span class="label">지난 쿠폰 번호</span>
+      <div class="code">못 받은 초대권</div>
+      <div class="gets">🎟️ <b>콜라보 초대권 세 장</b>이에요!<br>초대권은 하루에 한 장씩만 받을 수 있어서, <b>못 챙긴 날</b>이 있으면 그만큼 모자라거든요. 그럴 때 쓰세요 😊
         <ul class="gl">
-          <li class="big">🪙<b>30억</b> — 사고 싶던 통을 한참 살 수 있어요!</li>
-          <li class="big">🦔<b>고슴쮜</b> — 특별 햄쮜예요!</li>
-          <li>💌<b>고슴쮜가 오자마자 쓴 편지</b></li>
+          <li class="big">🎟️<b>콜라보 초대권 세 장</b></li>
         </ul>
       </div>
     </div>
 
-    <details class="fold">
-      <summary>🎟️ 지난 판 쿠폰 <span class="cnt">세 장 · 아직 안 썼으면 지금 써도 돼요</span></summary>
-      <div class="inner">
-    <p class="pastnote">이 셋은 <b>9월 15일 소식지</b>에 있던 거예요.
-      무엇을 주는지는 아래 <b>📚 옛날 소식</b>의 9월 15일 판에 다 적혀 있어요 😊</p>
+    <div class="ticket old">
+      <span class="label">지난 쿠폰 번호</span>
+      <div class="code">아프지마 쮜돌아</div>
+      <div class="gets">🍀 <b>지금까지 중에 제일 큰 선물</b>이에요!
+        <ul class="gl">
+          <li class="big">🧚<b>요정쮜</b> — 특별 햄쮜!</li>
+          <li>🪙<b>12,000</b></li>
+          <li>🍒<b>60</b></li>
+          <li>🎨<b>베레모</b></li>
+          <li>🌼<b>데이지 화환</b></li>
+          <li>🛎️<b>손종</b></li>
+          <li>📷<b>사진기</b></li>
+          <li>⛲<b>분수</b></li>
+          <li>🎋<b>그네</b></li>
+          <li>🗺️<b>보물 지도</b></li>
+          <li>🕹️<b>햄쮜 탐정 게임기</b></li>
+          <li>💌<b>요정쮜의 편지</b></li>
+          <li>💌<b>편지 다섯 통</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="sub">🎟️ 지난번에 번호를 못 알려드린 쿠폰</h2>
+    <p class="pastnote">이 둘은 <b>지난 판에 게임에는 들어갔는데</b> 소식지에 번호를 못 적었어요.
+      아직 안 쓰셨을 테니 여기 다시 적어둘게요 😊</p>
 
     <div class="ticket old">
       <span class="label">지난 쿠폰 번호</span>
-      <div class="code">소식지 읽었어요</div>
-      <div class="gets">📰 소식지를 읽어주셔서 고마워요 — 🪙코인이랑 🍒토핑을 드려요</div>
+      <div class="code">놀이공원 가고싶어</div>
+      <div class="gets">🎪 놀이가 다섯 가지 늘어난 기념이에요! 방을 놀이공원처럼 꾸며요 🎡
+        <ul class="gl">
+          <li>🪙<b>6,800</b></li>
+          <li>🍒<b>34</b></li>
+          <li>🐱<b>고양이 귀</b></li>
+          <li>🍡<b>경단 꼬치</b></li>
+          <li>🩷<b>딸기콘</b></li>
+          <li>🧇<b>와플 통</b></li>
+          <li>🥨<b>프레첼 통</b></li>
+          <li>🎡<b>대관람차</b></li>
+          <li>🤸<b>트램펄린</b></li>
+          <li>🎪<b>미니 텐트</b></li>
+          <li>🪁<b>연날리기</b></li>
+          <li>💌<b>편지 두 통</b></li>
+        </ul>
+      </div>
     </div>
 
     <div class="ticket old">
       <span class="label">지난 쿠폰 번호</span>
-      <div class="code">높이높이 쌓기</div>
-      <div class="gets">🍀 <b>네잎쮜</b>가 와요 — 이 쿠폰으로만 오는 아이예요!</div>
+      <div class="code">친구한테 편지 쓸래</div>
+      <div class="gets">💌 <b>햄쮜끼리 편지가 네 통</b>이나 한꺼번에 와요! 전해주면 둘 다 좋아해요 😊
+        <ul class="gl">
+          <li>🪙<b>6,200</b></li>
+          <li>🍒<b>32</b></li>
+          <li>🌙<b>초승달 머리핀</b></li>
+          <li>🦋<b>나비 브로치</b></li>
+          <li>🍵<b>말차콘</b></li>
+          <li>🍵<b>말차 통</b></li>
+          <li>🍪<b>쿠키앤크림 통</b></li>
+          <li>🕯️<b>촛대</b></li>
+          <li>🛏️<b>침대</b></li>
+          <li>🧁<b>디저트 진열대</b></li>
+        </ul>
+      </div>
     </div>
 
-    <div class="ticket old">
-      <span class="label">지난 쿠폰 번호</span>
-      <div class="code">같이 노래 부르자</div>
-      <div class="gets">🌕 <b>달님쮜</b>가 와요 — 특별 햄쮜예요!</div>
-    </div>
+    <p class="pastnote">지난번 <b>「간식 수레 왔어요」</b> 를 아직 안 썼다면 지금 써도 돼요!<br>
+      더 옛날 쿠폰도 아래 <b>지난 소식</b>에 다 있어요 😊</p>
       </div>
     </details>
-  </section>
-
-  <section class="changes">
-    <h2>🆕 새로 생긴 것</h2>
-
-    <ol class="scoops">
-      <li class="scoop" id="s1" data-toc="📖 오늘의 이야기">
-        <span class="num">서른여섯 가지</span>
-        <h3>📖 <b>오늘의 이야기</b>가 <b>서른여섯 가지</b>로 늘었어요</h3>
-        <p class="lead">열 가지뿐이라 자꾸 같은 이야기가 나왔어요.
-          이제 한 번 나온 이야기는 <b>적어도 13일</b> 뒤에나 또 나와요.</p>
-      </li>
-
-      <li class="scoop" id="s2" data-toc="🔁 다시 시작하기">
-        <span class="num">동화 · 여행 · 축제</span>
-        <h3>🔁 <b>한 바퀴를 다 돌았어요</b> 칸이 생겼어요</h3>
-        <p class="lead">다 끝낸 📚동화 · 🧳여행 · 🎪축제가 「다 한 것」에 숨어 있었어요.
-          이제 거기서 <b>바로 다시 시작</b>할 수 있어요.</p>
-      </li>
-
-      <li class="scoop" id="s3" data-toc="🧾 케이크 주문">
-        <span class="num">일주일에 한 번</span>
-        <h3>🧾 <b>케이크 주문</b>이 일주일에 한 번 와요</h3>
-        <p class="lead">주문서대로 구워서 내면 큰 상을 받아요.
-          🍰<b>진열</b>해 두기만 해도 하나에 <b>3%</b>씩 코인이 더 모여요(열둘이면 <b>+36%</b>).</p>
-      </li>
-
-      <li class="scoop" id="s4" data-toc="🍨 새 아이스크림 여덟">
-        <span class="num">여덟 가지</span>
-        <h3>🍨 새 아이스크림 <b>여덟 가지</b> — 통이 <b>265가지</b>!</h3>
-        <p class="lead">🍞파운드케이크 · 🥛우유식빵 · 🥔감자빵 · 🌽콘플레이크 ·
-          🍪버터쿠키 · 🧈버터스카치 · ☕커피젤리 · 🍎애플크럼블</p>
-      </li>
-
-      <li class="scoop" id="s5" data-toc="✨ 새 특별 햄쮜 셋">
-        <span class="num">셋</span>
-        <h3>✨ 새 <b>특별 햄쮜</b>가 셋 왔어요</h3>
-        <p class="lead">☀️<b>해님쮜</b> ⭐2,545 · 🦔<b>고슴쮜</b> ⭐2,695 ·
-          🐢<b>거북쮜</b> ⭐2,845 — ☀️와 🦔는 <b>아래 쿠폰</b>으로도 와요!</p>
-      </li>
-    </ol>
   </section>
 
   <a class="backbtn" href="index.html">🍨 게임으로 돌아가서 놀기</a>
 
   <section class="past">
     <details class="fold">
-      <summary>📚 옛날 소식 다시 보기 <span class="cnt">12판 · 쿠폰도 여기 있어요</span></summary>
+      <summary>📚 옛날 소식 다시 보기 <span class="cnt">11판 · 쿠폰도 여기 있어요</span></summary>
       <div class="inner">
-    <a class="pastlink" href="news-20260915.html">
-      <span class="d">9월 15일</span>
-      <span class="t">마이멜로쮜·토실쮜가 오고, 새 놀이가 둘 생겼어요</span>
-      <span class="n">9가지 · 🎫쿠폰 3장</span>
-    </a>
     <a class="pastlink" href="news-20260914.html">
       <span class="d">9월 14일</span>
       <span class="t">새 햄쮜가 마흔둘! 통이 257가지가 됐어요</span>
