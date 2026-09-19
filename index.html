@@ -14362,7 +14362,16 @@ const COUPONS={
      ⚠️ 🪽천사 고리는 원래 🍒30 짜리다 — 쿠폰으로 오는 것 중 제일 귀한 물건이 되게 뒀다. */
   '무대위의햄쮜':{em:'👗', name:'무대 위의 햄쮜', coin:11000, top:52,
                   wear:['hat_sailor','hat_halo','neck_featn','hand_yoyo'],
-                  furn:['wmask','wsun'], mail:3}
+                  furn:['wmask','wsun'], mail:3},
+  /* 🎨 2026-09-19 — 방에 놓을 자리를 🍒토핑으로 늘릴 수 있게 된 기념.
+     ⚠️ 🍒을 <b>듬뿍</b> 준다(12,000). 아이가 「토핑 어디에 쓰는지 모르겠어」 했는데
+        오늘 쓸 곳이 생겼으니 <b>받자마자 늘려볼 수 있어야</b> 배운다
+        (Lv.205 에서 첫 자리가 8,250, Lv.40 이면 1,650 이라 두 자리까지 는다).
+     ⚠️ 쿠폰에 <b>한 번도 안 나온</b> 소품 셋이 마지막으로 남아 있던 것들이다.
+        가구는 남은 넷이 전부 gift:1 이라 줄 수 없다(다른 놀이에서만 나와야 한다).
+     ⚠️ 특별햄쮜는 안 넣는다 — 남은 아이가 🐢거북쮜 하나뿐이고 <b>마지막 아이</b>다. */
+  '방을꾸며요':{em:'🎨', name:'방을 꾸며요', coin:12000, top:12000,
+                wear:['hat_goggle','neck_keyn','cone_cblue'], mail:3}
 };
 /* 🎫 받은 쿠폰이 스물여덟 장까지 늘 수 있다 — 다 늘어놓으면 팝업이 두 배로 길어진다.
    최근 여섯 장만 두고 나머지는 접는다. */
@@ -21844,8 +21853,19 @@ function towDrop(){
   }
   const h2=$('#modal h2 small'); if(h2) h2.textContent=(g.rows.length-1)+'층';
 }
+/* 🪙 payMin(분) = 「저절로 버는 코인 몇 분치」 — 레벨이 높아도 놀이 상이 초라해지지
+   않게 받치는 바닥값이다. ⚠️ 이 바닥값은 <b>반드시 쌓은 층수에 비례</b>해야 한다.
+   2026-09-19 이전에는 payMin(4) 가 층수와 상관없이 그냥 붙어 있어서,
+   <b>0층으로 끝내도</b> Lv.205 기준 억 단위가 들어왔다 — 「시작 → 그만」을 번갈아
+   누르기만 하면 돈이 복사됐다(사장님이 찾아내셨다).
+   ⚠️ 그리고 <b>곧은 비례로는 모자란다.</b> n*0.8 로 재 봤더니 1층짜리 판이
+      층당 33% 더 벌어서, 「시작 → 한 번 누르고 → 그만」이 새 돈복사가 됐다.
+      그래서 <b>층수의 제곱</b>에 비례시킨다 — 짧게 끊을수록 손해라서 반복할
+      까닭이 아예 없어지고, 높이 쌓을수록 상이 확 커진다(아이가 좋아하는
+      「점점 어려워지는」 맛과도 맞는다). 5층부터 4분치를 다 받는다. */
 function towPay(n, perf, bonus){
-  const coin=Math.round((120+S.lv*62)*n*(1+perf*0.12))+payMin(4);
+  if(!(n>0)) return {coin:0, top:0};
+  const coin=Math.round((120+S.lv*62)*n*(1+perf*0.12))+payMin(Math.min(4, n*n*0.16));
   const top = bonus ? Math.min(9, 1+Math.floor(n/3)) : 0;
   return {coin, top};
 }
@@ -21857,23 +21877,31 @@ function towEnd(why){
   const perf=g.perf|0, helped=g.helped.filter(k=>S.dex[k]);
   const t=towS();
   if(t.day!==todayKey()){ t.day=todayKey(); t.n=0; t.dbest=0; }
-  const bonus=towBonusLeft()>0 && n>0;
-  if(bonus) t.n=(t.n|0)+1;
-  const isBest=n>(t.best|0);
-  if(isBest) t.best=n;
-  if(n>(t.dbest|0)) t.dbest=n;
-  t.all=(t.all|0)+n;
+  /* ⚠️⚠️ <b>한 층도 안 쌓았으면 아무것도 주지 않는다</b> — 상도 별도 경험치도
+     오늘할일도 기록도. 2026-09-19 이전에는 0층 판도 상을 받아서,
+     「시작 → 그만」만 번갈아 눌러도 돈이 복사됐다.
+     ⚠️ 이것은 <b>벌이 아니다.</b> 결과창은 그대로 띄우고 「한 번 더」도 그대로다 —
+        「받은 것」 칸만 안 보인다. 이 게임은 지는 법이 없어야 한다. */
+  const got=n>0;
+  const bonus=got && towBonusLeft()>0;
+  const isBest=got && n>(t.best|0);
   const pay=towPay(n, perf, bonus);
-  S.coin+=pay.coin; S.top+=pay.top;
-  S.stats.tower=(S.stats.tower||0)+1;
-  if(perf>(S.stats.towPerf||0)) S.stats.towPerf=perf;
-  addStar(1+(bonus?1:0)+(isBest&&n>=3?1:0), '높이 쌓기');
-  addExp(playExp(4+n*2));
-  errBump('stack');
-  todayBump('play');
-  _mailing=true;
-  try{ helped.forEach(k=>addBond(k,3)); } finally{ _mailing=false; }
-  helped.forEach(k=>setMood(k,'happy'));
+  if(got){
+    if(bonus) t.n=(t.n|0)+1;
+    if(isBest) t.best=n;
+    if(n>(t.dbest|0)) t.dbest=n;
+    t.all=(t.all|0)+n;
+    S.coin+=pay.coin; S.top+=pay.top;
+    S.stats.tower=(S.stats.tower||0)+1;
+    if(perf>(S.stats.towPerf||0)) S.stats.towPerf=perf;
+    addStar(1+(bonus?1:0)+(isBest&&n>=3?1:0), '높이 쌓기');
+    addExp(playExp(4+n*2));
+    errBump('stack');
+    todayBump('play');
+    _mailing=true;
+    try{ helped.forEach(k=>addBond(k,3)); } finally{ _mailing=false; }
+    helped.forEach(k=>setMood(k,'happy'));
+  }
   sfx(n>=3?'star4':'heart'); vib([0,28,44,28]);
   _tw=null;
   checkBadges(); save(); renderHUD(); renderView();
@@ -21893,12 +21921,12 @@ function towEnd(why){
     ${helped.length?`<div class="row" style="justify-content:center;gap:4px;flex-wrap:wrap;margin-top:9px">
       ${helped.slice(0,6).map(k=>`<span class="hs" style="width:40px;height:40px;display:block">${hamSVG(hamOf(k))}</span>`).join('')}
     </div>`:''}
-    <div class="score" style="margin-top:9px">
+    ${got?`<div class="score" style="margin-top:9px">
       <div class="tot"><span>${bonus?'🎁 오늘 첫 판 선물':'받은 것'}</span>
         <b>🪙+${fmt(pay.coin)}${pay.top?` · 🍒+${pay.top}`:''}</b></div>
       ${helped.length?'<div class="tot"><span>같이 쌓은 햄쮜</span><b>💗+3씩</b></div>':''}
-    </div>
-    ${bonus?'':'<div class="muted" style="text-align:center;margin-top:6px">오늘 🍒토핑은 받았지만 <b>얼마든지 더</b> 쌓을 수 있어요 😊</div>'}
+    </div>`:''}
+    ${got&&!bonus?'<div class="muted" style="text-align:center;margin-top:6px">오늘 🍒토핑은 받았지만 <b>얼마든지 더</b> 쌓을 수 있어요 😊</div>':''}
     <div class="row" style="justify-content:center;margin-top:11px">
       <button class="btn g" onclick="towStart()">🔄 한 번 더!</button>
       <button class="btn w" onclick="closeModal()">그만할래요</button></div>`);
@@ -22056,8 +22084,11 @@ function echoTap(i){
     echoEnd('miss');
   }
 }
+/* 🪙 바닥값은 따라 한 음수의 <b>제곱</b>에 비례한다 — 까닭은 towPay 위에 적어 두었다.
+   6음부터 4분치를 다 받는다. */
 function echoPay(n, bonus){
-  const coin=Math.round((150+S.lv*74)*n)+payMin(4);
+  if(!(n>0)) return {coin:0, top:0};
+  const coin=Math.round((150+S.lv*74)*n)+payMin(Math.min(4, n*n*0.11));
   const top = bonus ? Math.min(9, n) : 0;
   return {coin, top};
 }
@@ -22069,23 +22100,28 @@ function echoEnd(why){
   _ec=null;
   const e=echoS();
   if(e.day!==todayKey()){ e.day=todayKey(); e.n=0; e.dbest=0; }
-  const bonus=echoBonusLeft()>0 && n>0;
-  if(bonus) e.n=(e.n|0)+1;
-  const isBest=n>(e.best|0);
-  if(isBest) e.best=n;
-  if(n>(e.dbest|0)) e.dbest=n;
-  e.all=(e.all|0)+n;
+  /* ⚠️⚠️ <b>한 음도 못 따라 했으면 아무것도 주지 않는다</b> — 까닭은 towEnd 를 보라.
+     벌이 아니다: 창도 「한 번 더」도 그대로고 「받은 것」 칸만 안 보인다. */
+  const got=n>0;
+  const bonus=got && echoBonusLeft()>0;
+  const isBest=got && n>(e.best|0);
   const pay=echoPay(n, bonus);
-  S.coin+=pay.coin; S.top+=pay.top;
-  S.stats.echo=(S.stats.echo||0)+1;
-  addStar(1+(bonus?1:0)+(isBest&&n>=4?1:0), '따라 부르기');
-  addExp(playExp(4+n*3));
-  errBump('echo');
-  todayBump('play');
-  if(S.dex[who]){
-    _mailing=true;
-    try{ addBond(who, 5); } finally{ _mailing=false; }
-    setMood(who,'happy');
+  if(got){
+    if(bonus) e.n=(e.n|0)+1;
+    if(isBest) e.best=n;
+    if(n>(e.dbest|0)) e.dbest=n;
+    e.all=(e.all|0)+n;
+    S.coin+=pay.coin; S.top+=pay.top;
+    S.stats.echo=(S.stats.echo||0)+1;
+    addStar(1+(bonus?1:0)+(isBest&&n>=4?1:0), '따라 부르기');
+    addExp(playExp(4+n*3));
+    errBump('echo');
+    todayBump('play');
+    if(S.dex[who]){
+      _mailing=true;
+      try{ addBond(who, 5); } finally{ _mailing=false; }
+      setMood(who,'happy');
+    }
   }
   sfx(n>=4?'star4':'heart'); vib([0,26,40,26]);
   checkBadges(); save(); renderHUD(); renderView();
@@ -22105,12 +22141,12 @@ function echoEnd(why){
     </div>
     ${S.dex[who]?`<div class="row" style="justify-content:center;margin-top:9px">
       <span class="hs" style="width:52px;height:52px;display:block">${hamSVG(hamOf(who))}</span></div>`:''}
-    <div class="score" style="margin-top:9px">
+    ${got?`<div class="score" style="margin-top:9px">
       <div class="tot"><span>${bonus?'🎁 오늘 첫 판 선물':'받은 것'}</span>
         <b>🪙+${fmt(pay.coin)}${pay.top?` · 🍒+${pay.top}`:''}</b></div>
       ${S.dex[who]?`<div class="tot"><span>같이 부른 햄쮜</span><b>💗+5</b></div>`:''}
-    </div>
-    ${bonus?'':'<div class="muted" style="text-align:center;margin-top:6px">오늘 🍒토핑은 받았지만 <b>얼마든지 더</b> 부를 수 있어요 😊</div>'}
+    </div>`:''}
+    ${got&&!bonus?'<div class="muted" style="text-align:center;margin-top:6px">오늘 🍒토핑은 받았지만 <b>얼마든지 더</b> 부를 수 있어요 😊</div>':''}
     <div class="row" style="justify-content:center;margin-top:11px">
       <button class="btn g" onclick="echoStart()">🔄 한 번 더!</button>
       <button class="btn w" onclick="closeModal()">그만할래요</button></div>`);
