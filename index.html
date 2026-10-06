@@ -1272,6 +1272,9 @@ function wpick(w){
    <b> 같은 태그는 빼고 마지막 글자를 본다 — 조사는 태그 밖에 붙는다. */
 function jong(s){
   s=String(s).replace(/<[^>]*>/g,'').trim();
+  /* ⚠️ 2026-10-06 — 「특별 다 모음」처럼 <b>닫는 괄호·따옴표·느낌표</b>로 끝나면 그 글자를 재서 늘 받침 없음이 됐다
+     (「스티커 「특별 다 모음」를 받았어요」). 끝의 문장부호는 건너뛰고 <b>마지막 글자</b>를 잰다. */
+  s=s.replace(/[\s」』"'”’)\]）!?.~…]+$/,'');
   if(!s) return false;
   const c=s.charCodeAt(s.length-1)-0xac00;
   if(c>=0 && c<11172) return (c%28)!==0;          /* 한글 — 받침이 있으면 true */
@@ -8217,6 +8220,139 @@ const SHAPES={
              <path d="M20 58 Q22 68 28 74" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".8"/>`,
     face:{x:50,y:66,s:0.52}, feet:1, tail:1},
 
+  /* ══ 🍨 2026-10-06 — 새 통 아홉(캔디바·와일드바디·엔초·빠삐코·폴라포·탱크보이·찰떡아이스·녹차·홍차) — 사장님이 고르심 ══ */
+
+  /* 🧊 캔디바 — 하늘색 소다 막대. 위가 넓은 사다리꼴 + 안쪽에 흰 사탕 테 + 위 모서리에 소다 방울 둘.
+     ⚠️ 아이스바·메로나·바밤바(곧은 막대)와는 사다리꼴로 갈린다 */
+  candybr:{name:'캔디바', w:36, top:12,
+    body:f=>`<path d="M22 10 H78 Q87 10 85 19 L77 73 Q76 80 69 80 H31 Q24 80 23 73 L15 19 Q13 10 22 10 Z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<rect x="45" y="76" width="10" height="16" rx="4" fill="#e8c48e" stroke="#b8905a" stroke-width="1.4"/>
+             <ellipse cx="24" cy="16" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="76" cy="16" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="24" cy="17" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="76" cy="17" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M24 18 H76 L69 70 Q68 73 65 73 H35 Q32 73 31 70 Z" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" opacity=".6"/>
+             <circle cx="31" cy="25" r="3.2" fill="none" stroke="#fff" stroke-width="1.6" opacity=".85"/><circle cx="69" cy="25" r="2.4" fill="none" stroke="#fff" stroke-width="1.4" opacity=".85"/>
+             <path d="M20 30 L25 64" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".55"/>`,
+    face:{x:50,y:48,s:0.56}, feet:0, tail:0},
+
+  /* 🍫 와일드바디 — 초코·바닐라를 꼰 막대. 왼쪽·오른쪽이 엇갈려 출렁이는 몸(꼰 밧줄) + 위·아래 띠에만 초코 사선.
+     ⚠️ 스크류바(분홍 나선 원반)와는 곧게 선 막대 + 엇갈린 옆선으로 갈린다 · 초코 줄을 얼굴에 긋지 않는다 */
+  wildbd:{name:'와일드바디', w:34, top:12,
+    body:f=>`<path d="M28 10 Q50 6 72 10 Q64 22 72 34 Q80 46 72 58 Q64 70 72 80 H28 Q20 70 28 58 Q36 46 28 34 Q20 22 28 10 Z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<rect x="45" y="76" width="10" height="16" rx="4" fill="#e8c48e" stroke="#b8905a" stroke-width="1.4"/>
+             <ellipse cx="30" cy="16" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="70" cy="16" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="30" cy="17" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="70" cy="17" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<g stroke="#7a4a2c" stroke-width="5" stroke-linecap="round" opacity=".85"><path d="M34 27 L42 13"/><path d="M47 28 L56 12"/><path d="M60 27 L67 15"/><path d="M33 77 L40 66"/><path d="M46 78 L53 66"/><path d="M59 78 L66 67"/></g>
+             <path d="M26 40 Q31 46 27 52" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".55"/>`,
+    face:{x:50,y:48,s:0.52}, feet:0, tail:0},
+
+  /* 🍦 엔초 — 초코를 입힌 바닐라 막대. 위아래가 둥근 알약 꼴 + 위 절반에 물결로 흘러내린 초코 + 꼭대기 바삭이 셋.
+     ⚠️ 바밤바(밤 모자 막대)와는 알약 꼴·초코 물결로 갈린다 */
+  encho:{name:'엔초', w:34, top:10,
+    body:f=>`<rect x="24" y="8" width="52" height="72" rx="26" ${f}/>`,
+    ears:c=>`<rect x="45" y="76" width="10" height="16" rx="4" fill="#e8c48e" stroke="#b8905a" stroke-width="1.4"/>
+             <ellipse cx="27" cy="26" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="73" cy="26" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="27" cy="27" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="73" cy="27" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M24 34 Q24 8 50 8 Q76 8 76 34 Q71 41 64 35 Q57 42 50 36 Q43 42 36 35 Q29 41 24 34 Z" fill="#7a4a2c"/>
+             <g fill="#f3dcb0" stroke="#a8743e" stroke-width=".8"><ellipse cx="39" cy="19" rx="3" ry="2"/><ellipse cx="50" cy="15" rx="3" ry="2"/><ellipse cx="61" cy="19" rx="3" ry="2"/></g>
+             <path d="M30 44 V66" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".55"/>`,
+    face:{x:50,y:58,s:0.54}, feet:0, tail:0},
+
+  /* 🍫 빠삐코 — 짜 먹는 초코 튜브. 뚜껑을 아래로 세운 꼴: 위는 넓게 주름진 끝, 아래로 좁아져 흰 뚜껑.
+     ⚠️ 쭈쭈바(가는 튜브, 뚜껑이 위)와 거꾸로다 */
+  ppapico:{name:'빠삐코', w:36, top:14,
+    body:f=>`<path d="M16 22 L16.0 12.0 L19.8 9.0 L23.6 12.0 L27.3 9.0 L31.1 12.0 L34.9 9.0 L38.7 12.0 L42.4 9.0 L46.2 12.0 L50.0 9.0 L53.8 12.0 L57.6 9.0 L61.3 12.0 L65.1 9.0 L68.9 12.0 L72.7 9.0 L76.4 12.0 L80.2 9.0 L84.0 12.0 V22 Z" ${f} stroke-linejoin="round"/>
+             <path d="M17 21 H83 L71 72 Q69 77 63 77 H37 Q31 77 29 72 Z" ${f} stroke-linejoin="round"/>
+             <rect x="42" y="75" width="16" height="6" ${f}/>`,
+    ears:c=>`<ellipse cx="22" cy="27" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="78" cy="27" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="22" cy="28" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="78" cy="28" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M18 15 H82 M18 18.5 H82" stroke="${c.dark}" stroke-width="1.4" opacity=".45" stroke-linecap="round"/>
+             <path d="M21 34 H79 L72 64 H28 Z" fill="#fbefd9" opacity=".95"/>
+             <rect x="37" y="80" width="26" height="11" rx="5.5" fill="#fff" stroke="#c9b8a8" stroke-width="1.4"/>
+             <path d="M41 83 V88 M46 83 V88 M51 83 V88 M56 83 V88" stroke="#ddd0c4" stroke-width="1.2"/>
+             <path d="M24 30 L33 64" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".55"/>`,
+    face:{x:50,y:49,s:0.54}, feet:0, tail:0},
+
+  /* 🍇 폴라포 — 포도 슬러시를 짜 먹는 키 큰 컵. 위가 넓은 컵 + 컵보다 넓은 둥근 뚜껑 + 꼭대기 짜는 꼭지.
+     ⚠️ 슬러시(빨대 꽂은 컵)·콜라컵과는 빨대 없이 둥근 뚜껑·꼭지로 갈린다 */
+  polarpo:{name:'폴라포', w:36, top:18,
+    body:f=>`<path d="M23 30 H77 L69 86 Q68 91 63 91 H37 Q32 91 31 86 Z" ${f} stroke-linejoin="round"/>
+             <path d="M17 33 Q17 17 50 15 Q83 17 83 33 Z" ${f}/>
+             <rect x="43" y="5" width="14" height="12" rx="3" ${f}/>`,
+    ears:c=>`<ellipse cx="27" cy="25" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="73" cy="25" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="27" cy="26" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="73" cy="26" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M18 32 H82" stroke="#fff" stroke-width="2.6" opacity=".7" stroke-linecap="round"/>
+             <path d="M44 9 H56" stroke="${c.dark}" stroke-width="1.6" opacity=".5"/>
+             <path d="M27 40 L33 76" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".55"/>`,
+    face:{x:50,y:56,s:0.54}, feet:0, tail:0},
+
+  /* 🍐 탱크보이 — 배 맛 슬러시를 짜 먹는 세워 두는 봉투. 넓은 네모 봉투 + 가운데 꼭지·뚜껑 + 바닥 접힌 선 + 귀퉁이에 작은 배.
+     ⚠️ 쭈쭈바(가는 튜브)·폴라포(위가 넓은 컵)와는 넓적한 네모 봉투로 갈린다 */
+  tankboy:{name:'탱크보이', w:38, top:20,
+    body:f=>`<path d="M18 28 Q18 20 27 20 H73 Q82 20 82 28 V80 Q82 90 72 90 H28 Q18 90 18 80 Z" ${f} stroke-linejoin="round"/>
+             <rect x="44" y="11" width="12" height="11" rx="2" ${f}/>`,
+    ears:c=>`<ellipse cx="25" cy="26" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="75" cy="26" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="25" cy="27" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="75" cy="27" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<rect x="40" y="5" width="20" height="8" rx="3" fill="#7cc06a" stroke="#4e8a40" stroke-width="1.2"/>
+             <path d="M22 82 Q50 88 78 82" stroke="${c.dark}" stroke-width="1.8" fill="none" opacity=".45"/>
+             <path d="M72 64 q-6 0 -6 7 q0 6 6 6 q6 0 6 -6 q0 -7 -6 -7 z" fill="#c8e07a" stroke="#88a040" stroke-width="1"/><path d="M72 64 v-3" stroke="#8a6a3a" stroke-width="1.4"/>
+             <path d="M24 34 V70" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".6"/>`,
+    face:{x:48,y:52,s:0.58}, feet:1, tail:1},
+
+  /* 🍡 찰떡아이스 — 코코아 가루를 묻힌 쫀득한 찹쌀떡 아이스크림. 네 귀퉁이가 볼록하고 옆이 쏙 들어간 폭신한 방석 꼴.
+     ⚠️ 찹쌀떡·모찌(동그란 덩이)와는 네모난 방석 꼴로 갈린다 · 가루를 점으로 흩뿌리면 벌레 — 위쪽 그늘로만 */
+  chaltk:{name:'찰떡아이스', w:36, top:22,
+    body:f=>`<path d="M20 30 Q19 18 31 21 Q50 26 69 21 Q81 18 80 30 Q75 50 80 70 Q81 83 69 80 Q50 75 31 80 Q19 83 20 70 Q25 50 20 30 Z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="26" cy="27" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="74" cy="27" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="26" cy="28" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="74" cy="28" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M27 28 Q50 33 73 28 Q60 38 50 38 Q40 38 27 28 Z" fill="${c.dark}" opacity=".22"/>
+             <path d="M27 40 Q24 52 27 64" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".6"/>`,
+    face:{x:50,y:54,s:0.58}, feet:1, tail:1},
+
+  /* 🍵 녹차 — 녹차 잎을 담는 차통. 곧은 원통 + 원통보다 넓은 뚜껑 + 뚜껑 꼭지 + 아래쪽 띠에 잎 하나.
+     ⚠️ 말차·찻잎(잎 꼴)·호지차(손잡이 컵)와는 원통 차통으로 갈린다 */
+  greent:{name:'녹차', w:36, top:16,
+    body:f=>`<rect x="22" y="26" width="56" height="64" rx="8" ${f}/>
+             <rect x="17" y="17" width="66" height="14" rx="6" ${f}/>
+             <rect x="43" y="9" width="14" height="10" rx="4" ${f}/>`,
+    ears:c=>`<ellipse cx="26" cy="23" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="74" cy="23" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="26" cy="24" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="74" cy="24" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M18 30 H82" stroke="${c.dark}" stroke-width="2" opacity=".4" stroke-linecap="round"/>
+             <rect x="22" y="72" width="56" height="10" fill="#e8f4dc" opacity=".9"/>
+             <path d="M50 74 q-7 3 -2 7 q6 -1 6 -7 q-2 -1 -4 0 z" fill="#5f9a3c"/>
+             <path d="M28 36 V66" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".55"/>`,
+    face:{x:50,y:52,s:0.58}, feet:0, tail:0},
+
+  /* ☕ 홍차 — 티백. 위 두 귀퉁이를 접은 네모 봉지 + 꼭대기 스테이플 + 실 + 실 끝 꼬리표(머리 위 가운데).
+     ⚠️ 꼬리표를 옆으로 늘어뜨리면 곁덩어리다 — 꼭대기 가운데에 세운다 */
+  blktea:{name:'홍차', w:34, top:24,
+    body:f=>`<path d="M22 26 L32 16 H68 L78 26 V82 Q78 88 72 88 H28 Q22 88 22 82 Z" ${f} stroke-linejoin="round"/>`,
+    ears:c=>`<ellipse cx="27" cy="30" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="73" cy="30" rx="6.2" ry="5.2" fill="${c.base}"/>
+             <ellipse cx="27" cy="31" rx="2.914" ry="2.444" fill="${c.cheek}"/>
+             <ellipse cx="73" cy="31" rx="2.914" ry="2.444" fill="${c.cheek}"/>`,
+    deco:c=>`<path d="M50 16 V8" stroke="#d8c4a8" stroke-width="1.6"/>
+             <rect x="40" y="1" width="20" height="9" rx="2" fill="#fff6ea" stroke="#c49a74" stroke-width="1.2"/>
+             <rect x="46" y="14" width="8" height="4" rx="1" fill="#d0d4d8"/>
+             <path d="M23 27 H77" stroke="${c.dark}" stroke-width="1.6" opacity=".35" stroke-dasharray="3 3"/>
+             <path d="M28 36 V72" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".55"/>`,
+    face:{x:50,y:56,s:0.58}, feet:1, tail:1},
+
   /* ✨ 2026-09-29 — 새 특별 햄쮜 서른 중 첫 열(🐨~🐷) */
 
   /* 🐨 코알라 — 복슬복슬한 <b>큰 동그란 귀</b>(양옆) + 까만 <b>큰 코</b>(mouth 로 코를 갈아 끼운다) */
@@ -8959,6 +9095,15 @@ const COLORS={
   bnkicy:{name:'바나나킥', base:'#f5d66e', light:'#fcebb0', dark:'#c49a2e', cheek:'#f79ab0'},
   chocbb:{name:'초코바', base:'#bf8a60', light:'#dfb28a', dark:'#744a2a', cheek:'#f2a0b0'},
   stbngp:{name:'딸기빙수', base:'#fbe0e6', light:'#fff2f5', dark:'#e0a8b6', cheek:'#f79ab0'},
+  candyb:{name:'캔디바', base:'#9fd4f2', light:'#d6eefb', dark:'#5a9cc4', cheek:'#f79ab0'},
+  wildbc:{name:'와일드바디', base:'#f3e2c4', light:'#fff4e2', dark:'#8a5a34', cheek:'#f79ab0'},
+  enchob:{name:'엔초', base:'#f2e6d0', light:'#fff6e8', dark:'#6a3e24', cheek:'#f79ab0'},
+  ppapcb:{name:'빠삐코', base:'#c89670', light:'#e8c4a4', dark:'#7a4e30', cheek:'#f2a0b0'},
+  polapp:{name:'폴라포', base:'#c7a6e6', light:'#e6d6f6', dark:'#7e5aa8', cheek:'#f79ab0'},
+  tankbg:{name:'탱크보이', base:'#dff0a8', light:'#f2f9d6', dark:'#98b04e', cheek:'#f79ab0'},
+  chaltc:{name:'찰떡아이스', base:'#ead7c6', light:'#faf0e8', dark:'#a8866c', cheek:'#f79ab0'},
+  greentg:{name:'녹차', base:'#bfe0a0', light:'#e2f2d2', dark:'#6f9a4e', cheek:'#f79ab0'},
+  blkteo:{name:'홍차', base:'#e8b08a', light:'#f6d6c0', dark:'#a0603c', cheek:'#f79ab0'},
   /* ✨ 2026-09-29 — 새 특별 햄쮜 서른 중 첫 열(🐨~🐷) */
   koalgy:{name:'코알라', base:'#b8c0c8', light:'#dfe4e9', dark:'#7a848e', cheek:'#f4a8bc'},
   girafy:{name:'기린', base:'#f5d58a', light:'#fbe9bf', dark:'#c09a45', cheek:'#f79ab0'},
@@ -10513,6 +10658,15 @@ const FLAVORS=[
   {k:'bnkick', n:'바나나킥', c:'#f5d66e', c2:'#fcebb0', lv:370,shape:'bnkick', color:'bnkicy', hn:'바나나킥쮜'},
   {k:'chocbar', n:'초코바', c:'#bf8a60', c2:'#dfb28a', lv:371,shape:'chocbar', color:'chocbb', hn:'초코바쮜'},
   {k:'stbing', n:'딸기빙수', c:'#fbe0e6', c2:'#fff2f5', lv:372,shape:'stbing', color:'stbngp', hn:'딸기빙수쮜'},
+  {k:'candybr', n:'캔디바', c:'#9fd4f2', c2:'#d6eefb', lv:373,shape:'candybr', color:'candyb', hn:'캔디바쮜'},
+  {k:'wildbd', n:'와일드바디', c:'#f3e2c4', c2:'#fff4e2', lv:374,shape:'wildbd', color:'wildbc', hn:'와일드바디쮜'},
+  {k:'encho', n:'엔초', c:'#f2e6d0', c2:'#fff6e8', lv:375,shape:'encho', color:'enchob', hn:'엔초쮜'},
+  {k:'ppapico', n:'빠삐코', c:'#c89670', c2:'#e8c4a4', lv:376,shape:'ppapico', color:'ppapcb', hn:'빠삐코쮜'},
+  {k:'polarpo', n:'폴라포', c:'#c7a6e6', c2:'#e6d6f6', lv:377,shape:'polarpo', color:'polapp', hn:'폴라포쮜'},
+  {k:'tankboy', n:'탱크보이', c:'#dff0a8', c2:'#f2f9d6', lv:378,shape:'tankboy', color:'tankbg', hn:'탱크보이쮜'},
+  {k:'chaltk', n:'찰떡아이스', c:'#ead7c6', c2:'#faf0e8', lv:379,shape:'chaltk', color:'chaltc', hn:'찰떡아이스쮜'},
+  {k:'greent', n:'녹차', c:'#bfe0a0', c2:'#e2f2d2', lv:380,shape:'greent', color:'greentg', hn:'녹차쮜'},
+  {k:'blktea', n:'홍차', c:'#e8b08a', c2:'#f6d6c0', lv:381,shape:'blktea', color:'blkteo', hn:'홍차쮜'},
 ];
 const FL={}; const FKEYS=[]; const NTUB=FLAVORS.length;
 /* 🍰 첫 진열장(Lv.20까지)이 몇 가지인지 — 「두 번째 진열장」 스티커의 기준이 된다.
@@ -14837,7 +14991,7 @@ function cbScoop(k){
   /* ⭐5 면 더 쓸 데가 없다 — 초대권을 삼키지 않게 여기서 막는다 */
   if(d0 && (d0.g|0)>=5){ sfx('boo'); toast(`${c.em} <b>${eun(nameOf(id0))}</b> 이미 ⭐5 예요!`); return; }
   const CU=curId(k), U=curInfo(CU);
-  if(curBal(CU)<cost){ sfx('boo'); toast(`${U.em} <b>${U.n}</b>이 ${cost-curBal(CU)}${U.unit} 더 필요해요`); return; }
+  if(curBal(CU)<cost){ sfx('boo'); toast(`${U.em} ${ega(`<b>${U.n}</b>`)} ${cost-curBal(CU)}${U.unit} 더 필요해요`); return; }
   curTake(CU, cost);
   const id=id0, d=d0, isNew=!d;
   /* 🎟️ 뽑기가 아니라 <b>확정 승급</b>이다 — 아이가 「모으는 게 목표」라고 했으니
@@ -14861,7 +15015,7 @@ function cbScoop(k){
     <div style="text-align:center">
       <b style="font-size:17px">${nameOf(id)}</b> <span class="stars">${'★'.repeat(now.g)}</span>
       <div class="muted" style="margin-top:6px;line-height:1.7">
-        ${isNew?`${c.d}<br>🍒토핑 +4`:`${'★'.repeat(now.g)}${'☆'.repeat(5-now.g)} <b>⭐${now.g}</b> 이 됐어요`}<br>
+        ${isNew?`${c.d}<br>🍒토핑 +4`:`${'★'.repeat(now.g)}${'☆'.repeat(5-now.g)} ${ega(`<b>⭐${now.g}</b>`)} 됐어요`}<br>
         ${maxed?'🎉 <b>다 키웠어요!</b> 더 뜰 필요가 없어요'
                :`${U.em} <b>${left}${U.unit}</b> 더 쓰면 <b>⭐5</b> 가 돼요`}<br>
         🗓️ <b>${cbLeftDays(k)}일</b> 더 있어요 · ${U.em} ${U.n} <b>${curBal(CU)}${U.unit}</b> 남음
@@ -15830,7 +15984,7 @@ function claimAnniv(k){
     <div class="big burst">${hamSVG(hamOf(k))}</div>
     <div style="text-align:center;font-size:14px;line-height:1.9">
       ${wagwa(`<b style="font-size:17px">${nameOf(k)}</b>`)} 함께한 지<br>
-      <b style="font-size:22px;color:var(--acc)">${a.d}일</b> 이 됐어요!
+      <b style="font-size:22px;color:var(--acc)">${a.d}일</b>이 됐어요!
       <div class="muted" style="margin-top:5px">${dateLabel(S.dex[k].since)}에 처음 만났어요</div>
       <div style="font-size:19px;font-weight:800;margin-top:8px">🪙+${fmt(a.coin)}　🍒+${a.top}　💗+10</div>
     </div>
@@ -16270,7 +16424,7 @@ const MAIL_ACT_TPL={
     (k,m)=>`제가 <b>${favToyLabel(k)}</b> 좋아하는 거 어떻게 알았어요?<br>
             저 말한 적도 없는데요.<br>혹시 제 얼굴에 써 있어요? 😆`
   ],
-  new:[    (k,m)=>`안녕하세요! 오늘 처음 나온 <b>${nameOf(k)}</b>예요.<br>
+  new:[    (k,m)=>`안녕하세요! 오늘 처음 나온 ${iyeyo(`<b>${nameOf(k)}</b>`)}.<br>
             나오자마자 인사하려고 했는데 눈이 부셨어요.<br>이제 인사해요. 반가워요! 🍨`,
     (k,m)=>{ const p=mailPalName(m);
       return `${FL[k]?`<b>${FL[k].n}</b> 통 안은 아늑했어요.`:'통 안은 아늑했어요.'}<br>
@@ -16548,7 +16702,7 @@ const MAIL_ACT_TPL={
   /* 👯 단짝이 된 날, 혹은 단짝 이야기 */
   buddy:[    (k,m)=>{ const b=buddyOf(k);
       return `있잖아요, 저 <b>단짝</b> 생겼어요!<br>
-              ${b?`<b>${nameOf(b)}</b>예요.`:'옆자리 친구예요.'}<br>
+              ${b?`${iyeyo(`<b>${nameOf(b)}</b>`)}.`:'옆자리 친구예요.'}<br>
               나란히 앉아 있다가 어느새 제일 친해졌어요 👯`; },
     (k,m)=>{ const b=buddyOf(k);
       return `${b?irang(`<b>${nameOf(b)}</b>`):'단짝이랑'} 오늘 하루 종일 붙어 있었어요.<br>
@@ -19510,7 +19664,7 @@ function rideGo(sk,ev){
 function playAll(kind){
   const t=TOYS[kind], now=Date.now(), key=kind+'At', last=S.play[key]||0;
   const list=seatHams();
-  if(!toyOK(kind)){ sfx('boo'); toast(`🔒 ${t.em} ${eun(`<b>${t.name}</b>`)} 가게가 <b>Lv.${t.lv}</b>이 되면 열려요`); return; }
+  if(!toyOK(kind)){ sfx('boo'); toast(`🔒 ${t.em} ${eun(`<b>${t.name}</b>`)} 가게가 ${ega(`<b>Lv.${t.lv}</b>`)} 되면 열려요`); return; }
   if(!list.length){ sfx('boo'); toast('이 방에 함께 놀 햄쮜가 없어요 🪑'); return; }
   const cd=toyCD(kind);
   if(now-last<cd){ toast(`${t.em} 잠깐 쉬는 중이에요 (${Math.ceil((cd-(now-last))/1000)}초 뒤)`); return; }
@@ -19625,7 +19779,7 @@ function playOne(k,kind){
     if(S.top<1){ sfx('boo'); toast('🍒 토핑이 없어요 — ⭐3 이상을 뜨거나 🫧비눗방울로 모아요'); return; }
     S.stats.one=(S.stats.one||0)+1; treatHam(k); infoRedraw(); fxOne('treat'); return;
   }
-  if(!toyOK(kind)){ sfx('boo'); toast(`🔒 ${t.em} ${eun(`<b>${t.name}</b>`)} 가게가 <b>Lv.${t.lv}</b>이 되면 열려요`); return; }
+  if(!toyOK(kind)){ sfx('boo'); toast(`🔒 ${t.em} ${eun(`<b>${t.name}</b>`)} 가게가 ${ega(`<b>Lv.${t.lv}</b>`)} 되면 열려요`); return; }
   const left=oneLeft(k,kind);
   if(left){ sfx('boo'); toast(`${t.em} ${ega(nameOf(k))} 잠깐 쉬는 중이에요 (${Math.ceil(left/1000)}초 뒤)`); return; }
   d.pAt=d.pAt||{}; d.pAt[kind]=Date.now();
@@ -19741,7 +19895,7 @@ function pickToy(k){
   if(!TOYS[k]) k='pet';
   if(!toyOK(k)){
     const t=TOYS[k]; sfx('boo');
-    toast(`🔒 ${t.em} ${eun(`<b>${t.name}</b>`)} 가게가 <b>Lv.${t.lv}</b>이 되면 열려요 — 지금 Lv.${S.lv}예요`);
+    toast(`🔒 ${t.em} ${eun(`<b>${t.name}</b>`)} 가게가 ${ega(`<b>Lv.${t.lv}</b>`)} 되면 열려요 — 지금 ${iyeyo(`Lv.${S.lv}`)}`);
     return;
   }
   S.play.toy=k; save();
@@ -21753,7 +21907,7 @@ function openLevel(){
 /* 📢 새 소식 — 📢 버튼을 누르면 같은 폴더의 news.html 안내 페이지로 넘어간다.
    소식을 새로 올릴 때마다 NEWS_VER 를 바꾸면 아이 화면의 「새」 점이 다시 붙는다.
    (news.html 을 깃에 같이 올려야 열린다 — 없으면 아무 일도 안 하고 넘어간다) */
-const NEWS_VER='2026-10-06';
+const NEWS_VER='2026-10-07';
 const NEWS_URL='news.html';
 function newsUnseen(){ return (S&&S.newsSeen)!==NEWS_VER; }
 function openNews(){
@@ -23078,7 +23232,7 @@ function spUp(id){
     _svgCache.clear();
     sfx('star4'); vib([0,30,50,30,50,40]); addExp(playExp(20));
     checkBadges(); save(); renderHUD(); renderView();
-    toast(`✨ 해냈어요! ${ega(nameOf(id))} <b>★${d.g}</b> 이 됐어요!`);
+    toast(`✨ 해냈어요! ${ega(nameOf(id))} ${ega(`<b>★${d.g}</b>`)} 됐어요!`);
     const k=String(id).slice(3);
     if(SPECIAL[k]) openSpInfo(k);
   }else{
@@ -24353,7 +24507,7 @@ function festPick(k){
   openModal(`<h2>${b.em} ${b.n}<span class="x" onclick="closeModal()">닫기</span></h2>
     <div class="card" style="margin:0;font-size:13.5px;line-height:1.9">${b.s}</div>
     <div class="muted" style="text-align:center;margin:8px 0 6px">
-      이 부스는 <b>${P.em||''}${P.n||''}</b>가 잘해요 — 누구를 보낼까요?</div>
+      이 부스는 ${ega(`<b>${P.em||''}${P.n||''}</b>`)} 잘해요 — 누구를 보낼까요?</div>
     <div class="shopgrid wide">${pool.map(x=>{
       const on=personaKey(x)===b.best;
       return `<div class="scard" style="${on?'border-color:var(--acc);background:#ffeaf1':''}"
@@ -26742,7 +26896,7 @@ function openSport(){
     <div class="card" style="margin:0">
       <h3>📋 오늘 종목</h3>
       ${SPORT_EV.map(e=>`<div style="font-size:12.5px;line-height:1.9">
-        ${e.em} <b>${e.n}</b> — ${e.k==='hunt'?`오늘은 <b>${P.em} ${P.n}</b>가 잘 찾아요!`:e.d}</div>`).join('')}
+        ${e.em} <b>${e.n}</b> — ${e.k==='hunt'?`오늘은 ${ega(`<b>${P.em} ${P.n}</b>`)} 잘 찾아요!`:e.d}</div>`).join('')}
     </div>
     <div class="card" style="margin:9px 0 0">
       <h3>🐹 누가 나갈까요? <small>${_sp.who.length}/${sportMax()}마리</small></h3>
@@ -26905,7 +27059,7 @@ function sportShow(res){
     </div>
     <div style="text-align:center;font-size:14px;line-height:1.8;margin-top:6px">
       🥇 <b>${ega(nameOf(res.rows[0].k))}</b> 1등이에요!<br>
-      <span class="muted">${res.wx} · 🎁보물찾기는 <b>${P.em} ${P.n}</b>가 유리했어요</span>
+      <span class="muted">${res.wx} · 🎁보물찾기는 ${ega(`<b>${P.em} ${P.n}</b>`)} 유리했어요</span>
       ${res.cheer ? `<br><span class="muted">📣 <b>${res.cheer}번</b> 응원해서 🏃달리기가
         <b>${res.cmul}배</b>였어요!</span>` : ''}
     </div>
